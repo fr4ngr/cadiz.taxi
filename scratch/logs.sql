@@ -1,0 +1,1 @@
+SELECT id, user_message, bot_response, intent_category, latency_ms, brains_injected FROM chat_logs ORDER BY id DESC LIMIT 5;

@@ -66,8 +66,8 @@ import MapWidget from '../components/widgets/MapWidget.astro';
 
         <script>
             window.switchTab = function(tab) {
-                const tabIds = ['tab-chat', 'tab-muro', 'tab-dms', 'tab-comunidad', 'tab-mapa', 'tab-melkart', 'tab-perfil'];
-                const navIds = ['nav-tab-chat', 'nav-tab-muro', 'nav-tab-dms', 'nav-tab-comunidad', 'nav-tab-mapa', 'nav-tab-melkart'];
+                const tabIds = ['tab-chat', 'tab-muro', 'tab-dms', 'tab-comunidad', 'tab-mapa', 'tab-melkart', 'tab-perfil', 'tab-noticias'];
+                const navIds = ['nav-tab-chat', 'nav-tab-muro', 'nav-tab-dms', 'nav-tab-comunidad', 'nav-tab-mapa', 'nav-tab-melkart', 'nav-tab-noticias'];
 
                 tabIds.forEach(id => {
                     const el = document.getElementById(id);
@@ -100,6 +100,7 @@ import MapWidget from '../components/widgets/MapWidget.astro';
                     if (tab === 'muro' && window.loadFeed) window.loadFeed();
                     if (tab === 'dms' && window.loadDMsInbox) window.loadDMsInbox();
                     if (tab === 'comunidad' && window.loadCommunity) window.loadCommunity();
+                    if (tab === 'noticias' && window.loadNews) window.loadNews();
                     if (tab === 'mapa') {
                         if (!window.currentMap && window.initializeGlobalMap) {
                             window.initializeGlobalMap();
@@ -554,6 +555,182 @@ import MapWidget from '../components/widgets/MapWidget.astro';
 
             <!-- TAB MELKART -->
             <MelkartTab />
+
+            <!-- TAB NOTICIAS -->
+            <div id="tab-noticias" style="display: none; flex: 1; width: 100%; min-height: 0; flex-direction: column; background: var(--bg-color); max-width: 480px; margin: 0 auto; overflow-y: auto;">
+
+                <!-- Cabecera sticky -->
+                <div style="padding: 16px 16px 0 16px; background: var(--header-bg); border-bottom: 1px solid var(--header-border); position: sticky; top: 0; z-index: 10;">
+                    <h2 style="margin: 0 0 12px 0; font-size: 20px; color: var(--text-primary); font-weight: 700;">Noticias</h2>
+
+                    <!-- Filtros Municipio -->
+                    <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; -ms-overflow-style: none;">
+                        <button class="news-filter-muni active" data-muni="all" onclick="window.filterNews('muni','all')" style="background: var(--primary-color); color: white; border: none; border-radius: 20px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;">Toda la provincia</button>
+                        <button class="news-filter-muni" data-muni="cadiz" onclick="window.filterNews('muni','cadiz')" style="background: var(--chat-bg); color: var(--text-secondary); border: 1px solid var(--header-border); border-radius: 20px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;">Cádiz</button>
+                        <button class="news-filter-muni" data-muni="jerez" onclick="window.filterNews('muni','jerez')" style="background: var(--chat-bg); color: var(--text-secondary); border: 1px solid var(--header-border); border-radius: 20px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;">Jerez</button>
+                        <button class="news-filter-muni" data-muni="algeciras" onclick="window.filterNews('muni','algeciras')" style="background: var(--chat-bg); color: var(--text-secondary); border: 1px solid var(--header-border); border-radius: 20px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;">Algeciras</button>
+                        <button class="news-filter-muni" data-muni="sanlucar" onclick="window.filterNews('muni','sanlucar')" style="background: var(--chat-bg); color: var(--text-secondary); border: 1px solid var(--header-border); border-radius: 20px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;">Sanlúcar</button>
+                        <button class="news-filter-muni" data-muni="chiclana" onclick="window.filterNews('muni','chiclana')" style="background: var(--chat-bg); color: var(--text-secondary); border: 1px solid var(--header-border); border-radius: 20px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;">Chiclana</button>
+                        <button class="news-filter-muni" data-muni="lalinea" onclick="window.filterNews('muni','lalinea')" style="background: var(--chat-bg); color: var(--text-secondary); border: 1px solid var(--header-border); border-radius: 20px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;">La Línea</button>
+                        <button class="news-filter-muni" data-muni="rota" onclick="window.filterNews('muni','rota')" style="background: var(--chat-bg); color: var(--text-secondary); border: 1px solid var(--header-border); border-radius: 20px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;">Rota</button>
+                        <button class="news-filter-muni" data-muni="puertoreal" onclick="window.filterNews('muni','puertoreal')" style="background: var(--chat-bg); color: var(--text-secondary); border: 1px solid var(--header-border); border-radius: 20px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;">Puerto Real</button>
+                        <button class="news-filter-muni" data-muni="barbate" onclick="window.filterNews('muni','barbate')" style="background: var(--chat-bg); color: var(--text-secondary); border: 1px solid var(--header-border); border-radius: 20px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;">Barbate</button>
+                        <button class="news-filter-muni" data-muni="tarifa" onclick="window.filterNews('muni','tarifa')" style="background: var(--chat-bg); color: var(--text-secondary); border: 1px solid var(--header-border); border-radius: 20px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;">Tarifa</button>
+                        <button class="news-filter-muni" data-muni="arcos" onclick="window.filterNews('muni','arcos')" style="background: var(--chat-bg); color: var(--text-secondary); border: 1px solid var(--header-border); border-radius: 20px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;">Sierra</button>
+                    </div>
+
+                    <!-- Filtros Categoría -->
+                    <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 12px; scrollbar-width: none; -ms-overflow-style: none; border-top: 1px solid var(--header-border); padding-top: 8px; margin-top: 2px;">
+                        <button class="news-filter-cat active" data-cat="all" onclick="window.filterNews('cat','all')" style="background: var(--primary-color); color: white; border: none; border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;">Todo</button>
+                        <button class="news-filter-cat" data-cat="deporte" onclick="window.filterNews('cat','deporte')" style="background: var(--chat-bg); color: var(--text-secondary); border: 1px solid var(--header-border); border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;">⚽ Deporte</button>
+                        <button class="news-filter-cat" data-cat="cultura" onclick="window.filterNews('cat','cultura')" style="background: var(--chat-bg); color: var(--text-secondary); border: 1px solid var(--header-border); border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;">🎭 Cultura</button>
+                        <button class="news-filter-cat" data-cat="sucesos" onclick="window.filterNews('cat','sucesos')" style="background: var(--chat-bg); color: var(--text-secondary); border: 1px solid var(--header-border); border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;">🚨 Sucesos</button>
+                        <button class="news-filter-cat" data-cat="politica" onclick="window.filterNews('cat','politica')" style="background: var(--chat-bg); color: var(--text-secondary); border: 1px solid var(--header-border); border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;">🏛️ Política</button>
+                        <button class="news-filter-cat" data-cat="economia" onclick="window.filterNews('cat','economia')" style="background: var(--chat-bg); color: var(--text-secondary); border: 1px solid var(--header-border); border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;">💼 Economía</button>
+                        <button class="news-filter-cat" data-cat="salud" onclick="window.filterNews('cat','salud')" style="background: var(--chat-bg); color: var(--text-secondary); border: 1px solid var(--header-border); border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;">🏥 Salud</button>
+                        <button class="news-filter-cat" data-cat="medio_ambiente" onclick="window.filterNews('cat','medio_ambiente')" style="background: var(--chat-bg); color: var(--text-secondary); border: 1px solid var(--header-border); border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;">🌿 Medio Amb.</button>
+                    </div>
+                </div>
+
+                <!-- Contenedor de noticias -->
+                <div id="news-container" style="padding: 12px 16px 100px 16px; display: flex; flex-direction: column; gap: 10px;">
+                    <!-- Skeletons iniciales -->
+                    <div class="news-skeleton" style="background: var(--header-bg); border: 1px solid var(--header-border); border-radius: 16px; padding: 14px; display: flex; gap: 12px; animation: pulse 1.5s infinite;"><div style="width: 80px; height: 80px; background: var(--chat-bg); border-radius: 10px; flex-shrink: 0;"></div><div style="flex:1; display:flex; flex-direction:column; gap:8px;"><div style="height:14px; background:var(--chat-bg); border-radius:6px; width:60%;"></div><div style="height:12px; background:var(--chat-bg); border-radius:6px;"></div><div style="height:12px; background:var(--chat-bg); border-radius:6px; width:80%;"></div></div></div>
+                    <div class="news-skeleton" style="background: var(--header-bg); border: 1px solid var(--header-border); border-radius: 16px; padding: 14px; display: flex; gap: 12px; animation: pulse 1.5s infinite 0.3s;"><div style="width: 80px; height: 80px; background: var(--chat-bg); border-radius: 10px; flex-shrink: 0;"></div><div style="flex:1; display:flex; flex-direction:column; gap:8px;"><div style="height:14px; background:var(--chat-bg); border-radius:6px; width:75%;"></div><div style="height:12px; background:var(--chat-bg); border-radius:6px;"></div><div style="height:12px; background:var(--chat-bg); border-radius:6px; width:55%;"></div></div></div>
+                    <div class="news-skeleton" style="background: var(--header-bg); border: 1px solid var(--header-border); border-radius: 16px; padding: 14px; display: flex; gap: 12px; animation: pulse 1.5s infinite 0.6s;"><div style="width: 80px; height: 80px; background: var(--chat-bg); border-radius: 10px; flex-shrink: 0;"></div><div style="flex:1; display:flex; flex-direction:column; gap:8px;"><div style="height:14px; background:var(--chat-bg); border-radius:6px; width:50%;"></div><div style="height:12px; background:var(--chat-bg); border-radius:6px;"></div><div style="height:12px; background:var(--chat-bg); border-radius:6px; width:70%;"></div></div></div>
+                </div>
+            </div>
+            <!-- END TAB NOTICIAS -->
+
+            <style>
+                @keyframes pulse {
+                    0%, 100% { opacity: 1; }
+                    50% { opacity: 0.5; }
+                }
+                #tab-noticias ::-webkit-scrollbar { display: none; }
+            </style>
+
+            <script>
+                // Estado de noticias
+                window._newsData = [];
+                window._newsMuni = 'all';
+                window._newsCat = 'all';
+                window._newsLoaded = false;
+
+                const CAT_LABELS = {
+                    general: '📰', deporte: '⚽', cultura: '🎭',
+                    sucesos: '🚨', politica: '🏛️', economia: '💼',
+                    salud: '🏥', medio_ambiente: '🌿'
+                };
+
+                window.loadNews = async function(forceRefresh = false) {
+                    if (window._newsLoaded && !forceRefresh) {
+                        window.renderNews();
+                        return;
+                    }
+                    const container = document.getElementById('news-container');
+                    if (!container) return;
+
+                    try {
+                        const res = await fetch('/api/news?limite=120');
+                        if (!res.ok) throw new Error('HTTP ' + res.status);
+                        const data = await res.json();
+                        window._newsData = data.items || [];
+                        window._newsLoaded = true;
+                        window.renderNews();
+                    } catch(e) {
+                        if (container) container.innerHTML = '<div style="text-align:center; color:#ef4444; padding:40px 16px;">⚠️ Error al cargar las noticias. Comprueba tu conexión.</div>';
+                    }
+                };
+
+                window.filterNews = function(tipo, valor) {
+                    if (tipo === 'muni') {
+                        window._newsMuni = valor;
+                        document.querySelectorAll('.news-filter-muni').forEach(btn => {
+                            const isActive = btn.dataset.muni === valor;
+                            btn.style.background = isActive ? 'var(--primary-color)' : 'var(--chat-bg)';
+                            btn.style.color = isActive ? 'white' : 'var(--text-secondary)';
+                            btn.style.border = isActive ? 'none' : '1px solid var(--header-border)';
+                            if (isActive) btn.classList.add('active'); else btn.classList.remove('active');
+                        });
+                    } else {
+                        window._newsCat = valor;
+                        document.querySelectorAll('.news-filter-cat').forEach(btn => {
+                            const isActive = btn.dataset.cat === valor;
+                            btn.style.background = isActive ? 'var(--primary-color)' : 'var(--chat-bg)';
+                            btn.style.color = isActive ? 'white' : 'var(--text-secondary)';
+                            btn.style.border = isActive ? 'none' : '1px solid var(--header-border)';
+                            if (isActive) btn.classList.add('active'); else btn.classList.remove('active');
+                        });
+                    }
+                    window.renderNews();
+                };
+
+                window.renderNews = function() {
+                    const container = document.getElementById('news-container');
+                    if (!container) return;
+
+                    let items = window._newsData;
+                    if (window._newsMuni !== 'all') items = items.filter(i => i.municipio === window._newsMuni);
+                    if (window._newsCat !== 'all')  items = items.filter(i => i.categoria === window._newsCat);
+
+                    if (items.length === 0) {
+                        container.innerHTML = '<div style="text-align:center; color:var(--text-secondary); padding:40px 16px;">No hay noticias con estos filtros.</div>';
+                        return;
+                    }
+
+                    container.innerHTML = '';
+                    items.forEach(item => {
+                        const card = document.createElement('a');
+                        card.href = item.url;
+                        card.target = '_blank';
+                        card.rel = 'noopener noreferrer';
+                        card.style.cssText = 'display:flex; gap:12px; background:var(--header-bg); border:1px solid var(--header-border); border-radius:16px; padding:14px; text-decoration:none; color:inherit; overflow:hidden; transition:transform 0.15s, box-shadow 0.15s; active:transform:scale(0.98);';
+                        card.onmousedown = () => card.style.transform = 'scale(0.98)';
+                        card.onmouseup = () => card.style.transform = '';
+                        card.ontouchstart = () => card.style.transform = 'scale(0.98)';
+                        card.ontouchend = () => card.style.transform = '';
+
+                        // Imagen
+                        if (item.imagen) {
+                            const img = document.createElement('img');
+                            img.src = item.imagen;
+                            img.alt = item.titulo;
+                            img.loading = 'lazy';
+                            img.style.cssText = 'width:80px; height:80px; object-fit:cover; border-radius:10px; flex-shrink:0; background:var(--chat-bg);';
+                            img.onerror = () => img.remove();
+                            card.appendChild(img);
+                        }
+
+                        // Texto
+                        const textDiv = document.createElement('div');
+                        textDiv.style.cssText = 'flex:1; display:flex; flex-direction:column; gap:4px; min-width:0;';
+
+                        // Meta: fuente + tiempo
+                        const meta = document.createElement('div');
+                        meta.style.cssText = 'display:flex; align-items:center; gap:6px; font-size:11px; color:var(--text-secondary);';
+                        meta.innerHTML = `<span style="font-weight:700; color:var(--primary-color);">${item.fuente}</span><span>·</span><span>${item.hace}</span><span style="margin-left:auto; font-size:13px;">${CAT_LABELS[item.categoria] || '📰'}</span>`;
+                        textDiv.appendChild(meta);
+
+                        // Título
+                        const titulo = document.createElement('div');
+                        titulo.style.cssText = 'font-weight:700; font-size:14px; color:var(--text-primary); line-height:1.3; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;';
+                        titulo.textContent = item.titulo;
+                        textDiv.appendChild(titulo);
+
+                        // Extracto
+                        if (item.extracto) {
+                            const ext = document.createElement('div');
+                            ext.style.cssText = 'font-size:12px; color:var(--text-secondary); line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;';
+                            ext.textContent = item.extracto;
+                            textDiv.appendChild(ext);
+                        }
+
+                        card.appendChild(textDiv);
+                        container.appendChild(card);
+                    });
+                };
+            </script>
         <!-- MODAL DE PERFIL PUBLICO -->
         <!-- MODAL DE PERFIL PUBLICO -->
         <div id="public-profile-modal" style="display: none; position: absolute; inset: 0; z-index: 50; background: var(--bg-color); flex-direction: column; overflow: hidden;">
@@ -683,6 +860,10 @@ import MapWidget from '../components/widgets/MapWidget.astro';
                 <button onclick="window.switchTab('melkart')" id="nav-tab-melkart" class="nav-tab" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-secondary); cursor: pointer; flex: 1;">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
                     <span style="font-size: 11px; font-weight: 600;">Melkart</span>
+                </button>
+                <button onclick="window.switchTab('noticias')" id="nav-tab-noticias" class="nav-tab" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-secondary); cursor: pointer; flex: 1;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8z"/></svg>
+                    <span style="font-size: 11px; font-weight: 600;">Noticias</span>
                 </button>
             </nav>
             

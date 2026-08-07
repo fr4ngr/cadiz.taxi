@@ -182,6 +182,26 @@ ${b.content}
             }]
         };
 
+        const newsTool = {
+            functionDeclarations: [{
+                name: "get_latest_news",
+                description: "Llama a esta función cuando el usuario pregunte por noticias recientes, actualidad, qué ha pasado hoy, o eventos en la provincia de Cádiz. Devuelve un resumen de los titulares más recientes obtenidos de 38 diarios de Cádiz.",
+                parameters: {
+                    type: SchemaType.OBJECT,
+                    properties: {
+                        municipio: {
+                            type: SchemaType.STRING,
+                            description: "Filtra por municipio si el usuario especifica uno (ej. 'cadiz', 'jerez', 'algeciras', 'sanlucar', 'chiclana', 'lalinea', 'rota', 'puertoreal'). Si no, usa 'all'."
+                        },
+                        categoria: {
+                            type: SchemaType.STRING,
+                            description: "Filtra por categoría si el usuario pide algo específico (ej. 'deporte', 'cultura', 'sucesos', 'politica', 'economia', 'salud'). Si no, usa 'all'."
+                        }
+                    }
+                }
+            }]
+        };
+
         let responseText = '';
         let currentModel = 'gemini-3.5-flash';
         let latencyMs = 0;
@@ -344,7 +364,7 @@ ${b.content}
                 generationConfig: {
                     temperature: 0.1
                 },
-                tools: [beachTool, transportTool]
+                tools: [beachTool, transportTool, newsTool]
             });
 
             let response = await model.generateContent({
@@ -491,6 +511,30 @@ ${b.content}
                             console.error("CTAN API error:", e);
                         }
                     }
+                } else if (call.name === 'get_latest_news') {
+                    const municipio = call.args.municipio || 'all';
+                    const categoria = call.args.categoria || 'all';
+                    
+                    try {
+                        const cacheResult = await env.DB.prepare('SELECT value FROM system_cache WHERE key = ?').bind('news_cadiz_v1').first();
+                        if (cacheResult && cacheResult.value) {
+                            const data = JSON.parse(cacheResult.value);
+                            let items = data.items || [];
+                            
+                            if (municipio !== 'all') items = items.filter(i => i.municipio === municipio);
+                            if (categoria !== 'all') items = items.filter(i => i.categoria === categoria);
+                            
+                            toolResponseData = {
+                                resumen_noticias: items.slice(0, 15).map(i => `[${i.fuente}] ${i.titulo} (${i.hace})`).join('\n'),
+                                total_encontradas: items.length,
+                                aviso: "Responde de forma conversacional destacando lo más importante. Ofrece más detalles si el usuario lo pide."
+                            };
+                        } else {
+                            toolResponseData = { error: "Las noticias aún no se han sincronizado en caché." };
+                        }
+                    } catch (e) {
+                        console.error("Error obteniendo noticias para IA:", e);
+                    }
                 } else {
                     toolCalled = false;
                 }
@@ -518,7 +562,7 @@ ${b.content}
                             responseSchema: schema,
                             temperature: 0.1
                         },
-                        tools: [beachTool, transportTool]
+                        tools: [beachTool, transportTool, newsTool]
                     });
 
                     response = await model.generateContent({
