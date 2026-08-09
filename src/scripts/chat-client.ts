@@ -208,10 +208,18 @@ import { renderCardDOM } from '../components/cards/CardRenderer';
         let userProfile = localStorage.getItem('gaditan_profile') || 'desconocido';
 
         try {
+            const payload = {
+                message: text,
+                history: chatHistory,
+                inputType: isHiddenInit ? 'system' : inputType,
+                sessionId,
+                userProfile,
+                clientContext: window.clientContext || null
+            };
             const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: text, history: chatHistory, inputType: isHiddenInit ? 'system' : inputType, sessionId, userProfile })
+                body: JSON.stringify(payload)
             });
 
             const data = await response.json();
@@ -2041,9 +2049,44 @@ import { renderCardDOM } from '../components/cards/CardRenderer';
         }
     });
 
-    setTimeout(() => {
+    // --- HIPERSEGMENTACIÓN: Cargar contexto ANTES del saludo inicial ---
+    (async function initWithContext() {
+        try {
+            // 1. Obtener datos del servidor (geo, User-Agent parseado por Cloudflare)
+            const res = await fetch('/api/auth/me');
+            const data = await res.json();
+            
+            // 2. Fingerprint del navegador (client-side, sin cookies)
+            const browserFingerprint = {
+                language: navigator.language || 'desconocido',
+                languages: navigator.languages ? navigator.languages.join(', ') : navigator.language,
+                screenWidth: screen.width,
+                screenHeight: screen.height,
+                devicePixelRatio: window.devicePixelRatio || 1,
+                touchScreen: 'ontouchstart' in window || navigator.maxTouchPoints > 0,
+                darkMode: window.matchMedia('(prefers-color-scheme: dark)').matches,
+                connection: (navigator as any).connection ? {
+                    type: (navigator as any).connection.effectiveType,
+                    downlink: (navigator as any).connection.downlink
+                } : null,
+                platform: navigator.platform || 'desconocido',
+                referrer: document.referrer || 'directo',
+                localHour: new Date().getHours(),
+                localDay: new Date().toLocaleDateString('es-ES', { weekday: 'long' })
+            };
+
+            // 3. Combinar server context + browser fingerprint
+            window.clientContext = {
+                ...(data.context || {}),
+                browser: browserFingerprint
+            };
+        } catch (e) {
+            console.warn('No se pudo cargar el contexto:', e);
+        }
+        
+        // 4. Ahora sí, enviar el saludo inicial CON el contexto completo
         sendMessageToAI('¡Hola! Acabo de entrar a la web. Preséntate brevemente de forma muy natural y dime en qué puedes ayudarme. NO añadas sugerencias ni listas en tu mensaje de texto, usa EXCLUSIVAMENTE los bloques de sugerencia de la interfaz.', true);
-    }, 500);
+    })();
 
     window.openWeatherModal = () => {
         const overlay = document.getElementById('weather-modal-overlay');

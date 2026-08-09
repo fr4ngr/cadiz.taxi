@@ -1,5 +1,5 @@
 export interface CardData {
-    cardType: 'HeroCard' | 'ListCard' | 'BusinessCard' | 'ArticleCard' | 'AlertCard' | 'NavigationCard' | 'ProductCard' | 'ProfileCard' | 'MapCard' | 'GalleryCard' | 'ReservationCard' | string;
+    cardType: 'HeroCard' | 'ListCard' | 'BusinessCard' | 'ArticleCard' | 'AlertCard' | 'NavigationCard' | 'ProductCard' | 'ProfileCard' | 'MapCard' | 'GalleryCard' | 'ReservationCard' | 'ElectricityCard' | 'TransportCard' | string;
     title?: string;
     subtitle?: string;
     content?: string;
@@ -21,4 +21,28 @@ export interface CardData {
     oldPrice?: string;
     locationTitle?: string;
     imageUrls?: string[];
+    electricityData?: string; // JSON stringificado con los datos de las horas
+    sunsetData?: {
+        sunrise: string;
+        sunset: string;
+    };
+    historicalComparison?: {
+        percentChange: number;
+    };
+    transportData?: {
+        routes?: Array<{
+            mode: 'bus' | 'boat';
+            origin: string;
+            destination: string;
+            nextDeparture: string | null; // e.g. "13:45"
+            upcomingDepartures: string[]; // e.g. ["14:30", "15:15"]
+            price?: string;
+        }>;
+        alert?: {
+            title: string;
+            description: string;
+            type: 'warning' | 'error' | 'info';
+        };
+    };
+    places?: any[];
 }

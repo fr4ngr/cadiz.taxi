@@ -52,8 +52,11 @@ const FEEDS = [
   { url: 'https://andaluciainformacion.es/losbarrios/feed',  fuente: 'Los Barrios Info',   municipio: 'losbarrios',  zona: 'campo-gibraltar' },
 ];
 
-const CACHE_KEY = 'news_cadiz_v1';
+const CACHE_KEY = 'news_cadiz_v9';
 const CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutos
+
+// Diccionario de Modo Turista ESTRICTO (Cortes, alertas climáticas fuertes y agenda clara)
+const DICCIONARIO_TURISTA = /\b(aemet|previsi[oó]n meteorol[oó]gica|el tiempo en|atasco|corte de tr[aá]fico|cortado el tr[aá]fico|corte de carretera|cortada la carretera|huelga de|retrasos en|suspensi[oó]n del catamar[aá]n|alerta amarilla|alerta naranja|fuerte levante|fuerte poniente|bandera roja|bandera amarilla|medusas|corte de agua|corte de luz|concierto de|entradas para|festival de|ruta guiada)\b/i;
 
 // ─── Parser RSS sin DOMParser (compatible con Cloudflare Workers) ───────────
 function parseRSS(xml, feedMeta) {
@@ -109,7 +112,7 @@ function parseRSS(xml, feedMeta) {
     catch { fecha = new Date().toISOString(); }
 
     // ID único basado en URL
-    const id = btoa(link).replace(/[^a-zA-Z0-9]/g, '').substring(0, 16);
+    const id = link;
 
     items.push({
       id,
@@ -122,6 +125,7 @@ function parseRSS(xml, feedMeta) {
       zona: feedMeta.zona,
       fecha,
       categoria: 'general', // se clasifica después si hay AI
+      es_turistica: DICCIONARIO_TURISTA.test(title) || DICCIONARIO_TURISTA.test(desc)
     });
   }
 
@@ -151,6 +155,12 @@ const CATEGORIAS = {
   medio_ambiente: /\b(medio ambiente|parque natural|contaminaci[oó]n|incendio forestal|sequía|lluvia|tormenta|atún|pesca|medusa|playa|mar)\b/i,
   salud:      /\b(hospital|salud|enfermedad|vacuna|médico|sanitario|covid|gripe|urgencias|consulta|operaci[oó]n)\b/i,
 };
+
+// Filtro de ruido nacional/internacional
+const RUIDO_NACIONAL = /\b(s[aá]nchez|feij[oó]o|puigdemont|biden|trump|gaza|ucrania|congreso de los diputados|senado|moncloa|israel|ham[aá]s|putin|zelenski|rusia|eeuu|estados unidos|madrid|catalu[ñn]a|abascal|yolanda d[ií]az)\b/i;
+const RUIDO_URLS = /\/(espana|mundo|sociedad|television|gente|tecnologia|motor|ocio|wappissima|de_compras|nacional|internacional|cine)\//i;
+// Excepción: si el titular menciona algo nacional pero también menciona Cádiz, Andalucía, o algún municipio, lo dejamos pasar.
+const SALVAGUARDA_LOCAL = /\b(c[aá]diz|andaluc[ií]a|jerez|algeciras|l[ií]nea|chiclana|sanl[uú]car|puerto|rota|barbate|conil|tarifa)\b/i;
 
 function clasificarCategoria(titulo, extracto) {
   const texto = (titulo + ' ' + extracto).toLowerCase();
@@ -188,26 +198,126 @@ async function syncNews(env) {
     if (r.status === 'fulfilled') allItems.push(...r.value);
   });
 
-  // Deduplicar por ID
+  // Deduplicar por ID y por Título (para evitar que distintos feeds publiquen lo mismo)
   const seen = new Set();
+  const seenTitles = new Set();
+  
   allItems = allItems.filter(item => {
-    if (seen.has(item.id)) return false;
+    // 1. Filtrar ruido nacional
+    if (RUIDO_URLS.test(item.url)) return false;
+    if (RUIDO_NACIONAL.test(item.titulo) && !SALVAGUARDA_LOCAL.test(item.titulo)) {
+        return false;
+    }
+
+    // 2. Deduplicar
+    const normTitle = item.titulo.toLowerCase().replace(/[^a-z0-9áéíóúüñ]/g, '');
+    if (seen.has(item.id) || seenTitles.has(normTitle)) return false;
+    
     seen.add(item.id);
+    seenTitles.add(normTitle);
     return true;
   });
 
-  // Clasificar categorías
-  allItems = allItems.map(item => ({
-    ...item,
-    categoria: clasificarCategoria(item.titulo, item.extracto),
-    hace: tiempoRelativo(item.fecha),
-  }));
+  // 3. Consultar la memoria de IA para las URLs
+  const aiMem = new Map();
+  try {
+      const aiCacheResult = await env.DB.prepare('SELECT url, es_turistica, categoria, municipio FROM news_ai_cache').all();
+      if (aiCacheResult && aiCacheResult.results) {
+          for (const row of aiCacheResult.results) {
+              aiMem.set(row.url, row);
+          }
+      }
+  } catch (e) {
+      console.error("No se pudo leer news_ai_cache", e);
+  }
+
+  // 4. Identificar noticias nuevas (sin IA)
+  const nuevasParaIA = allItems.filter(item => !aiMem.has(item.url));
+  
+  // Limitar a procesar máximo 15 por ejecución para no exceder timeout
+  const batchParaIA = nuevasParaIA.slice(0, 15);
+  
+  if (batchParaIA.length > 0 && env.AI) {
+      const systemPrompt = `Eres un asistente que clasifica noticias de la provincia de Cádiz.
+Debes devolver un JSON exacto sin texto adicional con esta estructura: {"categoria": "...", "municipio": "..."}.
+Categorías permitidas: politica, sucesos, deportes, cultura, sociedad, economia, tecnologia, opinion, general.
+Municipios: cadiz, jerez, san fernando, chiclana, algeciras, puerto real, puerto de santa maria, rota, sanlucar, barbate, conil, tarifa, linea, provincia. (o null si no aplica).
+No pongas markdown ni \`\`\`. Devuelve solo el JSON válido.`;
+
+      const stmt = env.DB.prepare(`
+        INSERT INTO news_ai_cache (url, es_turistica, categoria, municipio)
+        VALUES (?, ?, ?, ?)
+        ON CONFLICT(url) DO UPDATE SET es_turistica = excluded.es_turistica, categoria = excluded.categoria, municipio = excluded.municipio
+      `);
+      
+      const insertPromises = [];
+      
+      for (const item of batchParaIA) {
+          try {
+              const res = await env.AI.run('@cf/meta/llama-3-8b-instruct', {
+                  messages: [
+                      { role: 'system', content: systemPrompt },
+                      { role: 'user', content: `Titular: ${item.titulo}\nExtracto: ${item.extracto}` }
+                  ]
+              });
+              
+              const jsonStr = res.response.replace(/```json/gi, '').replace(/```/g, '').trim();
+              const aiData = JSON.parse(jsonStr);
+              
+              // Validar y guardar en memoria temporal para este ciclo
+              const es_tur = aiData.turistica === true;
+              const cat = aiData.categoria || clasificarCategoria(item.titulo, item.extracto);
+              const mun = aiData.municipio || item.municipio;
+              
+              aiMem.set(item.url, {
+                  url: item.url,
+                  es_turistica: es_tur ? 1 : 0,
+                  categoria: cat,
+                  municipio: mun
+              });
+              
+              insertPromises.push(
+                  stmt.bind(item.url, es_tur ? 1 : 0, cat, mun).run()
+              );
+          } catch(e) {
+              console.error("Error IA para URL " + item.url, e);
+          }
+      }
+      
+      if (insertPromises.length > 0) {
+          await Promise.allSettled(insertPromises);
+      }
+  }
+
+  // 5. Asignar los valores a todas las noticias (IA + Fallback)
+  allItems = allItems.map(item => {
+    let finalCat = clasificarCategoria(item.titulo, item.extracto);
+    let finalTur = item.es_turistica; // el fallback de regex
+    let finalMuni = item.municipio;
+    
+    if (aiMem.has(item.url)) {
+        const mem = aiMem.get(item.url);
+        if (mem.categoria) finalCat = mem.categoria;
+        finalTur = (mem.es_turistica === 1 || mem.es_turistica === true);
+        if (mem.municipio && mem.municipio !== 'null' && mem.municipio !== 'provincia') {
+            finalMuni = mem.municipio;
+        }
+    }
+    
+    return {
+        ...item,
+        categoria: finalCat,
+        es_turistica: finalTur,
+        municipio: finalMuni,
+        hace: tiempoRelativo(item.fecha)
+    };
+  });
 
   // Ordenar por fecha desc
   allItems.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
-  // Guardar solo los últimos 300
-  const toSave = allItems.slice(0, 300);
+  // Guardar todo lo recuperado (hasta 2000 noticias en caché)
+  const toSave = allItems.slice(0, 2000);
 
   const payload = {
     items: toSave,
@@ -235,7 +345,7 @@ export async function onRequest(context) {
 
   const municipio = url.searchParams.get('municipio') || 'all';
   const categoria = url.searchParams.get('categoria') || 'all';
-  const limite    = Math.min(parseInt(url.searchParams.get('limite') || '60'), 120);
+  const limite    = Math.min(parseInt(url.searchParams.get('limite') || '2000'), 2000);
   const forChat   = url.searchParams.get('for_chat') === '1'; // Para el asistente IA
 
   const CORS = {

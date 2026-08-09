@@ -2,14 +2,29 @@ export async function onRequestGet(context) {
     const { env, request } = context;
     
     try {
+        // Extraer contexto del usuario para hipersegmentación (sin cookies)
+        const clientContext = {
+            geo: request.cf ? {
+                city: request.cf.city,
+                region: request.cf.region,
+                country: request.cf.country,
+                timezone: request.cf.timezone,
+                asn: request.cf.asn,
+                latitude: request.cf.latitude,
+                longitude: request.cf.longitude
+            } : null,
+            userAgent: request.headers.get('User-Agent') || '',
+            acceptLanguage: request.headers.get('Accept-Language') || ''
+        };
+
         const cookieHeader = request.headers.get('Cookie');
         if (!cookieHeader) {
-            return new Response(JSON.stringify({ user: null }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+            return new Response(JSON.stringify({ user: null, context: clientContext }), { status: 200, headers: { 'Content-Type': 'application/json' } });
         }
 
         const match = cookieHeader.match(/auth_session=([^;]+)/);
         if (!match) {
-            return new Response(JSON.stringify({ user: null }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+            return new Response(JSON.stringify({ user: null, context: clientContext }), { status: 200, headers: { 'Content-Type': 'application/json' } });
         }
 
         const sessionId = match[1];
@@ -25,7 +40,7 @@ export async function onRequestGet(context) {
         const result = await env.DB.prepare(query).bind(sessionId).first();
 
         if (!result) {
-            return new Response(JSON.stringify({ user: null }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+            return new Response(JSON.stringify({ user: null, context: clientContext }), { status: 200, headers: { 'Content-Type': 'application/json' } });
         }
 
         // Si el usuario está baneado
@@ -34,14 +49,14 @@ export async function onRequestGet(context) {
             if (isBanned) {
                 // Borramos su sesión y devolvemos que está baneado
                 await env.DB.prepare(`DELETE FROM sessions WHERE id = ?`).bind(sessionId).run();
-                return new Response(JSON.stringify({ user: null, error: 'Tu cuenta ha sido suspendida por violar las normas de la comunidad.' }), { status: 403, headers: { 'Content-Type': 'application/json' } });
+                return new Response(JSON.stringify({ user: null, context: clientContext, error: 'Tu cuenta ha sido suspendida por violar las normas de la comunidad.' }), { status: 403, headers: { 'Content-Type': 'application/json' } });
             }
         }
 
-        return new Response(JSON.stringify({ user: result }), { status: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate' } });
+        return new Response(JSON.stringify({ user: result, context: clientContext }), { status: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate' } });
 
     } catch (e) {
         console.error("Auth me error:", e);
-        return new Response(JSON.stringify({ user: null, error: e.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+        return new Response(JSON.stringify({ user: null, context: null, error: e.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
     }
 }

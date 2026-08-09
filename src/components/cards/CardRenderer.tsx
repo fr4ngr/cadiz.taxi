@@ -8,6 +8,8 @@ import { AlertCard } from './AlertCard';
 import { ProductCard } from './ProductCard';
 import { ProfileCard } from './ProfileCard';
 import { MapCard, NavigationCard } from './MapAndNavCards';
+import { ElectricityCard } from './ElectricityCard';
+import { TransportCard } from './TransportCard';
 
 const GalleryCard = ({ data }: { data: CardData }) => {
     return (
@@ -50,6 +52,8 @@ export const renderCardDOM = (data: CardData, msgId: string): HTMLElement => {
         case 'MapCard': Component = MapCard; break;
         case 'NavigationCard': Component = NavigationCard; break;
         case 'GalleryCard': Component = GalleryCard; break;
+        case 'ElectricityCard': Component = ElectricityCard; break;
+        case 'TransportCard': Component = TransportCard; break;
         default:
             // Fallback for unknown card types or plain text bubble
             const formatContent = (text: string) => {

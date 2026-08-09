@@ -563,22 +563,6 @@ import MapWidget from '../components/widgets/MapWidget.astro';
                 <div style="padding: 16px 16px 0 16px; background: var(--header-bg); border-bottom: 1px solid var(--header-border); position: sticky; top: 0; z-index: 10;">
                     <h2 style="margin: 0 0 12px 0; font-size: 20px; color: var(--text-primary); font-weight: 700;">Noticias</h2>
 
-                    <!-- Filtros Municipio -->
-                    <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; -ms-overflow-style: none;">
-                        <button class="news-filter-muni active" data-muni="all" onclick="window.filterNews('muni','all')" style="background: var(--primary-color); color: white; border: none; border-radius: 20px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;">Toda la provincia</button>
-                        <button class="news-filter-muni" data-muni="cadiz" onclick="window.filterNews('muni','cadiz')" style="background: var(--chat-bg); color: var(--text-secondary); border: 1px solid var(--header-border); border-radius: 20px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;">Cádiz</button>
-                        <button class="news-filter-muni" data-muni="jerez" onclick="window.filterNews('muni','jerez')" style="background: var(--chat-bg); color: var(--text-secondary); border: 1px solid var(--header-border); border-radius: 20px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;">Jerez</button>
-                        <button class="news-filter-muni" data-muni="algeciras" onclick="window.filterNews('muni','algeciras')" style="background: var(--chat-bg); color: var(--text-secondary); border: 1px solid var(--header-border); border-radius: 20px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;">Algeciras</button>
-                        <button class="news-filter-muni" data-muni="sanlucar" onclick="window.filterNews('muni','sanlucar')" style="background: var(--chat-bg); color: var(--text-secondary); border: 1px solid var(--header-border); border-radius: 20px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;">Sanlúcar</button>
-                        <button class="news-filter-muni" data-muni="chiclana" onclick="window.filterNews('muni','chiclana')" style="background: var(--chat-bg); color: var(--text-secondary); border: 1px solid var(--header-border); border-radius: 20px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;">Chiclana</button>
-                        <button class="news-filter-muni" data-muni="lalinea" onclick="window.filterNews('muni','lalinea')" style="background: var(--chat-bg); color: var(--text-secondary); border: 1px solid var(--header-border); border-radius: 20px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;">La Línea</button>
-                        <button class="news-filter-muni" data-muni="rota" onclick="window.filterNews('muni','rota')" style="background: var(--chat-bg); color: var(--text-secondary); border: 1px solid var(--header-border); border-radius: 20px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;">Rota</button>
-                        <button class="news-filter-muni" data-muni="puertoreal" onclick="window.filterNews('muni','puertoreal')" style="background: var(--chat-bg); color: var(--text-secondary); border: 1px solid var(--header-border); border-radius: 20px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;">Puerto Real</button>
-                        <button class="news-filter-muni" data-muni="barbate" onclick="window.filterNews('muni','barbate')" style="background: var(--chat-bg); color: var(--text-secondary); border: 1px solid var(--header-border); border-radius: 20px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;">Barbate</button>
-                        <button class="news-filter-muni" data-muni="tarifa" onclick="window.filterNews('muni','tarifa')" style="background: var(--chat-bg); color: var(--text-secondary); border: 1px solid var(--header-border); border-radius: 20px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;">Tarifa</button>
-                        <button class="news-filter-muni" data-muni="arcos" onclick="window.filterNews('muni','arcos')" style="background: var(--chat-bg); color: var(--text-secondary); border: 1px solid var(--header-border); border-radius: 20px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;">Sierra</button>
-                    </div>
-
                     <!-- Filtros Categoría -->
                     <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 12px; scrollbar-width: none; -ms-overflow-style: none; border-top: 1px solid var(--header-border); padding-top: 8px; margin-top: 2px;">
                         <button class="news-filter-cat active" data-cat="all" onclick="window.filterNews('cat','all')" style="background: var(--primary-color); color: white; border: none; border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;">Todo</button>
@@ -632,7 +616,7 @@ import MapWidget from '../components/widgets/MapWidget.astro';
                     if (!container) return;
 
                     try {
-                        const res = await fetch('/api/news?limite=120');
+                        const res = await fetch('/api/news?limite=2000');
                         if (!res.ok) throw new Error('HTTP ' + res.status);
                         const data = await res.json();
                         window._newsData = data.items || [];
@@ -641,6 +625,70 @@ import MapWidget from '../components/widgets/MapWidget.astro';
                     } catch(e) {
                         if (container) container.innerHTML = '<div style="text-align:center; color:#ef4444; padding:40px 16px;">⚠️ Error al cargar las noticias. Comprueba tu conexión.</div>';
                     }
+                };
+
+                window.handleNewsAction = async function(e, actionType, item, btn, domId) {
+                    e.preventDefault();
+                    
+                    const dataMe = window.dataMe || {};
+                    if (!dataMe.user) {
+                        alert('Por favor, inicia sesión para interactuar con las noticias.');
+                        return;
+                    }
+
+                    // Optimistic update
+                    const originalHtml = btn.innerHTML;
+                    if (actionType === 'like') {
+                        btn.innerHTML = `<span style="font-size:16px;">❤️</span> <span id="${domId}_likes" style="font-size:12px; font-weight:600; color:var(--text-secondary);">...</span>`;
+                    } else if (actionType === 'save') {
+                        btn.innerHTML = `<span style="font-size:16px;">📑</span>`; // solid bookmark
+                    }
+
+                    try {
+                        const res = await fetch('/api/news/action', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                id: btoa(item.url).replace(/[^a-zA-Z0-9]/g, '').slice(0, 15), // fallback id
+                                url: item.url,
+                                titulo: item.titulo,
+                                extracto: item.extracto,
+                                imagen: item.imagen,
+                                fuente: item.fuente,
+                                categoria: item.categoria,
+                                municipio: item.municipio,
+                                action_type: actionType
+                            })
+                        });
+                        
+                        const data = await res.json();
+                        if (data.success) {
+                            if (actionType === 'like') {
+                                btn.innerHTML = `<span style="font-size:16px;">${data.isActive ? '❤️' : '🤍'}</span> <span id="${domId}_likes" style="font-size:12px; font-weight:600; color:var(--text-secondary);">${data.stats.likes_count || ''}</span>`;
+                            } else if (actionType === 'save') {
+                                btn.innerHTML = `<span style="font-size:16px;">${data.isActive ? '📑' : '🔖'}</span>`;
+                            }
+                        } else {
+                            btn.innerHTML = originalHtml;
+                            alert('Error: ' + data.error);
+                        }
+                    } catch (err) {
+                        console.error('Error action:', err);
+                        btn.innerHTML = originalHtml;
+                    }
+                };
+
+                window.handleNewsComment = function(e, item, domId) {
+                    e.preventDefault();
+                    
+                    const dataMe = window.dataMe || {};
+                    if (!dataMe.user) {
+                        alert('Por favor, inicia sesión para comentar en las noticias.');
+                        return;
+                    }
+                    
+                    // Aquí llamaremos a la lógica de modal de comentarios
+                    alert('La función de comentarios estará lista pronto para: ' + item.titulo);
                 };
 
                 window.filterNews = function(tipo, valor) {
@@ -669,38 +717,43 @@ import MapWidget from '../components/widgets/MapWidget.astro';
                 window.renderNews = function() {
                     const container = document.getElementById('news-container');
                     if (!container) return;
-
+                    
+                    container.innerHTML = '';
                     let items = window._newsData;
+                    
                     if (window._newsMuni !== 'all') items = items.filter(i => i.municipio === window._newsMuni);
                     if (window._newsCat !== 'all')  items = items.filter(i => i.categoria === window._newsCat);
 
                     if (items.length === 0) {
-                        container.innerHTML = '<div style="text-align:center; color:var(--text-secondary); padding:40px 16px;">No hay noticias con estos filtros.</div>';
+                        const noNews = document.createElement('div');
+                        noNews.style.cssText = 'text-align:center; color:var(--text-secondary); padding:40px 16px;';
+                        noNews.innerText = 'No hay noticias con estos filtros.';
+                        container.appendChild(noNews);
                         return;
                     }
-
-                    container.innerHTML = '';
                     items.forEach(item => {
-                        const card = document.createElement('a');
-                        card.href = item.url;
-                        card.target = '_blank';
-                        card.rel = 'noopener noreferrer';
-                        card.style.cssText = 'display:flex; gap:12px; background:var(--header-bg); border:1px solid var(--header-border); border-radius:16px; padding:14px; text-decoration:none; color:inherit; overflow:hidden; transition:transform 0.15s, box-shadow 0.15s; active:transform:scale(0.98);';
-                        card.onmousedown = () => card.style.transform = 'scale(0.98)';
-                        card.onmouseup = () => card.style.transform = '';
-                        card.ontouchstart = () => card.style.transform = 'scale(0.98)';
-                        card.ontouchend = () => card.style.transform = '';
-
-                        // Imagen
+                        const card = document.createElement('div');
+                        card.style.cssText = 'display:flex; gap:12px; background:var(--header-bg); border:1px solid var(--header-border); border-radius:16px; padding:14px; color:inherit; overflow:hidden; transition:transform 0.15s, box-shadow 0.15s;';
+                        
+                        // Imagen o Placeholder (Enlace)
+                        const imgBox = document.createElement('a');
+                        imgBox.href = item.url;
+                        imgBox.target = '_blank';
+                        imgBox.rel = 'noopener noreferrer';
+                        imgBox.style.cssText = 'width:80px; height:80px; flex-shrink:0; border-radius:10px; overflow:hidden; background:var(--chat-bg); display:flex; align-items:center; justify-content:center; text-decoration:none;';
+                        
                         if (item.imagen) {
                             const img = document.createElement('img');
                             img.src = item.imagen;
                             img.alt = item.titulo;
                             img.loading = 'lazy';
-                            img.style.cssText = 'width:80px; height:80px; object-fit:cover; border-radius:10px; flex-shrink:0; background:var(--chat-bg);';
-                            img.onerror = () => img.remove();
-                            card.appendChild(img);
+                            img.style.cssText = 'width:100%; height:100%; object-fit:cover;';
+                            img.onerror = () => { imgBox.innerHTML = '<div style="font-size:32px; opacity:0.5;">' + (CAT_LABELS[item.categoria] || '📰') + '</div>'; };
+                            imgBox.appendChild(img);
+                        } else {
+                            imgBox.innerHTML = '<div style="font-size:32px; opacity:0.5;">' + (CAT_LABELS[item.categoria] || '📰') + '</div>';
                         }
+                        card.appendChild(imgBox);
 
                         // Texto
                         const textDiv = document.createElement('div');
@@ -709,22 +762,79 @@ import MapWidget from '../components/widgets/MapWidget.astro';
                         // Meta: fuente + tiempo
                         const meta = document.createElement('div');
                         meta.style.cssText = 'display:flex; align-items:center; gap:6px; font-size:11px; color:var(--text-secondary);';
-                        meta.innerHTML = `<span style="font-weight:700; color:var(--primary-color);">${item.fuente}</span><span>·</span><span>${item.hace}</span><span style="margin-left:auto; font-size:13px;">${CAT_LABELS[item.categoria] || '📰'}</span>`;
+                        meta.innerHTML = `<span style="font-weight:700; color:var(--primary-color);">${item.fuente}</span><span>•</span><span>${item.hace}</span><span style="margin-left:auto; font-size:13px;">${CAT_LABELS[item.categoria] || '📰'}</span>`;
                         textDiv.appendChild(meta);
 
-                        // Título
+                        // Título (Enlace)
+                        const tituloLink = document.createElement('a');
+                        tituloLink.href = item.url;
+                        tituloLink.target = '_blank';
+                        tituloLink.rel = 'noopener noreferrer';
+                        tituloLink.style.cssText = 'text-decoration:none; color:var(--text-primary);';
                         const titulo = document.createElement('div');
-                        titulo.style.cssText = 'font-weight:700; font-size:14px; color:var(--text-primary); line-height:1.3; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;';
+                        titulo.style.cssText = 'font-weight:700; font-size:14px; line-height:1.3;';
                         titulo.textContent = item.titulo;
-                        textDiv.appendChild(titulo);
+                        tituloLink.appendChild(titulo);
+                        textDiv.appendChild(tituloLink);
 
                         // Extracto
                         if (item.extracto) {
                             const ext = document.createElement('div');
-                            ext.style.cssText = 'font-size:12px; color:var(--text-secondary); line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;';
-                            ext.textContent = item.extracto;
+                            ext.style.cssText = 'font-size:12px; color:var(--text-secondary); line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; margin-bottom: 6px;';
+                            const tempDiv = document.createElement('div');
+                            tempDiv.innerHTML = item.extracto || '';
+                            let cleanText = tempDiv.textContent || tempDiv.innerText || '';
+                            let words = cleanText.trim().split(/\s+/);
+                            if (words.length > 20) cleanText = words.slice(0, 20).join(' ') + '...';
+                            ext.textContent = cleanText;
                             textDiv.appendChild(ext);
                         }
+
+                        // Botonera Social
+                        const socialBar = document.createElement('div');
+                        socialBar.style.cssText = 'display:flex; align-items:center; gap:16px; margin-top:auto; padding-top:8px;';
+                        
+                        // Generar ID único usando hash simple de URL para el DOM
+                        const newsDomId = 'news_' + btoa(item.url).replace(/[^a-zA-Z0-9]/g, '').slice(0, 15);
+                        
+                        // Like
+                        const likeBtn = document.createElement('button');
+                        likeBtn.innerHTML = `<span style="font-size:16px;">🤍</span> <span id="${newsDomId}_likes" style="font-size:12px; font-weight:600; color:var(--text-secondary);"></span>`;
+                        likeBtn.style.cssText = 'background:none; border:none; padding:4px; cursor:pointer; display:flex; align-items:center; gap:4px; transition:transform 0.1s;';
+                        likeBtn.onclick = (e) => window.handleNewsAction(e, 'like', item, likeBtn, newsDomId);
+                        
+                        // Comentar
+                        const commentBtn = document.createElement('button');
+                        commentBtn.innerHTML = `<span style="font-size:16px;">💬</span> <span id="${newsDomId}_comments" style="font-size:12px; font-weight:600; color:var(--text-secondary);"></span>`;
+                        commentBtn.style.cssText = 'background:none; border:none; padding:4px; cursor:pointer; display:flex; align-items:center; gap:4px; transition:transform 0.1s;';
+                        commentBtn.onclick = (e) => window.handleNewsComment(e, item, newsDomId);
+                        
+                        // Guardar
+                        const saveBtn = document.createElement('button');
+                        saveBtn.innerHTML = `<span style="font-size:16px;">🔖</span>`;
+                        saveBtn.style.cssText = 'background:none; border:none; padding:4px; cursor:pointer; display:flex; align-items:center; gap:4px; transition:transform 0.1s; margin-left:auto;';
+                        saveBtn.onclick = (e) => window.handleNewsAction(e, 'save', item, saveBtn, newsDomId);
+
+                        // Compartir
+                        const shareBtn = document.createElement('button');
+                        shareBtn.innerHTML = `<span style="font-size:16px;">📤</span>`;
+                        shareBtn.style.cssText = 'background:none; border:none; padding:4px; cursor:pointer; display:flex; align-items:center; gap:4px; transition:transform 0.1s;';
+                        shareBtn.onclick = (e) => {
+                            e.preventDefault();
+                            if (navigator.share) {
+                                navigator.share({ title: item.titulo, url: item.url });
+                            } else {
+                                navigator.clipboard.writeText(item.url);
+                                alert('Enlace copiado al portapapeles');
+                            }
+                        };
+
+                        socialBar.appendChild(likeBtn);
+                        socialBar.appendChild(commentBtn);
+                        socialBar.appendChild(saveBtn);
+                        socialBar.appendChild(shareBtn);
+                        
+                        textDiv.appendChild(socialBar);
 
                         card.appendChild(textDiv);
                         container.appendChild(card);
@@ -1059,6 +1169,11 @@ import MapWidget from '../components/widgets/MapWidget.astro';
                 try {
                     const res = await fetch('/api/auth/me');
                     const data = await res.json();
+                    
+                    if (data.context) {
+                        window.clientContext = data.context;
+                    }
+                    
                     if (data.user) {
                         // User is logged in
                         const btnIcon = document.getElementById('profile-icon');
@@ -1488,6 +1603,222 @@ import MapWidget from '../components/widgets/MapWidget.astro';
                     });
                 }
             });
+        </script>
+
+        <!-- MODAL DE COMENTARIOS DE NOTICIAS -->
+        <div id="news-comments-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 3100; align-items: flex-end; justify-content: center; backdrop-filter: blur(8px);">
+            <div style="background: var(--bg-color); width: 100%; max-width: 480px; border-radius: 24px 24px 0 0; display: flex; flex-direction: column; height: 80vh; max-height: 80vh; overflow: hidden; box-shadow: 0 -10px 40px rgba(0,0,0,0.2);">
+                <div style="padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background: var(--header-bg);">
+                    <h3 style="margin:0; font-size: 16px; color: var(--text-primary);">Comentarios</h3>
+                    <button onclick="document.getElementById('news-comments-modal').style.display='none'" style="background:none; border:none; color:var(--text-secondary); cursor:pointer; font-size:24px; padding:0; line-height:1;">&times;</button>
+                </div>
+                <div id="news-comments-list" style="flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 16px; background: var(--chat-bg);">
+                    <div style="text-align:center; color:var(--text-secondary); font-size:14px; margin-top:20px;">Cargando comentarios...</div>
+                </div>
+                <div style="padding: 12px 16px; border-top: 1px solid var(--border-color); background: var(--header-bg); display: flex; gap: 8px;">
+                    <input type="text" id="news-comment-input" placeholder="Escribe un comentario..." style="flex:1; border:1px solid var(--border-color); border-radius:20px; padding:10px 16px; font-family:inherit; font-size:14px; background:var(--bg-color); color:var(--text-primary); outline:none;">
+                    <button id="news-comment-submit" style="background:var(--primary-color); color:white; border:none; border-radius:50%; width:40px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL DE NOTICIAS GUARDADAS -->
+        <div id="saved-news-modal" style="display: none; position: fixed; inset: 0; background: var(--bg-color); z-index: 3000; flex-direction: column;">
+            <div style="padding: 16px; background: var(--header-bg); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <button onclick="document.getElementById('saved-news-modal').style.display='none'" style="background: none; border: none; color: var(--text-primary); font-size: 24px; cursor: pointer;">←</button>
+                    <h2 style="margin:0; font-size: 18px; color: var(--text-primary);">Noticias Guardadas</h2>
+                </div>
+            </div>
+            <div id="saved-news-container" style="flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; max-width: 480px; margin: 0 auto; width: 100%;">
+                <div style="text-align:center; color:var(--text-secondary); font-size:14px; margin-top:20px;">Cargando...</div>
+            </div>
+        </div>
+
+        <script>
+            let currentNewsItemForComment = null;
+            let currentNewsDomIdForComment = null;
+
+            // Re-define para poder abrir modal
+            window.handleNewsComment = function(e, item, domId) {
+                e.preventDefault();
+                const dataMe = window.dataMe || {};
+                if (!dataMe.user) {
+                    alert('Por favor, inicia sesión para comentar.');
+                    return;
+                }
+                
+                currentNewsItemForComment = item;
+                currentNewsDomIdForComment = domId;
+                
+                const modal = document.getElementById('news-comments-modal');
+                const list = document.getElementById('news-comments-list');
+                const input = document.getElementById('news-comment-input');
+                
+                modal.style.display = 'flex';
+                input.value = '';
+                list.innerHTML = '<div style="text-align:center; color:var(--text-secondary); font-size:14px; margin-top:20px;">Cargando comentarios...</div>';
+                
+                const newsId = btoa(item.url).replace(/[^a-zA-Z0-9]/g, '').slice(0, 15);
+                
+                fetch(`/api/news/comments?id=${newsId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        list.innerHTML = '';
+                        if (data.success && data.comments && data.comments.length > 0) {
+                            data.comments.forEach(c => {
+                                const cDiv = document.createElement('div');
+                                cDiv.style.cssText = 'background:var(--bg-color); border:1px solid var(--border-color); border-radius:12px; padding:12px;';
+                                const d = new Date(c.created_at);
+                                const dateStr = isNaN(d.getTime()) ? 'hace poco' : d.toLocaleString();
+                                
+                                cDiv.innerHTML = `
+                                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                                        <div style="width:24px; height:24px; border-radius:50%; background:var(--primary-color); display:flex; align-items:center; justify-content:center; color:white; font-size:12px; font-weight:bold; overflow:hidden;">
+                                            ${c.avatar_url ? `<img src="${c.avatar_url}" style="width:100%; height:100%; object-fit:cover;">` : c.name.charAt(0).toUpperCase()}
+                                        </div>
+                                        <span style="font-weight:600; font-size:13px; color:var(--text-primary);">${c.name}</span>
+                                        <span style="font-size:11px; color:var(--text-secondary); margin-left:auto;">${dateStr}</span>
+                                    </div>
+                                    <div style="font-size:14px; color:var(--text-primary); line-height:1.4;">${c.content}</div>
+                                `;
+                                list.appendChild(cDiv);
+                            });
+                        } else {
+                            list.innerHTML = '<div style="text-align:center; color:var(--text-secondary); font-size:14px; margin-top:20px;">Sé el primero en comentar.</div>';
+                        }
+                    })
+                    .catch(err => {
+                        list.innerHTML = '<div style="text-align:center; color:red; font-size:14px; margin-top:20px;">Error al cargar comentarios.</div>';
+                    });
+            };
+
+            document.getElementById('news-comment-submit').addEventListener('click', async () => {
+                if (!currentNewsItemForComment) return;
+                const input = document.getElementById('news-comment-input');
+                const content = input.value.trim();
+                if (!content) return;
+                
+                input.disabled = true;
+                const item = currentNewsItemForComment;
+                const newsId = btoa(item.url).replace(/[^a-zA-Z0-9]/g, '').slice(0, 15);
+                
+                try {
+                    const res = await fetch('/api/news/comment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            id: newsId,
+                            url: item.url,
+                            titulo: item.titulo,
+                            extracto: item.extracto,
+                            imagen: item.imagen,
+                            fuente: item.fuente,
+                            categoria: item.categoria,
+                            municipio: item.municipio,
+                            content: content
+                        })
+                    });
+                    
+                    const data = await res.json();
+                    if (data.success) {
+                        // Recargar comentarios
+                        window.handleNewsComment({preventDefault:()=>{}}, currentNewsItemForComment, currentNewsDomIdForComment);
+                        // Actualizar contador visualmente
+                        const countSpan = document.getElementById(currentNewsDomIdForComment + '_comments');
+                        if (countSpan) {
+                            const currentCount = parseInt(countSpan.textContent || '0');
+                            countSpan.textContent = isNaN(currentCount) ? '1' : (currentCount + 1);
+                        }
+                    } else {
+                        alert('Error al publicar: ' + data.error);
+                    }
+                } catch (e) {
+                    alert('Error de conexión.');
+                }
+                input.disabled = false;
+                input.value = '';
+            });
+
+            window.openSavedNewsModal = function() {
+                const dataMe = window.dataMe || {};
+                if (!dataMe.user) {
+                    alert('Inicia sesión para ver tus noticias guardadas.');
+                    return;
+                }
+                
+                const modal = document.getElementById('saved-news-modal');
+                const container = document.getElementById('saved-news-container');
+                modal.style.display = 'flex';
+                container.innerHTML = '<div style="text-align:center; color:var(--text-secondary); font-size:14px; margin-top:20px;">Cargando...</div>';
+                
+                fetch('/api/news/saved')
+                    .then(res => res.json())
+                    .then(data => {
+                        container.innerHTML = '';
+                        if (data.success && data.items && data.items.length > 0) {
+                            // Reusar la lógica de renderNews (simplificada) para las guardadas
+                            data.items.forEach(item => {
+                                const card = document.createElement('div');
+                                card.style.cssText = 'display:flex; gap:12px; background:var(--header-bg); border:1px solid var(--header-border); border-radius:16px; padding:14px; color:inherit; margin-bottom: 12px;';
+                                
+                                const imgBox = document.createElement('a');
+                                imgBox.href = item.url;
+                                imgBox.target = '_blank';
+                                imgBox.style.cssText = 'width:60px; height:60px; flex-shrink:0; border-radius:8px; overflow:hidden; background:var(--chat-bg); display:flex; align-items:center; justify-content:center; text-decoration:none;';
+                                
+                                if (item.imagen) {
+                                    const img = document.createElement('img');
+                                    img.src = item.imagen;
+                                    img.style.cssText = 'width:100%; height:100%; object-fit:cover;';
+                                    imgBox.appendChild(img);
+                                } else {
+                                    imgBox.innerHTML = '📰';
+                                }
+                                card.appendChild(imgBox);
+                                
+                                const textDiv = document.createElement('div');
+                                textDiv.style.cssText = 'flex:1; display:flex; flex-direction:column; min-width:0;';
+                                
+                                const tituloLink = document.createElement('a');
+                                tituloLink.href = item.url;
+                                tituloLink.target = '_blank';
+                                tituloLink.style.cssText = 'text-decoration:none; color:var(--text-primary); font-weight:700; font-size:13px; line-height:1.3; margin-bottom: 8px;';
+                                tituloLink.textContent = item.titulo;
+                                textDiv.appendChild(tituloLink);
+                                
+                                const socialBar = document.createElement('div');
+                                socialBar.style.cssText = 'display:flex; align-items:center; gap:12px; margin-top:auto;';
+                                
+                                const newsDomId = 'saved_' + item.id;
+                                
+                                // Save btn (Unsave)
+                                const saveBtn = document.createElement('button');
+                                saveBtn.innerHTML = `<span style="font-size:16px;">📑</span>`;
+                                saveBtn.style.cssText = 'background:none; border:none; padding:4px; cursor:pointer; display:flex; align-items:center; gap:4px;';
+                                saveBtn.onclick = async (e) => {
+                                    // Unsave action
+                                    window.handleNewsAction(e, 'save', item, saveBtn, newsDomId);
+                                    // Remove from view
+                                    card.style.opacity = '0.5';
+                                    setTimeout(() => card.remove(), 500);
+                                };
+                                
+                                socialBar.appendChild(saveBtn);
+                                textDiv.appendChild(socialBar);
+                                card.appendChild(textDiv);
+                                container.appendChild(card);
+                            });
+                        } else {
+                            container.innerHTML = '<div style="text-align:center; color:var(--text-secondary); font-size:14px; margin-top:20px;">No tienes noticias guardadas.</div>';
+                        }
+                    })
+                    .catch(err => {
+                        container.innerHTML = '<div style="text-align:center; color:red; font-size:14px; margin-top:20px;">Error al cargar.</div>';
+                    });
+            };
         </script>
     </body>
 </html>

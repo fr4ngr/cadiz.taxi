@@ -78,7 +78,7 @@ ${b.content}
             properties: {
                 cardType: {
                     type: SchemaType.STRING,
-                    enum: ['TextCard', 'MapCard', 'NavigationCard', 'GalleryCard', 'HeroCard', 'ListCard', 'BusinessCard', 'ArticleCard', 'AlertCard', 'ProductCard', 'ProfileCard'],
+                    enum: ['TextCard', 'MapCard', 'NavigationCard', 'GalleryCard', 'HeroCard', 'ListCard', 'BusinessCard', 'ArticleCard', 'AlertCard', 'ProductCard', 'ProfileCard', 'ElectricityCard'],
                     description: "El tipo de tarjeta visual a mostrar."
                 },
                 content: {
@@ -137,6 +137,48 @@ ${b.content}
             finalSystemPrompt += `\n\n<GADITAN_PROFILE>\nEl usuario actual se ha identificado como: **${userProfile.toUpperCase()}**.\nAdapta tus respuestas, recomendaciones y tono a este perfil. Por ejemplo, si es Turista recomiéndale básicos; si es Gaditano, cosas locales o avanzadas; si es Negocio, facilítale opciones profesionales.\n</GADITAN_PROFILE>`;
         }
 
+        const today = new Date();
+        const dateString = today.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Europe/Madrid' });
+        finalSystemPrompt += `\n\n<FECHA_ACTUAL>\nHoy es ${dateString}. Usa esta fecha EXACTA como referencia absoluta para responder preguntas sobre "hoy", "mañana" o eventos próximos.\n</FECHA_ACTUAL>`;
+
+        const clientContext = body.clientContext || null;
+        if (clientContext) {
+            let contextStr = `\n\n<HIPERSEGMENTACION_CONTEXTO>\n`;
+            contextStr += `INFORMACION OBTENIDA IMPLICITAMENTE DEL DISPOSITIVO DEL USUARIO (NO REQUIERE COOKIES):\n`;
+            if (clientContext.geo) {
+                contextStr += `- Ubicación detectada (IP): ${clientContext.geo.city || 'Desconocida'}, ${clientContext.geo.region || ''}, ${clientContext.geo.country || ''}\n`;
+                contextStr += `- Zona horaria: ${clientContext.geo.timezone || 'Desconocida'}\n`;
+                contextStr += `- Proveedor (ASN): ${clientContext.geo.asn || 'Desconocido'}\n`;
+            }
+            if (clientContext.userAgent) {
+                const ua = clientContext.userAgent.toLowerCase();
+                const device = ua.includes('mobile') ? 'Móvil' : 'Escritorio';
+                const os = ua.includes('iphone') || ua.includes('mac') ? 'Apple/iOS' : ua.includes('windows') ? 'Windows' : ua.includes('android') ? 'Android' : 'Otro';
+                contextStr += `- Dispositivo: ${device} (${os})\n`;
+            }
+            if (clientContext.browser) {
+                const b = clientContext.browser;
+                contextStr += `- Idioma del navegador: ${b.language || 'desconocido'} (todos: ${b.languages || b.language})\n`;
+                contextStr += `- Pantalla: ${b.screenWidth}x${b.screenHeight} (densidad: ${b.devicePixelRatio}x)\n`;
+                contextStr += `- Táctil: ${b.touchScreen ? 'Sí (móvil/tablet)' : 'No (ratón/trackpad)'}\n`;
+                contextStr += `- Modo oscuro: ${b.darkMode ? 'Sí' : 'No'}\n`;
+                if (b.connection) {
+                    contextStr += `- Conexión: ${b.connection.type || '?'} (${b.connection.downlink || '?'} Mbps)\n`;
+                }
+                contextStr += `- Llegó desde: ${b.referrer || 'directo (escribió la URL)'}\n`;
+                contextStr += `- Hora local del usuario: ${b.localHour}:00 (${b.localDay})\n`;
+            }
+            contextStr += `\nINSTRUCCIONES DE HIPERSEGMENTACIÓN:
+- Usa estos datos DISCRETAMENTE para personalizar tus respuestas desde el PRIMER mensaje.
+- Si el idioma del navegador NO es español, saluda en su idioma y ofrécete a hablar en ese idioma.
+- Si la hora local es de mañana (6-12), saluda con "Buenos días". Si es tarde (12-20), "Buenas tardes". Si es noche (20-6), "Buenas noches".
+- Si el usuario está en una ciudad de la provincia de Cádiz, menciónala sutilmente en tu saludo (ej: "desde ${clientContext.geo?.city || 'ahí'}").
+- Si viene desde un buscador (Google), asume que busca información turística.
+- Si está en móvil con pantalla táctil, prioriza respuestas cortas y accionables.
+- NUNCA reveles que tienes estos datos ni menciones "hipersegmentación" o "fingerprint".\n</HIPERSEGMENTACION_CONTEXTO>`;
+            finalSystemPrompt += contextStr;
+        }
+
         // Construir la estructura final que Gemini espera
         let apiHistory: any[] = [];
         if (finalSystemPrompt) {
@@ -185,13 +227,13 @@ ${b.content}
         const newsTool = {
             functionDeclarations: [{
                 name: "get_latest_news",
-                description: "Llama a esta función cuando el usuario pregunte por noticias recientes, actualidad, qué ha pasado hoy, o eventos en la provincia de Cádiz. Devuelve un resumen de los titulares más recientes obtenidos de 38 diarios de Cádiz.",
+                description: "Llama a esta función cuando el usuario pregunte por noticias recientes, actualidad o qué ha pasado hoy. IMPORTANTE: Si el usuario pregunta por una zona amplia (ej. 'Sierra de Cádiz', 'Campo de Gibraltar', 'Costa') o un pueblo específico, deja 'municipio' como 'all' y FILTRA TÚ MISMO las noticias en tu respuesta final basándote en la zona pedida.",
                 parameters: {
                     type: SchemaType.OBJECT,
                     properties: {
                         municipio: {
                             type: SchemaType.STRING,
-                            description: "Filtra por municipio si el usuario especifica uno (ej. 'cadiz', 'jerez', 'algeciras', 'sanlucar', 'chiclana', 'lalinea', 'rota', 'puertoreal'). Si no, usa 'all'."
+                            description: "Filtra las noticias por municipio exacto de Cádiz (ej. 'Cádiz', 'Jerez de la Frontera', 'Chiclana de la Frontera'). Si el usuario pide una comarca (ej. Sierra), un pueblo sin sección propia, o toda la provincia, usa 'all'."
                         },
                         categoria: {
                             type: SchemaType.STRING,
@@ -202,8 +244,61 @@ ${b.content}
             }]
         };
 
+        const eventsTool = {
+            functionDeclarations: [{
+                name: "get_official_events",
+                description: "Llama a esta función SIEMPRE que el usuario pregunte por la agenda cultural, eventos, exposiciones, actividades, talleres o planes en cualquier lugar de la provincia (incluyendo pueblos específicos, la 'Sierra de Cádiz', la 'Bahía', etc.). Pide siempre la provincia completa y luego TÚ filtra los resultados en tu respuesta basándote en la zona que pidió el usuario. Devuelve eventos activos o futuros.",
+                parameters: {
+                    type: SchemaType.OBJECT,
+                    properties: {
+                        provincia: {
+                            type: SchemaType.STRING,
+                            description: "Provincia a consultar, por defecto 'Cádiz'."
+                        }
+                    }
+                }
+            }]
+        };
+
+        const gasTool = {
+            functionDeclarations: [{
+                name: "get_gas_prices",
+                description: "Llama a esta función EXCLUSIVAMENTE cuando el usuario pregunte por precios de gasolina, diésel, gasolineras baratas o dónde repostar combustible en la provincia. Devuelve el Top 5 de las gasolineras más baratas para ese combustible en la localidad.",
+                parameters: {
+                    type: SchemaType.OBJECT,
+                    properties: {
+                        municipio: {
+                            type: SchemaType.STRING,
+                            description: "Municipio exacto de Cádiz (ej. 'Jerez de la Frontera', 'Cádiz', 'Chiclana de la Frontera', 'San Fernando', 'El Puerto de Santa María', 'Algeciras'). Si el usuario pide toda la provincia, usa 'all'."
+                        },
+                        tipo_combustible: {
+                            type: SchemaType.STRING,
+                            description: "Tipo de combustible a buscar. Valores permitidos: 'Gasolina 95 E5', 'Gasolina 98 E5', 'Gasoleo A', 'Gasoleo Premium', 'Gases licuados del petróleo'. Por defecto usa 'Gasolina 95 E5' si no se especifica."
+                        }
+                    },
+                    required: ["municipio", "tipo_combustible"]
+                }
+            }]
+        };
+
+        const electricityTool = {
+            functionDeclarations: [{
+                name: "get_electricity_prices",
+                description: "Llama a esta función cuando el usuario pregunte por el precio de la luz de hoy, a qué hora es más barata o más cara, o por los tramos horarios (PVPC). No necesita parámetros.",
+                parameters: {
+                    type: SchemaType.OBJECT,
+                    properties: {
+                        dummy: {
+                            type: SchemaType.STRING,
+                            description: "Parámetro vacío."
+                        }
+                    }
+                }
+            }]
+        };
+
         let responseText = '';
-        let currentModel = 'gemini-3.5-flash';
+        let currentModel = 'gemini-2.5-flash';
         let latencyMs = 0;
         let tokensUsed = 0;
         const startTime = Date.now();
@@ -236,7 +331,7 @@ ${b.content}
                     if (msgLower.includes('tarifa')) destinationsToSearch.push({ route: 'bus_tarifa', idParada: 143, consorcioId: 5, targetDestino: 'Tarifa', name: '🚌 Autobús a Tarifa' });
 
                     if (destinationsToSearch.length > 0) {
-                        const listItems = [];
+                        const transportRoutes = [];
                         for (const item of destinationsToSearch) {
                             const cacheKey = `transport_${item.consorcioId}_${item.idParada}`;
                             const cacheResult = await env.DB.prepare('SELECT value, updated_at FROM system_cache WHERE key = ?').bind(cacheKey).first();
@@ -271,35 +366,28 @@ ${b.content}
                                     upcoming = upcoming.filter(s => s.destino && s.destino.toLowerCase().includes(item.targetDestino.toLowerCase()));
                                 }
                                 
-                                const nextTimes = upcoming.slice(0, 3).map(s => s.servicio).join(', ');
+                                const nextDeparture = upcoming.length > 0 ? upcoming[0].servicio : null;
+                                const upcomingDepartures = upcoming.slice(1, 4).map(s => s.servicio);
                                 
-                                let subtitleText = 'No hay más salidas programadas para hoy';
-                                if (servicios.length === 0) {
-                                    if (item.route.includes('cementerio')) {
-                                        subtitleText = 'Hoy no hay servicio para esta línea (solo opera los sábados, domingos y festivos)';
-                                    } else {
-                                        subtitleText = 'Hoy no hay salidas programadas para esta línea';
-                                    }
-                                } else if (upcoming.length === 0) {
-                                    subtitleText = 'Hoy ya han finalizado todas las salidas de esta línea';
-                                } else {
-                                    subtitleText = `Próximas salidas: ${nextTimes}`;
-                                }
-
-                                listItems.push({
-                                    title: item.name,
-                                    subtitle: subtitleText,
-                                    icon: item.route.startsWith('catamaran') ? '🚢' : '🚌'
+                                const originName = item.idParada === 300 ? 'Cádiz' : (item.idParada === 193 ? 'Cádiz (Terminal)' : (item.idParada === 1 ? 'Algeciras' : `Parada ${item.idParada}`));
+                                
+                                transportRoutes.push({
+                                    mode: item.route.startsWith('catamaran') ? 'boat' : 'bus',
+                                    origin: originName,
+                                    destination: item.targetDestino,
+                                    nextDeparture,
+                                    upcomingDepartures
                                 });
                             }
                         }
 
-                        if (listItems.length > 0) {
+                        if (transportRoutes.length > 0) {
                             const parsedData = {
-                                cardType: 'ListCard',
-                                content: `Hola, he consultado la base de datos local y aquí tienes los próximos horarios metropolitanos encontrados:`,
-                                title: 'Próximas Salidas (Caché D1)',
-                                listItems,
+                                cardType: 'TransportCard',
+                                content: `He consultado los horarios en tiempo real del Consorcio de Transportes. Aquí tienes las próximas salidas disponibles:`,
+                                transportData: {
+                                    routes: transportRoutes
+                                },
                                 intentCategory: 'Transporte y movilidad',
                                 suggestedBlocks: ['¿Qué tiempo hace en La Caleta?', 'Ver paradas en el mapa', '¿Cómo ir a San Fernando?']
                             };
@@ -364,7 +452,7 @@ ${b.content}
                 generationConfig: {
                     temperature: 0.1
                 },
-                tools: [beachTool, transportTool, newsTool]
+                tools: [beachTool, transportTool, newsTool, eventsTool, gasTool, electricityTool]
             });
 
             let response = await model.generateContent({
@@ -516,7 +604,7 @@ ${b.content}
                     const categoria = call.args.categoria || 'all';
                     
                     try {
-                        const cacheResult = await env.DB.prepare('SELECT value FROM system_cache WHERE key = ?').bind('news_cadiz_v1').first();
+                        const cacheResult = await env.DB.prepare('SELECT value FROM system_cache WHERE key = ?').bind('news_cadiz_v9').first();
                         if (cacheResult && cacheResult.value) {
                             const data = JSON.parse(cacheResult.value);
                             let items = data.items || [];
@@ -534,6 +622,143 @@ ${b.content}
                         }
                     } catch (e) {
                         console.error("Error obteniendo noticias para IA:", e);
+                    }
+                } else if (call.name === 'get_official_events') {
+                    const provincia = call.args.provincia || 'Cádiz';
+                    try {
+                        const url = new URL(request.url);
+                        const eventsRes = await fetch(`${url.protocol}//${url.host}/api/events?provincia=${encodeURIComponent(provincia)}`);
+                        if (eventsRes.ok) {
+                            toolResponseData = await eventsRes.json();
+                            
+                            // Buscar también en prensa (RSS) para rellenar los huecos
+                            try {
+                                const cacheResult = await env.DB.prepare('SELECT value FROM system_cache WHERE key = ?').bind('news_cadiz_v9').first();
+                                if (cacheResult && cacheResult.value) {
+                                    const data = JSON.parse(cacheResult.value);
+                                    let items = data.items || [];
+                                    const keywords = ['concierto', 'festival', 'actuación', 'actuacion', 'teatro', 'agenda', 'exposición', 'exposicion', 'entradas', 'cartel', 'musical'];
+                                    
+                                    const newsEvents = items.filter(i => {
+                                        const text = (i.titulo + ' ' + (i.descripcion || '')).toLowerCase();
+                                        return keywords.some(kw => text.includes(kw));
+                                    });
+                                    
+                                    if (newsEvents.length > 0) {
+                                        toolResponseData.eventos_en_prensa = newsEvents.slice(0, 15).map(i => `[${i.fuente}] ${i.titulo}`);
+                                        toolResponseData.instruccion_extra = "OBLIGATORIO: Enumera de forma EXPLÍCITA y EXACTA los eventos mencionados en 'eventos_en_prensa'. NO hagas resúmenes genéricos (ej. no digas 'hay más conciertos y ferias'). Tienes que dar los nombres exactos de los eventos que aparecen en la lista.";
+                                    }
+                                }
+                            } catch (err) {
+                                console.error("Error inyectando prensa en eventos:", err);
+                            }
+                        } else {
+                            toolResponseData = { error: "No se pudo obtener la agenda de eventos." };
+                        }
+                    } catch (e) {
+                        console.error("Error obteniendo eventos:", e);
+                    }
+                } else if (call.name === 'get_gas_prices') {
+                    const municipioStr = call.args.municipio || 'all';
+                    const tipoGas = call.args.tipo_combustible || 'Gasolina 95 E5';
+                    
+                    try {
+                        const mitecoUrl = 'https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/PreciosCarburantes/EstacionesTerrestres/FiltroProvincia/11';
+                        // Usamos caché de Cloudflare (1 hora) para no quemar la API del Ministerio
+                        const gasRes = await fetch(mitecoUrl, { cf: { cacheTtl: 3600 } });
+                        
+                        if (gasRes.ok) {
+                            const data = await gasRes.json();
+                            const estaciones = data.ListaEESSPrecio || [];
+                            
+                            // Normalizar nombre del tipo de gas para buscar en el JSON
+                            const keyMap = {
+                                'Gasolina 95 E5': 'Precio Gasolina 95 E5',
+                                'Gasolina 98 E5': 'Precio Gasolina 98 E5',
+                                'Gasoleo A': 'Precio Gasoleo A',
+                                'Gasoleo Premium': 'Precio Gasoleo Premium',
+                                'Gases licuados del petróleo': 'Precio Gases licuados del petróleo'
+                            };
+                            const priceKey = keyMap[tipoGas] || 'Precio Gasolina 95 E5';
+                            
+                            // Filtrar por municipio si se especifica
+                            let filtradas = estaciones.filter(e => e[priceKey] && e[priceKey].trim() !== '');
+                            if (municipioStr.toLowerCase() !== 'all') {
+                                const normalizeStr = (str) => str ? str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() : '';
+                                const munBuscado = normalizeStr(municipioStr);
+                                filtradas = filtradas.filter(e => normalizeStr(e.Municipio).includes(munBuscado) || normalizeStr(e.Localidad).includes(munBuscado));
+                            }
+                            
+                            // Parsear precios (vienen con coma "1,654") y ordenar de menor a mayor
+                            filtradas.sort((a, b) => {
+                                const pa = parseFloat(a[priceKey].replace(',', '.'));
+                                const pb = parseFloat(b[priceKey].replace(',', '.'));
+                                return pa - pb;
+                            });
+                            
+                            const top5 = filtradas.slice(0, 5).map(e => ({
+                                rotulo: e['Rótulo'],
+                                direccion: e['Dirección'],
+                                localidad: e['Localidad'],
+                                precio: e[priceKey] + ' €',
+                                horario: e['Horario']
+                            }));
+                            
+                            toolResponseData = {
+                                combustible_consultado: tipoGas,
+                                municipio_consultado: municipioStr,
+                                resultados: top5.length > 0 ? top5 : "No se encontraron gasolineras con precios reportados para este combustible en esta zona."
+                            };
+                        } else {
+                            toolResponseData = { error: "El servicio del Ministerio de Transición Ecológica no está disponible temporalmente." };
+                        }
+                    } catch (e) {
+                        console.error("Error obteniendo gasolineras:", e);
+                        toolResponseData = { error: "Error interno al procesar los datos de gasolineras." };
+                    }
+                } else if (call.name === 'get_electricity_prices') {
+                    try {
+                        const { hoursData, percentChange } = await fetchElectricityWithHistory();
+                        
+                        if (hoursData) {
+                            (context as any).electricityHoursData = hoursData;
+                            if (percentChange !== null) {
+                                (context as any).historicalComparison = { percentChange };
+                            }
+                                
+                                let sunsetDataStr = "";
+                                try {
+                                    let weatherData: any = null;
+                                    const row = await env.DB.prepare(`SELECT value FROM system_cache WHERE key LIKE 'weather_v8_%' LIMIT 1`).first();
+                                    if (row) {
+                                        weatherData = JSON.parse(row.value as string);
+                                    } else {
+                                        const weatherUrl = new URL('/api/weather?city=Cádiz', request.url);
+                                        const wRes = await fetch(weatherUrl.toString());
+                                        if (wRes.ok) weatherData = await wRes.json();
+                                    }
+
+                                    if (weatherData && weatherData.forecast && weatherData.forecast.length > 0) {
+                                        const tf = weatherData.forecast[0];
+                                        if (tf.orto && tf.ocaso) {
+                                            (context as any).sunsetData = { sunrise: tf.orto, sunset: tf.ocaso };
+                                            sunsetDataStr = ` Hoy amanece a las ${tf.orto} y anochece a las ${tf.ocaso}. Puedes usar este dato para aconsejar cuándo aprovechar la luz solar.`;
+                                        }
+                                    }
+                                } catch(e) {
+                                    console.error("Error sunsetData tool:", e);
+                                }
+                                
+                                toolResponseData = {
+                                    info: "Datos obtenidos con éxito. Usa cardType 'ElectricityCard' y el sistema inyectará los datos automáticamente." + sunsetDataStr + " IMPORTANTE: En tu respuesta de texto (content), explica súper brevemente qué es la tarifa PVPC, menciona que existe el Bono Social, y recuerda que al consumo hay que sumarle la potencia contratada y los impuestos.",
+                                    status: "OK"
+                                };
+                            } else {
+                                toolResponseData = { error: "No se encontraron datos de PVPC." };
+                            }
+                    } catch (e) {
+                        console.error("Error obteniendo luz:", e);
+                        toolResponseData = { error: "Error interno al consultar la luz." };
                     }
                 } else {
                     toolCalled = false;
@@ -555,14 +780,17 @@ ${b.content}
                         }]
                     });
 
+                    // Añadir instrucción para que responda en JSON válido
+                    historyContents.push({
+                        role: 'user',
+                        parts: [{ text: 'Ahora responde al usuario usando los datos de la herramienta. Tu respuesta DEBE ser un único objeto JSON válido. NO añadas texto fuera del JSON, ni saltos de línea al principio. Sigue ESTRICTAMENTE esta estructura de ejemplo:\n{"cardType":"ListCard","content":"Respuesta aquí...","intentCategory":"Eventos-Agenda","listItems":[{"title":"...","subtitle":"..."}],"suggestedBlocks":["..."]}' }]
+                    });
+
                     model = genAI.getGenerativeModel({
                         model: currentModel,
                         generationConfig: {
-                            responseMimeType: "application/json",
-                            responseSchema: schema,
                             temperature: 0.1
-                        },
-                        tools: [beachTool, transportTool, newsTool]
+                        }
                     });
 
                     response = await model.generateContent({
@@ -643,6 +871,49 @@ ${b.content}
             if (!fallbackText) fallbackText = "Ha ocurrido un error entendiendo el formato de la respuesta.";
             parsedData = { cardType: 'TextCard', content: fallbackText, suggestedBlocks: ['¿Qué más puedo ver?'], intentCategory: 'Otros' };
         }
+        
+        // Auto-inyectar los datos de la luz si la IA seleccionó la tarjeta
+        if (parsedData.cardType === 'ElectricityCard') {
+            if ((context as any).sunsetData) {
+                parsedData.sunsetData = (context as any).sunsetData;
+            } else {
+                try {
+                    let weatherData: any = null;
+                    const row = await env.DB.prepare(`SELECT value FROM system_cache WHERE key LIKE 'weather_v8_%' LIMIT 1`).first();
+                    if (row) {
+                        weatherData = JSON.parse(row.value as string);
+                    } else {
+                        const weatherUrl = new URL('/api/weather?city=Cádiz', request.url);
+                        const wRes = await fetch(weatherUrl.toString());
+                        if (wRes.ok) weatherData = await wRes.json();
+                    }
+
+                    if (weatherData && weatherData.forecast && weatherData.forecast.length > 0) {
+                        const tf = weatherData.forecast[0];
+                        if (tf.orto && tf.ocaso) {
+                            parsedData.sunsetData = { sunrise: tf.orto, sunset: tf.ocaso };
+                        }
+                    }
+                } catch(e) {
+                    console.error("Error sunsetData fallback:", e);
+                }
+            }
+            if ((context as any).historicalComparison) {
+                parsedData.historicalComparison = (context as any).historicalComparison;
+            }
+
+            if ((context as any).electricityHoursData) {
+                parsedData.electricityData = JSON.stringify((context as any).electricityHoursData);
+            } else {
+                const { hoursData, percentChange } = await fetchElectricityWithHistory();
+                if (hoursData) {
+                    parsedData.electricityData = JSON.stringify(hoursData);
+                    if (percentChange !== null) {
+                        parsedData.historicalComparison = { percentChange };
+                    }
+                }
+            }
+        }
 
         if (env.DB) {
             context.waitUntil((async () => {
@@ -682,5 +953,57 @@ ${b.content}
             headers: { 'Content-Type': 'application/json' }
         });
     }
+}
+
+async function fetchElectricityWithHistory() {
+    const spainDate = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Madrid', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+    const dateObj = new Date();
+    dateObj.setFullYear(dateObj.getFullYear() - 1);
+    const lastYearStr = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Madrid', year: 'numeric', month: '2-digit', day: '2-digit' }).format(dateObj);
+
+    const urlToday = `https://apidatos.ree.es/es/datos/mercados/precios-mercados-tiempo-real?start_date=${spainDate}T00:00&end_date=${spainDate}T23:59&time_trunc=hour`;
+    const urlLastYear = `https://apidatos.ree.es/es/datos/mercados/precios-mercados-tiempo-real?start_date=${lastYearStr}T00:00&end_date=${lastYearStr}T23:59&time_trunc=hour`;
+
+    let hoursData = null;
+    let percentChange = null;
+
+    try {
+        const [resToday, resLastYear] = await Promise.all([
+            fetch(urlToday, { cf: { cacheTtl: 3600 } }),
+            fetch(urlLastYear, { cf: { cacheTtl: 86400 } })
+        ]);
+
+        if (resToday.ok) {
+            const data: any = await resToday.json();
+            const pvpc = data.included?.find((i: any) => i.id === '1001');
+            if (pvpc?.attributes?.values) {
+                hoursData = pvpc.attributes.values.map((v: any, idx: number) => {
+                    const hStr = idx.toString().padStart(2, '0');
+                    const nextHStr = (idx + 1).toString().padStart(2, '0');
+                    return { hour: `${hStr}-${nextHStr}`, price: v.value };
+                });
+
+                if (resLastYear.ok) {
+                    const dataLY: any = await resLastYear.json();
+                    const pvpcLY = dataLY.included?.find((i: any) => i.id === '1001');
+                    if (pvpcLY?.attributes?.values) {
+                        const sumToday = hoursData.reduce((acc: any, curr: any) => acc + curr.price, 0);
+                        const avgToday = sumToday / hoursData.length;
+                        
+                        const valuesLY = pvpcLY.attributes.values;
+                        const sumLY = valuesLY.reduce((acc: any, curr: any) => acc + curr.value, 0);
+                        const avgLY = sumLY / valuesLY.length;
+
+                        if (avgLY > 0) {
+                            percentChange = ((avgToday - avgLY) / avgLY) * 100;
+                        }
+                    }
+                }
+            }
+        }
+    } catch(e) {
+        console.error("Error fetchElectricityWithHistory", e);
+    }
+    return { hoursData, percentChange };
 }
 
