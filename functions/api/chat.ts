@@ -486,7 +486,6 @@ ${b.content}
                                 headers: { 'Content-Type': 'application/json' }
                             });
                         }
-                    }
                 } else if (isBeachQuery) {
                     let beachId = '1101203'; // Playa Victoria/Cortadura por defecto
                     if (msgLower.includes('caleta')) beachId = '1101201';
