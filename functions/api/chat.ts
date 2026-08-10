@@ -307,7 +307,7 @@ ${b.content}
         // 0. FAST-PATH INTENT ROUTER (Bypasses Gemini entirely for zero-latency)
         // ----------------------------------------------------
         const msgLower = userMessage.toLowerCase().trim();
-        const isTransportQuery = msgLower.includes('bus') || msgLower.includes('autobús') || msgLower.includes('autobuses') || msgLower.includes('catamaran') || msgLower.includes('catamarán') || msgLower.includes('barco') || msgLower.includes('barquito') || msgLower.includes('horario') || msgLower.includes('salidas') || msgLower.includes('líneas') || msgLower.includes('lineas');
+        const isTransportQuery = msgLower.includes('bus') || msgLower.includes('autobús') || msgLower.includes('autobuses') || msgLower.includes('catamaran') || msgLower.includes('catamarán') || msgLower.includes('barco') || msgLower.includes('barquito') || msgLower.includes('horario') || msgLower.includes('salidas') || msgLower.includes('líneas') || msgLower.includes('lineas') || msgLower.includes('tren') || msgLower.includes('renfe') || msgLower.includes('cercan') || msgLower.includes('trambahia') || msgLower.includes('trambahía');
         const isBeachQuery = msgLower.includes('playa') || msgLower.includes('caleta') || msgLower.includes('victoria') || msgLower.includes('cortadura') || msgLower.includes('santa maría') || msgLower.includes('oleaje') || msgLower.includes('olas');
 
         if (isTransportQuery || isBeachQuery) {
