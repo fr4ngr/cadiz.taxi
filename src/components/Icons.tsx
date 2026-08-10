@@ -74,3 +74,15 @@ export const IconShip = ({ size = 20, color = 'currentColor' }) => (
     <path d="M12 2v3"></path>
   </svg>
 );
+
+export const IconTrain = ({ size = 20, color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="4" y="3" width="16" height="16" rx="2" ry="2"></rect>
+    <path d="M4 11h16"></path>
+    <path d="M12 3v8"></path>
+    <path d="M8 19l-2 3"></path>
+    <path d="M16 19l2 3"></path>
+    <circle cx="9" cy="15" r="1.5"></circle>
+    <circle cx="15" cy="15" r="1.5"></circle>
+  </svg>
+);

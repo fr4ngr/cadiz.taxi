@@ -330,8 +330,90 @@ ${b.content}
                     if (msgLower.includes('linea') || msgLower.includes('línea')) destinationsToSearch.push({ route: 'bus_lalinea', idParada: 116, consorcioId: 5, targetDestino: 'La Línea', name: '🚌 Autobús a La Línea' });
                     if (msgLower.includes('tarifa')) destinationsToSearch.push({ route: 'bus_tarifa', idParada: 143, consorcioId: 5, targetDestino: 'Tarifa', name: '🚌 Autobús a Tarifa' });
 
+                    const transportRoutes = [];
+
+                    if (msgLower.includes('tren') || msgLower.includes('renfe') || msgLower.includes('cercan') || msgLower.includes('trambahia') || msgLower.includes('trambahía')) {
+                        let originStr = 'cádiz';
+                        let destStr = 'jerez';
+                        if (msgLower.includes('san fernando') || msgLower.includes('isla')) destStr = 'san fernando-bahía sur';
+                        else if (msgLower.includes('puerto real') || msgLower.includes('universidad')) destStr = 'puerto real';
+                        else if (msgLower.includes('puerto')) destStr = 'puerto de santa maría';
+                        else if (msgLower.includes('chiclana') || msgLower.includes('pelagatos')) destStr = 'pelagatos';
+                        else if (msgLower.includes('aeropuerto')) destStr = 'aeropuerto de jerez';
+                        
+                        if (env.ASSETS) {
+                            try {
+                                const renfeReq = new Request(new URL('/data/renfe_cadiz.json', request.url));
+                                const renfeRes = await env.ASSETS.fetch(renfeReq);
+                                if (renfeRes.ok) {
+                                    const renfeData = await renfeRes.json();
+                                    let originId, destId;
+                                    let originName = originStr, destName = destStr;
+                                    for (const [id, stop] of Object.entries(renfeData.stops)) {
+                                        if (stop.name.toLowerCase().includes(originStr.toLowerCase())) { originId = id; originName = stop.name; }
+                                        if (stop.name.toLowerCase().includes(destStr.toLowerCase())) { destId = id; destName = stop.name; }
+                                    }
+                                    
+                                    if (originId && destId) {
+                                        let upcoming = [];
+                                        const formatter = new Intl.DateTimeFormat("es-ES", { timeZone: "Europe/Madrid", hour: "2-digit", minute: "2-digit", hour12: false });
+                                        const nowStr = formatter.format(new Date());
+                                        const madridDate = new Date(new Date().toLocaleString("en-US", {timeZone: "Europe/Madrid"}));
+                                        const dayOfWeek = madridDate.getDay() === 0 ? 6 : madridDate.getDay() - 1;
+                                        
+                                        for (const trip of renfeData.trips) {
+                                            const cal = renfeData.calendar[trip.s];
+                                            if (cal && cal.days[dayOfWeek] === 1) {
+                                                const oIdx = trip.st.findIndex(s => s[0] === originId);
+                                                const dIdx = trip.st.findIndex(s => s[0] === destId);
+                                                if (oIdx !== -1 && dIdx !== -1 && oIdx < dIdx) {
+                                                    const time = trip.st[oIdx][1];
+                                                    if (time >= nowStr) upcoming.push({ time, tripId: trip.t });
+                                                }
+                                            }
+                                        }
+                                        
+                                        upcoming.sort((a, b) => a.time.localeCompare(b.time));
+                                        const rtRes = await fetch("https://gtfsrt.renfe.com/trip_updates.json", { signal: AbortSignal.timeout(3000) }).catch(() => null);
+                                        let rtData = null;
+                                        if (rtRes && rtRes.ok) rtData = await rtRes.json();
+                                        
+                                        let nextDeparture = null, nextDelay = null, nextStatus = null;
+                                        const upcomingDepartures = [];
+                                        
+                                        for (let i = 0; i < Math.min(upcoming.length, 4); i++) {
+                                            const u = upcoming[i];
+                                            let delay = null;
+                                            let status = 'on_time';
+                                            if (rtData && rtData.entity) {
+                                                const rtEntity = rtData.entity.find(e => e.id === 'TUUPDATE_' + u.tripId);
+                                                if (rtEntity && rtEntity.tripUpdate) {
+                                                    if (rtEntity.tripUpdate.trip && rtEntity.tripUpdate.trip.scheduleRelationship === 'CANCELED') status = 'canceled';
+                                                    if (rtEntity.tripUpdate.delay) {
+                                                        delay = Math.round(rtEntity.tripUpdate.delay / 60);
+                                                        if (delay > 0) status = 'delayed';
+                                                    }
+                                                }
+                                            }
+                                            if (i === 0) {
+                                                nextDeparture = u.time; nextDelay = delay; nextStatus = status;
+                                            } else {
+                                                upcomingDepartures.push(u.time);
+                                            }
+                                        }
+                                        
+                                        if (nextDeparture) {
+                                            transportRoutes.push({ mode: 'train', origin: originName, destination: destName, nextDeparture, upcomingDepartures, delay: nextDelay, status: nextStatus });
+                                        }
+                                    }
+                                }
+                            } catch (e) {
+                                console.error("Error cargando Renfe:", e);
+                            }
+                        }
+                    }
+
                     if (destinationsToSearch.length > 0) {
-                        const transportRoutes = [];
                         for (const item of destinationsToSearch) {
                             const cacheKey = `transport_${item.consorcioId}_${item.idParada}`;
                             const cacheResult = await env.DB.prepare('SELECT value, updated_at FROM system_cache WHERE key = ?').bind(cacheKey).first();
@@ -380,11 +462,12 @@ ${b.content}
                                 });
                             }
                         }
+                    }
 
-                        if (transportRoutes.length > 0) {
+                    if (transportRoutes.length > 0) {
                             const parsedData = {
                                 cardType: 'TransportCard',
-                                content: `He consultado los horarios en tiempo real del Consorcio de Transportes. Aquí tienes las próximas salidas disponibles:`,
+                                content: `He consultado los horarios en tiempo real. Aquí tienes las próximas salidas disponibles:`,
                                 transportData: {
                                     routes: transportRoutes
                                 },

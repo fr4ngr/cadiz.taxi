@@ -31,12 +31,14 @@ export interface CardData {
     };
     transportData?: {
         routes?: Array<{
-            mode: 'bus' | 'boat';
+            mode: 'bus' | 'boat' | 'train';
             origin: string;
             destination: string;
             nextDeparture: string | null; // e.g. "13:45"
             upcomingDepartures: string[]; // e.g. ["14:30", "15:15"]
             price?: string;
+            delay?: number; // en minutos
+            status?: 'canceled' | 'on_time' | 'delayed';
         }>;
         alert?: {
             title: string;

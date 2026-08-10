@@ -1,7 +1,7 @@
 import { h } from 'preact';
 import type { CardData } from './types';
 import { CardWrapper } from './CardShared';
-import { IconAlert, IconBus, IconShip } from '../Icons';
+import { IconAlert, IconBus, IconShip, IconTrain } from '../Icons';
 
 export const TransportCard = ({ data }: { data: CardData }) => {
     const { transportData } = data;
@@ -43,7 +43,9 @@ export const TransportCard = ({ data }: { data: CardData }) => {
                         {/* Header: Origen -> Destino */}
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
                             <div style={{ color: 'var(--primary-color)' }}>
-                                {route.mode === 'boat' ? <IconShip size={24} color="var(--primary-color)" /> : <IconBus size={24} color="var(--primary-color)" />}
+                                {route.mode === 'boat' ? <IconShip size={24} color="var(--primary-color)" /> : 
+                                 route.mode === 'train' ? <IconTrain size={24} color="var(--primary-color)" /> : 
+                                 <IconBus size={24} color="var(--primary-color)" />}
                             </div>
                             <div style={{ flex: 1, fontWeight: 'bold', color: 'var(--text-color)', fontSize: '1.1rem' }}>
                                 {route.origin} ➔ {route.destination}
@@ -63,6 +65,16 @@ export const TransportCard = ({ data }: { data: CardData }) => {
                             <div style={{ fontSize: '2.5rem', fontWeight: '800', color: 'var(--primary-color)', lineHeight: 1 }}>
                                 {route.nextDeparture || '--:--'}
                             </div>
+                            {route.delay && (
+                                <div style={{ color: '#c2410c', fontSize: '0.9rem', fontWeight: 'bold', marginTop: '8px' }}>
+                                    Demorado: +{route.delay} min
+                                </div>
+                            )}
+                            {route.status === 'canceled' && (
+                                <div style={{ color: '#dc2626', fontSize: '0.9rem', fontWeight: 'bold', marginTop: '8px' }}>
+                                    Cancelado
+                                </div>
+                            )}
                         </div>
 
                         {/* Siguientes Salidas */}
