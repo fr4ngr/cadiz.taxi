@@ -1,5 +1,5 @@
 export interface CardData {
-    cardType: 'HeroCard' | 'ListCard' | 'BusinessCard' | 'ArticleCard' | 'AlertCard' | 'NavigationCard' | 'ProductCard' | 'ProfileCard' | 'MapCard' | 'GalleryCard' | 'ReservationCard' | 'ElectricityCard' | 'TransportCard' | string;
+    cardType: 'HeroCard' | 'ListCard' | 'BusinessCard' | 'ArticleCard' | 'AlertCard' | 'NavigationCard' | 'ProductCard' | 'ProfileCard' | 'MapCard' | 'GalleryCard' | 'ReservationCard' | 'ElectricityCard' | 'TransportCard' | 'RouteCard' | string;
     title?: string;
     subtitle?: string;
     content?: string;
@@ -45,6 +45,19 @@ export interface CardData {
             description: string;
             type: 'warning' | 'error' | 'info';
         };
+    };
+    routeData?: {
+        origin: string;
+        destination: string;
+        options: Array<{
+            mode: 'car' | 'bus' | 'train' | 'boat';
+            durationText: string; // ej. "35 min"
+            durationValue: number; // en segundos
+            distanceText?: string; // ej. "42 km"
+            trafficCondition?: 'good' | 'moderate' | 'heavy'; // solo para coche
+            nextDeparture?: string; // solo para transporte público
+            price?: string;
+        }>;
     };
     places?: any[];
 }

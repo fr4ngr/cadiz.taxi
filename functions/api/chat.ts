@@ -308,11 +308,12 @@ ${b.content}
         // ----------------------------------------------------
         const msgLower = userMessage.toLowerCase().trim();
         const isTransportQuery = msgLower.includes('bus') || msgLower.includes('autobús') || msgLower.includes('autobuses') || msgLower.includes('catamaran') || msgLower.includes('catamarán') || msgLower.includes('barco') || msgLower.includes('barquito') || msgLower.includes('horario') || msgLower.includes('salidas') || msgLower.includes('líneas') || msgLower.includes('lineas') || msgLower.includes('tren') || msgLower.includes('renfe') || msgLower.includes('cercan') || msgLower.includes('trambahia') || msgLower.includes('trambahía');
+        const isRoutingQuery = msgLower.includes('como ir') || msgLower.includes('cómo ir') || msgLower.includes('ruta') || msgLower.includes('alternativa');
         const isBeachQuery = msgLower.includes('playa') || msgLower.includes('caleta') || msgLower.includes('victoria') || msgLower.includes('cortadura') || msgLower.includes('santa maría') || msgLower.includes('oleaje') || msgLower.includes('olas');
 
-        if (isTransportQuery || isBeachQuery) {
+        if (isTransportQuery || isRoutingQuery || isBeachQuery) {
             try {
-                if (isTransportQuery) {
+                if (isTransportQuery || isRoutingQuery) {
                     const destinationsToSearch = [];
                     if (msgLower.includes('rota')) destinationsToSearch.push({ route: 'catamaran_rota', idParada: 193, consorcioId: 2, targetDestino: 'Rota', name: '🚢 Catamarán a Rota' });
                     if (msgLower.includes('puerto')) destinationsToSearch.push({ route: 'catamaran_puerto', idParada: 193, consorcioId: 2, targetDestino: 'El Puerto', name: '🚢 Catamarán a El Puerto' });
@@ -465,27 +466,89 @@ ${b.content}
                     }
 
                     if (transportRoutes.length > 0) {
-                            const parsedData = {
-                                cardType: 'TransportCard',
-                                content: `He consultado los horarios en tiempo real. Aquí tienes las próximas salidas disponibles:`,
-                                transportData: {
-                                    routes: transportRoutes
-                                },
-                                intentCategory: 'Transporte y movilidad',
-                                suggestedBlocks: ['¿Qué tiempo hace en La Caleta?', 'Ver paradas en el mapa', '¿Cómo ir a San Fernando?']
-                            };
+                        let finalCardType = isRoutingQuery ? 'RouteCard' : 'TransportCard';
+                        let finalContent = `He consultado los horarios en tiempo real. Aquí tienes las próximas salidas disponibles:`;
+                        
+                        let parsedData: any = {
+                            cardType: finalCardType,
+                            content: finalContent,
+                            intentCategory: 'Transporte y movilidad',
+                            suggestedBlocks: ['¿Qué tiempo hace en La Caleta?', 'Ver paradas en el mapa', '¿Cómo ir a San Fernando?']
+                        };
 
-                            if (env.DB) {
-                                context.waitUntil(env.DB.prepare(
-                                    "INSERT INTO chat_logs (user_message, bot_response, intent_category, latency_ms, tokens_used, brains_injected, input_type, ab_variant) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-                                ).bind(userMessage, parsedData.content, 'Transporte y movilidad', Date.now() - startTime, 0, 'Fast-Path Local', 'typed', activeVariant).run().catch(console.error));
+                        if (isRoutingQuery && env.GOOGLE_MAPS_API_KEY) {
+                            // Convert transit routes to route options
+                            const options = transportRoutes.map(tr => ({
+                                mode: tr.mode,
+                                durationText: tr.mode === 'train' ? '40 min' : '50 min', // Approx
+                                durationValue: tr.mode === 'train' ? 2400 : 3000,
+                                nextDeparture: tr.nextDeparture,
+                                price: tr.mode === 'train' ? '4.10€' : '2.50€'
+                            }));
+
+                            // Fetch car route
+                            const target = transportRoutes[0].destination;
+                            const originStr = "Cádiz, Spain";
+                            const destStr = `${target}, Cádiz, Spain`;
+
+                            try {
+                                const googleRes = await fetch('https://routes.googleapis.com/directions/v2:computeRoutes', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-Goog-Api-Key': env.GOOGLE_MAPS_API_KEY,
+                                        'X-Goog-FieldMask': 'routes.duration,routes.distanceMeters'
+                                    },
+                                    body: JSON.stringify({
+                                        origin: { address: originStr },
+                                        destination: { address: destStr },
+                                        travelMode: 'DRIVE',
+                                        routingPreference: 'TRAFFIC_AWARE',
+                                        computeAlternativeRoutes: false
+                                    })
+                                });
+
+                                if (googleRes.ok) {
+                                    const googleData = await googleRes.json();
+                                    if (googleData.routes && googleData.routes.length > 0) {
+                                        const route = googleData.routes[0];
+                                        const durSecs = parseInt(route.duration.replace('s', ''));
+                                        const distKm = (route.distanceMeters / 1000).toFixed(1);
+                                        
+                                        options.push({
+                                            mode: 'car',
+                                            durationText: `${Math.round(durSecs / 60)} min`,
+                                            durationValue: durSecs,
+                                            distanceText: `${distKm} km`,
+                                            trafficCondition: durSecs > 3000 ? 'heavy' : (durSecs > 2100 ? 'moderate' : 'good')
+                                        });
+                                    }
+                                }
+                            } catch(e) {
+                                console.error("Error fetching Google Maps:", e);
                             }
 
-                            return new Response(JSON.stringify(parsedData), {
-                                status: 200,
-                                headers: { 'Content-Type': 'application/json' }
-                            });
+                            parsedData.routeData = {
+                                origin: 'Cádiz',
+                                destination: target,
+                                options: options
+                            };
+                            parsedData.content = `Aquí tienes una comparativa de las mejores alternativas para ir a ${target} en tiempo real:`;
+                        } else {
+                            parsedData.transportData = { routes: transportRoutes };
                         }
+
+                        if (env.DB) {
+                            context.waitUntil(env.DB.prepare(
+                                "INSERT INTO chat_logs (user_message, bot_response, intent_category, latency_ms, tokens_used, brains_injected, input_type, ab_variant) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+                            ).bind(userMessage, parsedData.content, 'Transporte y movilidad', Date.now() - startTime, 0, 'Fast-Path Local', 'typed', activeVariant).run().catch(console.error));
+                        }
+
+                        return new Response(JSON.stringify(parsedData), {
+                            status: 200,
+                            headers: { 'Content-Type': 'application/json' }
+                        });
+                    }
                 } else if (isBeachQuery) {
                     let beachId = '1101203'; // Playa Victoria/Cortadura por defecto
                     if (msgLower.includes('caleta')) beachId = '1101201';
