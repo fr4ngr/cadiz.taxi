@@ -423,69 +423,76 @@ ${b.content}
                                         }
                                         allDayTrips = Array.from(uniqueTripsMap.values()).sort((a, b) => a.time.localeCompare(b.time));
                                         
-                                        let upcoming = allDayTrips.filter(t => t.time >= nowStr);
-                                        
                                         const rtRes = await fetch("https://gtfsrt.renfe.com/trip_updates.json", { signal: AbortSignal.timeout(3000) }).catch(() => null);
                                         let rtData = null;
                                         if (rtRes && rtRes.ok) rtData = await rtRes.json();
                                         
-                                        let nextDeparture = null, nextDelay = null, nextStatus = null;
-                                        const upcomingDepartures = [];
-                                        
-                                        for (let i = 0; i < Math.min(upcoming.length, 4); i++) {
-                                            const u = upcoming[i];
-                                            let delay = null;
-                                            let status = 'on_time';
-                                            if (rtData && rtData.entity) {
-                                                const rtEntity = rtData.entity.find(e => e.id === 'TUUPDATE_' + u.trip.t);
-                                                if (rtEntity && rtEntity.tripUpdate) {
-                                                    if (rtEntity.tripUpdate.trip && rtEntity.tripUpdate.trip.scheduleRelationship === 'CANCELED') status = 'canceled';
-                                                    if (rtEntity.tripUpdate.delay) {
-                                                        delay = Math.round(rtEntity.tripUpdate.delay / 60);
-                                                        if (delay > 0) status = 'delayed';
-                                                    }
-                                                }
+                                        const groupedTrips = {};
+                                        for (const t of allDayTrips) {
+                                            let lineCode = 'Cercanías C-1';
+                                            const route = renfeData.routes[t.trip.r];
+                                            if (route && route.short_name) {
+                                                lineCode = route.short_name;
                                             }
-                                            if (i === 0) {
-                                                nextDeparture = u.time; nextDelay = delay; nextStatus = status;
-                                            } else {
-                                                upcomingDepartures.push(u.time);
-                                            }
+                                            if (!groupedTrips[lineCode]) groupedTrips[lineCode] = [];
+                                            groupedTrips[lineCode].push(t);
                                         }
-                                        
-                                        if (nextDeparture) {
-                                            const firstTrip = allDayTrips[0];
-                                            let lineCode = 'Renfe';
-                                            if (firstTrip) {
-                                                const route = renfeData.routes[firstTrip.trip.r];
-                                                if (route) lineCode = route.short_name;
-                                            }
+
+                                        for (const [lineCode, tripsInGroup] of Object.entries(groupedTrips)) {
+                                            let upcoming = tripsInGroup.filter(t => t.time >= nowStr);
                                             
-                                            const stops = [];
-                                            if (firstTrip) {
-                                                for (let i = firstTrip.oIdx; i <= firstTrip.dIdx; i++) {
-                                                    const stopId = firstTrip.trip.st[i][0];
-                                                    const stopInfo = renfeData.stops[stopId];
-                                                    if (stopInfo) {
-                                                        stops.push({
-                                                            name: stopInfo.name,
-                                                            isOrigin: i === firstTrip.oIdx,
-                                                            isDest: i === firstTrip.dIdx
-                                                        });
+                                            let nextDeparture = null, nextDelay = null, nextStatus = null;
+                                            const upcomingDepartures = [];
+                                            
+                                            for (let i = 0; i < Math.min(upcoming.length, 4); i++) {
+                                                const u = upcoming[i];
+                                                let delay = null;
+                                                let status = 'on_time';
+                                                if (rtData && rtData.entity) {
+                                                    const rtEntity = rtData.entity.find(e => e.id === 'TUUPDATE_' + u.trip.t);
+                                                    if (rtEntity && rtEntity.tripUpdate) {
+                                                        if (rtEntity.tripUpdate.trip && rtEntity.tripUpdate.trip.scheduleRelationship === 'CANCELED') status = 'canceled';
+                                                        if (rtEntity.tripUpdate.delay) {
+                                                            delay = Math.round(rtEntity.tripUpdate.delay / 60);
+                                                            if (delay > 0) status = 'delayed';
+                                                        }
                                                     }
+                                                }
+                                                if (i === 0) {
+                                                    nextDeparture = u.time; nextDelay = delay; nextStatus = status;
+                                                } else {
+                                                    upcomingDepartures.push(u.time);
                                                 }
                                             }
                                             
-                                            const schedules = allDayTrips.map(t => ({
-                                                time: t.time,
-                                                isPast: t.time < nowStr
-                                            }));
+                                            if (nextDeparture || tripsInGroup.length > 0) {
+                                                const firstTrip = tripsInGroup[0];
+                                                const stops = [];
+                                                if (firstTrip) {
+                                                    for (let i = firstTrip.oIdx; i <= firstTrip.dIdx; i++) {
+                                                        const stopId = firstTrip.trip.st[i][0];
+                                                        const stopInfo = renfeData.stops[stopId];
+                                                        if (stopInfo) {
+                                                            stops.push({
+                                                                name: stopInfo.name,
+                                                                isOrigin: i === firstTrip.oIdx,
+                                                                isDest: i === firstTrip.dIdx
+                                                            });
+                                                        }
+                                                    }
+                                                }
+                                                
+                                                const schedules = tripsInGroup.map(t => ({
+                                                    time: t.time,
+                                                    isPast: t.time < nowStr
+                                                }));
 
-                                            transportRoutes.push({ 
-                                                mode: 'train', origin: originName, destination: destName, 
-                                                nextDeparture, upcomingDepartures, delay: nextDelay, status: nextStatus,
-                                                details: { lineCode, stops, schedules }
-                                            });
+                                                transportRoutes.push({ 
+                                                    mode: 'train', origin: originName, destination: destName, 
+                                                    nextDeparture, upcomingDepartures, delay: nextDelay, status: nextStatus,
+                                                    details: { lineCode, stops, schedules }
+                                                });
+                                            }
                                         }
                                     }
                                 }
