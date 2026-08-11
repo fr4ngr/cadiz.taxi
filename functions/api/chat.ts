@@ -321,6 +321,7 @@ ${b.content}
                 if (isTransportQuery || isRoutingQuery) {
                     const towns = [
                         { name: 'Cádiz', keywords: ['cádiz', 'cadiz'], busId: 14, consorcioId: 2, trainName: 'cádiz' },
+                        { name: 'Aeropuerto de Jerez', keywords: ['aeropuerto de jerez', 'aeropuerto'], busId: null, consorcioId: 2, trainName: 'aeropuerto de jerez' },
                         { name: 'Jerez', keywords: ['jerez'], busId: 161, consorcioId: 2, trainName: 'jerez' },
                         { name: 'San Fernando', keywords: ['san fernando', 'la isla'], busId: 47, consorcioId: 2, trainName: 'san fernando-bahía sur' },
                         { name: 'El Puerto de Santa María', keywords: ['puerto de santa maría', 'el puerto', 'pto de sta maria', 'pto de santa maria'], busId: 125, consorcioId: 2, trainName: 'puerto de santa maría' },
@@ -331,8 +332,7 @@ ${b.content}
                         { name: 'Medina', keywords: ['medina', 'medina sidonia'], busId: 188, consorcioId: 2, trainName: null },
                         { name: 'Algeciras', keywords: ['algeciras'], busId: 1, consorcioId: 5, trainName: null },
                         { name: 'La Línea', keywords: ['la línea', 'linea de la concepción', 'la linea'], busId: 116, consorcioId: 5, trainName: null },
-                        { name: 'Tarifa', keywords: ['tarifa'], busId: 143, consorcioId: 5, trainName: null },
-                        { name: 'Aeropuerto de Jerez', keywords: ['aeropuerto de jerez', 'aeropuerto'], busId: null, consorcioId: 2, trainName: 'aeropuerto de jerez' }
+                        { name: 'Tarifa', keywords: ['tarifa'], busId: 143, consorcioId: 5, trainName: null }
                     ];
 
                     let originTown = towns[0]; // Default to Cádiz
@@ -346,7 +346,7 @@ ${b.content}
                         if (found) originTown = found;
                     }
 
-                    const destRegex = /(?:a|hacia|para)\s+([a-záéíóúñ\s]+)/i;
+                    const destRegex = /(?:a|al|hacia|para)\s+([a-záéíóúñ\s]+)/i;
                     const matchDest = msgLower.match(destRegex);
                     if (matchDest) {
                         const destStr = matchDest[1];
@@ -403,10 +403,11 @@ ${b.content}
                                         const nowStr = formatter.format(new Date());
                                         const madridDate = new Date(new Date().toLocaleString("en-US", {timeZone: "Europe/Madrid"}));
                                         const dayOfWeek = madridDate.getDay() === 0 ? 6 : madridDate.getDay() - 1;
+                                        const nowStrDate = `${madridDate.getFullYear()}${(madridDate.getMonth() + 1).toString().padStart(2, '0')}${madridDate.getDate().toString().padStart(2, '0')}`;
                                         
                                         for (const trip of renfeData.trips) {
                                             const cal = renfeData.calendar[trip.s];
-                                            if (cal && cal.days[dayOfWeek] === 1) {
+                                            if (cal && cal.days[dayOfWeek] === 1 && cal.start <= nowStrDate && cal.end >= nowStrDate) {
                                                 const oIdx = trip.st.findIndex(s => s[0] === originId);
                                                 const dIdx = trip.st.findIndex(s => s[0] === destId);
                                                 if (oIdx !== -1 && dIdx !== -1 && oIdx < dIdx) {
@@ -416,7 +417,11 @@ ${b.content}
                                             }
                                         }
                                         
-                                        allDayTrips.sort((a, b) => a.time.localeCompare(b.time));
+                                        const uniqueTripsMap = new Map();
+                                        for (const t of allDayTrips) {
+                                            if (!uniqueTripsMap.has(t.time)) uniqueTripsMap.set(t.time, t);
+                                        }
+                                        allDayTrips = Array.from(uniqueTripsMap.values()).sort((a, b) => a.time.localeCompare(b.time));
                                         
                                         let upcoming = allDayTrips.filter(t => t.time >= nowStr);
                                         
