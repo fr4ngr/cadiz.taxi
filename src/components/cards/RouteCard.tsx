@@ -208,7 +208,12 @@ export const RouteCard = ({ data }: { data: CardData }) => {
                                                         border: sched.isPast ? '1px dashed var(--border-color)' : '1px solid transparent',
                                                         textDecoration: sched.isPast ? 'line-through' : 'none'
                                                     }}>
-                                                        {sched.time}
+                                                        {sched.lineCode && (
+                                                            <div style={{ fontSize: '10px', opacity: 0.8, marginBottom: '2px', fontWeight: 500 }}>
+                                                                {sched.lineCode}
+                                                            </div>
+                                                        )}
+                                                        <div>{sched.time}</div>
                                                     </div>
                                                 )
                                             })}

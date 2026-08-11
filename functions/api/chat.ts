@@ -427,72 +427,75 @@ ${b.content}
                                         let rtData = null;
                                         if (rtRes && rtRes.ok) rtData = await rtRes.json();
                                         
-                                        const groupedTrips = {};
-                                        for (const t of allDayTrips) {
-                                            let lineCode = 'Cercanías C-1';
-                                            const route = renfeData.routes[t.trip.r];
-                                            if (route && route.short_name) {
-                                                lineCode = route.short_name;
+                                        let upcoming = allDayTrips.filter(t => t.time >= nowStr);
+                                        
+                                        let nextDeparture = null, nextDelay = null, nextStatus = null;
+                                        const upcomingDepartures = [];
+                                        
+                                        for (let i = 0; i < Math.min(upcoming.length, 4); i++) {
+                                            const u = upcoming[i];
+                                            let delay = null;
+                                            let status = 'on_time';
+                                            if (rtData && rtData.entity) {
+                                                const rtEntity = rtData.entity.find(e => e.id === 'TUUPDATE_' + u.trip.t);
+                                                if (rtEntity && rtEntity.tripUpdate) {
+                                                    if (rtEntity.tripUpdate.trip && rtEntity.tripUpdate.trip.scheduleRelationship === 'CANCELED') status = 'canceled';
+                                                    if (rtEntity.tripUpdate.delay) {
+                                                        delay = Math.round(rtEntity.tripUpdate.delay / 60);
+                                                        if (delay > 0) status = 'delayed';
+                                                    }
+                                                }
                                             }
-                                            if (!groupedTrips[lineCode]) groupedTrips[lineCode] = [];
-                                            groupedTrips[lineCode].push(t);
+                                            if (i === 0) {
+                                                nextDeparture = u.time; nextDelay = delay; nextStatus = status;
+                                            } else {
+                                                upcomingDepartures.push(u.time);
+                                            }
                                         }
-
-                                        for (const [lineCode, tripsInGroup] of Object.entries(groupedTrips)) {
-                                            let upcoming = tripsInGroup.filter(t => t.time >= nowStr);
-                                            
-                                            let nextDeparture = null, nextDelay = null, nextStatus = null;
-                                            const upcomingDepartures = [];
-                                            
-                                            for (let i = 0; i < Math.min(upcoming.length, 4); i++) {
-                                                const u = upcoming[i];
-                                                let delay = null;
-                                                let status = 'on_time';
-                                                if (rtData && rtData.entity) {
-                                                    const rtEntity = rtData.entity.find(e => e.id === 'TUUPDATE_' + u.trip.t);
-                                                    if (rtEntity && rtEntity.tripUpdate) {
-                                                        if (rtEntity.tripUpdate.trip && rtEntity.tripUpdate.trip.scheduleRelationship === 'CANCELED') status = 'canceled';
-                                                        if (rtEntity.tripUpdate.delay) {
-                                                            delay = Math.round(rtEntity.tripUpdate.delay / 60);
-                                                            if (delay > 0) status = 'delayed';
-                                                        }
-                                                    }
-                                                }
-                                                if (i === 0) {
-                                                    nextDeparture = u.time; nextDelay = delay; nextStatus = status;
-                                                } else {
-                                                    upcomingDepartures.push(u.time);
+                                        
+                                        if (nextDeparture || allDayTrips.length > 0) {
+                                            const referenceTrip = upcoming.length > 0 ? upcoming[0] : allDayTrips[0];
+                                            let lineCode = 'Cercanías C-1';
+                                            if (referenceTrip) {
+                                                const route = renfeData.routes[referenceTrip.trip.r];
+                                                if (route && route.short_name) {
+                                                    lineCode = route.short_name;
                                                 }
                                             }
                                             
-                                            if (nextDeparture || tripsInGroup.length > 0) {
-                                                const firstTrip = tripsInGroup[0];
-                                                const stops = [];
-                                                if (firstTrip) {
-                                                    for (let i = firstTrip.oIdx; i <= firstTrip.dIdx; i++) {
-                                                        const stopId = firstTrip.trip.st[i][0];
-                                                        const stopInfo = renfeData.stops[stopId];
-                                                        if (stopInfo) {
-                                                            stops.push({
-                                                                name: stopInfo.name,
-                                                                isOrigin: i === firstTrip.oIdx,
-                                                                isDest: i === firstTrip.dIdx
-                                                            });
-                                                        }
+                                            const stops = [];
+                                            if (referenceTrip) {
+                                                for (let i = referenceTrip.oIdx; i <= referenceTrip.dIdx; i++) {
+                                                    const stopId = referenceTrip.trip.st[i][0];
+                                                    const stopInfo = renfeData.stops[stopId];
+                                                    if (stopInfo) {
+                                                        stops.push({
+                                                            name: stopInfo.name,
+                                                            isOrigin: i === referenceTrip.oIdx,
+                                                            isDest: i === referenceTrip.dIdx
+                                                        });
                                                     }
                                                 }
-                                                
-                                                const schedules = tripsInGroup.map(t => ({
+                                            }
+                                            
+                                            const schedules = allDayTrips.map(t => {
+                                                let lc = 'C-1';
+                                                const rt = renfeData.routes[t.trip.r];
+                                                if (rt && rt.short_name) {
+                                                    lc = rt.short_name === 'Cercanías C-1' ? 'C-1' : rt.short_name;
+                                                }
+                                                return {
                                                     time: t.time,
-                                                    isPast: t.time < nowStr
-                                                }));
+                                                    isPast: t.time < nowStr,
+                                                    lineCode: lc
+                                                };
+                                            });
 
-                                                transportRoutes.push({ 
-                                                    mode: 'train', origin: originName, destination: destName, 
-                                                    nextDeparture, upcomingDepartures, delay: nextDelay, status: nextStatus,
-                                                    details: { lineCode, stops, schedules }
-                                                });
-                                            }
+                                            transportRoutes.push({ 
+                                                mode: 'train', origin: originName, destination: destName, 
+                                                nextDeparture, upcomingDepartures, delay: nextDelay, status: nextStatus,
+                                                details: { lineCode, stops, schedules }
+                                            });
                                         }
                                     }
                                 }
