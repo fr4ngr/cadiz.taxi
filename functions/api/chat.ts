@@ -332,7 +332,19 @@ ${b.content}
                         { name: 'Medina', keywords: ['medina', 'medina sidonia'], busId: 188, consorcioId: 2, trainName: null },
                         { name: 'Algeciras', keywords: ['algeciras'], busId: 1, consorcioId: 5, trainName: null },
                         { name: 'La Línea', keywords: ['la línea', 'linea de la concepción', 'la linea'], busId: 116, consorcioId: 5, trainName: null },
-                        { name: 'Tarifa', keywords: ['tarifa'], busId: 143, consorcioId: 5, trainName: null }
+                        { name: 'Tarifa', keywords: ['tarifa'], busId: 143, consorcioId: 5, trainName: null },
+                        { name: 'Barbate', keywords: ['barbate'], busId: null, consorcioId: 2, trainName: null },
+                        { name: 'Los Caños de Meca', keywords: ['caños', 'caños de meca'], busId: null, consorcioId: 2, trainName: null },
+                        { name: 'Zahara de los Atunes', keywords: ['zahara de los atunes', 'zahara'], busId: null, consorcioId: 2, trainName: null },
+                        { name: 'Chipiona', keywords: ['chipiona'], busId: null, consorcioId: 2, trainName: null },
+                        { name: 'Sanlúcar de Barrameda', keywords: ['sanlucar', 'sanlúcar', 'sanlúcar de barrameda'], busId: null, consorcioId: 2, trainName: null },
+                        { name: 'Arcos de la Frontera', keywords: ['arcos', 'arcos de la frontera'], busId: null, consorcioId: 2, trainName: null },
+                        { name: 'Vejer de la Frontera', keywords: ['vejer', 'vejer de la frontera'], busId: null, consorcioId: 2, trainName: null },
+                        { name: 'El Colorado', keywords: ['colorado', 'el colorado'], busId: null, consorcioId: 2, trainName: null },
+                        { name: 'La Barrosa', keywords: ['la barrosa', 'barrosa'], busId: null, consorcioId: 2, trainName: null },
+                        { name: 'Novo Sancti Petri', keywords: ['novo', 'sancti petri', 'novo sancti petri'], busId: null, consorcioId: 2, trainName: null },
+                        { name: 'Costa Ballena', keywords: ['costa ballena'], busId: null, consorcioId: 2, trainName: null },
+                        { name: 'Atlanterra', keywords: ['atlanterra'], busId: null, consorcioId: 2, trainName: null }
                     ];
 
                     let originTown = towns[0]; // Default to Cádiz
@@ -650,6 +662,123 @@ ${b.content}
                             }
                         } catch(e) {
                             console.error("Error loading bus JSON", e);
+                        }
+                    }
+
+                    // FALLBACK: Si no hay rutas de transporte locales (Renfe/Consorcio), usamos Google Maps directamente
+                    if (transportRoutes.length === 0 && isRoutingQuery && env.GOOGLE_MAPS_API_KEY && destTown) {
+                        try {
+                            const originStr = `${originTown.name}, Cádiz, Spain`;
+                            const destStr = `${destTown.name}, Cádiz, Spain`;
+                            const options = [];
+                            
+                            // 1. Fetch DRIVE route
+                            const googleResDrive = await fetch('https://routes.googleapis.com/directions/v2:computeRoutes', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-Goog-Api-Key': env.GOOGLE_MAPS_API_KEY,
+                                    'X-Goog-FieldMask': 'routes.duration,routes.distanceMeters'
+                                },
+                                body: JSON.stringify({
+                                    origin: { address: originStr },
+                                    destination: { address: destStr },
+                                    travelMode: 'DRIVE',
+                                    routingPreference: 'TRAFFIC_AWARE',
+                                    computeAlternativeRoutes: false
+                                })
+                            });
+                            
+                            if (googleResDrive.ok) {
+                                const googleData = await googleResDrive.json();
+                                if (googleData.routes && googleData.routes.length > 0) {
+                                    const route = googleData.routes[0];
+                                    const durSecs = parseInt(route.duration.replace('s', ''));
+                                    const distKm = (route.distanceMeters / 1000).toFixed(1);
+                                    options.push({
+                                        mode: 'car',
+                                        durationText: `${Math.round(durSecs / 60)} min`,
+                                        durationValue: durSecs,
+                                        distanceText: `${distKm} km`,
+                                        trafficCondition: durSecs > 3000 ? 'heavy' : (durSecs > 2100 ? 'moderate' : 'good')
+                                    });
+                                }
+                            }
+                            
+                            // 2. Fetch TRANSIT route
+                            const googleResTransit = await fetch('https://routes.googleapis.com/directions/v2:computeRoutes', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-Goog-Api-Key': env.GOOGLE_MAPS_API_KEY,
+                                    'X-Goog-FieldMask': 'routes.duration,routes.distanceMeters,routes.legs.steps.transitDetails'
+                                },
+                                body: JSON.stringify({
+                                    origin: { address: originStr },
+                                    destination: { address: destStr },
+                                    travelMode: 'TRANSIT',
+                                    computeAlternativeRoutes: false
+                                })
+                            });
+                            
+                            if (googleResTransit.ok) {
+                                const googleData = await googleResTransit.json();
+                                if (googleData.routes && googleData.routes.length > 0) {
+                                    const route = googleData.routes[0];
+                                    const durSecs = parseInt(route.duration.replace('s', ''));
+                                    
+                                    let transitDetails = null;
+                                    if (route.legs && route.legs[0] && route.legs[0].steps) {
+                                        const transitStep = route.legs[0].steps.find(s => s.transitDetails);
+                                        if (transitStep) transitDetails = transitStep.transitDetails;
+                                    }
+                                    
+                                    let nextDep = null;
+                                    let lineCode = 'Transporte Público';
+                                    if (transitDetails && transitDetails.stopDetails && transitDetails.stopDetails.departureTime) {
+                                        const date = new Date(transitDetails.stopDetails.departureTime);
+                                        nextDep = date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Madrid' });
+                                    }
+                                    if (transitDetails && transitDetails.transitLine && transitDetails.transitLine.name) {
+                                        lineCode = transitDetails.transitLine.name;
+                                    }
+                                    
+                                    options.push({
+                                        mode: 'bus', 
+                                        durationText: `${Math.round(durSecs / 60)} min`,
+                                        durationValue: durSecs,
+                                        nextDeparture: nextDep || 'Consultar',
+                                        details: { lineCode: lineCode }
+                                    });
+                                }
+                            }
+                            
+                            if (options.length > 0) {
+                                const parsedData = {
+                                    cardType: 'RouteCard',
+                                    content: `No tengo horarios detallados en mi base de datos local para ir a ${destTown.name}, pero he consultado a Google Maps en tiempo real y aquí tienes las mejores alternativas:`,
+                                    intentCategory: 'Transporte y movilidad',
+                                    suggestedBlocks: ['Ver playas cercanas', 'Ver mapa'],
+                                    routeData: {
+                                        origin: originTown.name,
+                                        destination: destTown.name,
+                                        options: options
+                                    }
+                                };
+                                
+                                if (env.DB) {
+                                    context.waitUntil(env.DB.prepare(
+                                        "INSERT INTO chat_logs (user_message, bot_response, intent_category, latency_ms, tokens_used, brains_injected, input_type, ab_variant) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+                                    ).bind(userMessage, parsedData.content, 'Transporte y movilidad', Date.now() - startTime, 0, 'Fast-Path Fallback', 'typed', activeVariant).run().catch(console.error));
+                                }
+
+                                return new Response(JSON.stringify(parsedData), {
+                                    status: 200,
+                                    headers: { 'Content-Type': 'application/json' }
+                                });
+                            }
+                        } catch(e) {
+                            console.error("Error on fallback", e);
                         }
                     }
 
