@@ -651,7 +651,9 @@ ${b.content}
                         } catch(e) {
                             console.error("Error loading bus JSON", e);
                         }
-                    }\n\n                    if (transportRoutes.length > 0) {
+                    }
+
+                    if (transportRoutes.length > 0) {
                         let finalCardType = isRoutingQuery ? 'RouteCard' : 'TransportCard';
                         let finalContent = `He consultado los horarios en tiempo real. Aquí tienes las próximas salidas disponibles:`;
                         
