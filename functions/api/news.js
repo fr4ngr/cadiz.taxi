@@ -31,25 +31,6 @@ const FEEDS = [
   { url: 'https://rotaaldia.com/coverrss',            fuente: 'Rota al Día',               municipio: 'rota',        zona: 'costa-noroeste' },
   { url: 'https://www.canalsierradecadiz.com/rss',    fuente: 'Canal Sierra de Cádiz',     municipio: 'arcos',       zona: 'sierra' },
 
-  // --- ANDALUCÍA INFORMACIÓN SUB-FEEDS ---
-  { url: 'https://andaluciainformacion.es/elpuerto/feed',    fuente: 'El Puerto Info',     municipio: 'elpuerto',    zona: 'bahia' },
-  { url: 'https://andaluciainformacion.es/sanfernando/feed', fuente: 'San Fernando Info',  municipio: 'sanfernando', zona: 'bahia' },
-  { url: 'https://andaluciainformacion.es/chiclana/feed',    fuente: 'Chiclana Info',      municipio: 'chiclana',    zona: 'bahia' },
-  { url: 'https://andaluciainformacion.es/barbate/feed',     fuente: 'Barbate Info',       municipio: 'barbate',     zona: 'costa-sur' },
-  { url: 'https://andaluciainformacion.es/conil/feed',       fuente: 'Conil Info',         municipio: 'conil',       zona: 'costa-sur' },
-  { url: 'https://andaluciainformacion.es/tarifa/feed',      fuente: 'Tarifa Info',        municipio: 'tarifa',      zona: 'campo-gibraltar' },
-  { url: 'https://andaluciainformacion.es/rota/feed',        fuente: 'Rota Info',          municipio: 'rota',        zona: 'costa-noroeste' },
-  { url: 'https://andaluciainformacion.es/chipiona/feed',    fuente: 'Chipiona Info',      municipio: 'chipiona',    zona: 'costa-noroeste' },
-  { url: 'https://andaluciainformacion.es/sanlucar/feed',    fuente: 'Sanlúcar Info',      municipio: 'sanlucar',    zona: 'costa-noroeste' },
-  { url: 'https://andaluciainformacion.es/jerez/feed',       fuente: 'Jerez Info',         municipio: 'jerez',       zona: 'jerez' },
-  { url: 'https://andaluciainformacion.es/algeciras/feed',   fuente: 'Algeciras Info',     municipio: 'algeciras',   zona: 'campo-gibraltar' },
-  { url: 'https://andaluciainformacion.es/lalinea/feed',     fuente: 'La Línea Info',      municipio: 'lalinea',     zona: 'campo-gibraltar' },
-  { url: 'https://andaluciainformacion.es/arcos/feed',       fuente: 'Arcos Info',         municipio: 'arcos',       zona: 'sierra' },
-  { url: 'https://andaluciainformacion.es/medina/feed',      fuente: 'Medina Sidonia Info', municipio: 'medina',     zona: 'campiña' },
-  { url: 'https://andaluciainformacion.es/ubrique/feed',     fuente: 'Ubrique Info',       municipio: 'ubrique',     zona: 'sierra' },
-  { url: 'https://andaluciainformacion.es/vejer/feed',       fuente: 'Vejer Info',         municipio: 'vejer',       zona: 'costa-sur' },
-  { url: 'https://andaluciainformacion.es/jimena/feed',      fuente: 'Jimena Info',        municipio: 'jimena',      zona: 'campo-gibraltar' },
-  { url: 'https://andaluciainformacion.es/losbarrios/feed',  fuente: 'Los Barrios Info',   municipio: 'losbarrios',  zona: 'campo-gibraltar' },
 ];
 
 const CACHE_KEY = 'news_cadiz_v9';
