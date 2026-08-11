@@ -673,35 +673,59 @@ ${b.content}
                             const options = [];
                             
                             // 1. Fetch DRIVE route
-                            const googleResDrive = await fetch('https://routes.googleapis.com/directions/v2:computeRoutes', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-Goog-Api-Key': env.GOOGLE_MAPS_API_KEY,
-                                    'X-Goog-FieldMask': 'routes.duration,routes.distanceMeters'
-                                },
-                                body: JSON.stringify({
-                                    origin: { address: originStr },
-                                    destination: { address: destStr },
-                                    travelMode: 'DRIVE',
-                                    routingPreference: 'TRAFFIC_AWARE',
-                                    computeAlternativeRoutes: false
-                                })
-                            });
+                            const cacheKeyDrive = `gmaps_drive_${originStr}_${destStr}`.replace(/\s+/g, '_').toLowerCase();
+                            let cachedDrive = null;
+                            if (env.DB) {
+                                const cr = await env.DB.prepare('SELECT value, updated_at FROM system_cache WHERE key = ?').bind(cacheKeyDrive).first();
+                                if (cr && cr.value) {
+                                    const updatedAt = new Date(cr.updated_at).getTime();
+                                    // Cache for 30 days
+                                    if (Date.now() - updatedAt < 30 * 24 * 60 * 60 * 1000) {
+                                        cachedDrive = JSON.parse(cr.value);
+                                    }
+                                }
+                            }
                             
-                            if (googleResDrive.ok) {
-                                const googleData = await googleResDrive.json();
-                                if (googleData.routes && googleData.routes.length > 0) {
-                                    const route = googleData.routes[0];
-                                    const durSecs = parseInt(route.duration.replace('s', ''));
-                                    const distKm = (route.distanceMeters / 1000).toFixed(1);
-                                    options.push({
-                                        mode: 'car',
-                                        durationText: `${Math.round(durSecs / 60)} min`,
-                                        durationValue: durSecs,
-                                        distanceText: `${distKm} km`,
-                                        trafficCondition: durSecs > 3000 ? 'heavy' : (durSecs > 2100 ? 'moderate' : 'good')
-                                    });
+                            if (cachedDrive) {
+                                options.push(cachedDrive);
+                            } else {
+                                const googleResDrive = await fetch('https://routes.googleapis.com/directions/v2:computeRoutes', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-Goog-Api-Key': env.GOOGLE_MAPS_API_KEY,
+                                        'X-Goog-FieldMask': 'routes.duration,routes.distanceMeters'
+                                    },
+                                    body: JSON.stringify({
+                                        origin: { address: originStr },
+                                        destination: { address: destStr },
+                                        travelMode: 'DRIVE',
+                                        routingPreference: 'TRAFFIC_AWARE',
+                                        computeAlternativeRoutes: false
+                                    })
+                                });
+                                
+                                if (googleResDrive.ok) {
+                                    const googleData = await googleResDrive.json();
+                                    if (googleData.routes && googleData.routes.length > 0) {
+                                        const route = googleData.routes[0];
+                                        const durSecs = parseInt(route.duration.replace('s', ''));
+                                        const distKm = (route.distanceMeters / 1000).toFixed(1);
+                                        const driveOption = {
+                                            mode: 'car',
+                                            durationText: `${Math.round(durSecs / 60)} min`,
+                                            durationValue: durSecs,
+                                            distanceText: `${distKm} km`,
+                                            trafficCondition: durSecs > 3000 ? 'heavy' : (durSecs > 2100 ? 'moderate' : 'good')
+                                        };
+                                        options.push(driveOption);
+                                        
+                                        if (env.DB) {
+                                            context.waitUntil(env.DB.prepare(
+                                                "INSERT INTO system_cache (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP;"
+                                            ).bind(cacheKeyDrive, JSON.stringify(driveOption)).run().catch(console.error));
+                                        }
+                                    }
                                 }
                             }
                             
@@ -812,6 +836,22 @@ ${b.content}
                                 const destStr = `${destTown ? destTown.name : target}, Cádiz, Spain`;
 
                                 try {
+                                    const cacheKeyDrive = `gmaps_drive_${originStr}_${destStr}`.replace(/\s+/g, '_').toLowerCase();
+                                let cachedDrive = null;
+                                if (env.DB) {
+                                    const cr = await env.DB.prepare('SELECT value, updated_at FROM system_cache WHERE key = ?').bind(cacheKeyDrive).first();
+                                    if (cr && cr.value) {
+                                        const updatedAt = new Date(cr.updated_at).getTime();
+                                        // Cache for 30 days
+                                        if (Date.now() - updatedAt < 30 * 24 * 60 * 60 * 1000) {
+                                            cachedDrive = JSON.parse(cr.value);
+                                        }
+                                    }
+                                }
+                                
+                                if (cachedDrive) {
+                                    options.push(cachedDrive);
+                                } else {
                                     const googleRes = await fetch('https://routes.googleapis.com/directions/v2:computeRoutes', {
                                         method: 'POST',
                                         headers: {
@@ -827,7 +867,7 @@ ${b.content}
                                             computeAlternativeRoutes: false
                                         })
                                     });
-
+                                    
                                     if (googleRes.ok) {
                                         const googleData = await googleRes.json();
                                         if (googleData.routes && googleData.routes.length > 0) {
@@ -835,15 +875,23 @@ ${b.content}
                                             const durSecs = parseInt(route.duration.replace('s', ''));
                                             const distKm = (route.distanceMeters / 1000).toFixed(1);
                                             
-                                            options.push({
+                                            const driveOption = {
                                                 mode: 'car',
                                                 durationText: `${Math.round(durSecs / 60)} min`,
                                                 durationValue: durSecs,
                                                 distanceText: `${distKm} km`,
                                                 trafficCondition: durSecs > 3000 ? 'heavy' : (durSecs > 2100 ? 'moderate' : 'good')
-                                            });
+                                            };
+                                            options.push(driveOption);
+                                            
+                                            if (env.DB) {
+                                                context.waitUntil(env.DB.prepare(
+                                                    "INSERT INTO system_cache (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP;"
+                                                ).bind(cacheKeyDrive, JSON.stringify(driveOption)).run().catch(console.error));
+                                            }
                                         }
                                     }
+                                }
                                 } catch(e) {
                                     console.error("Error fetching Google Maps:", e);
                                 }
