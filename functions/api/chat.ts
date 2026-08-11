@@ -307,9 +307,14 @@ ${b.content}
         // 0. FAST-PATH INTENT ROUTER (Bypasses Gemini entirely for zero-latency)
         // ----------------------------------------------------
         const msgLower = userMessage.toLowerCase().trim();
-        const isTransportQuery = msgLower.includes('bus') || msgLower.includes('autobús') || msgLower.includes('autobuses') || msgLower.includes('catamaran') || msgLower.includes('catamarán') || msgLower.includes('barco') || msgLower.includes('barquito') || msgLower.includes('horario') || msgLower.includes('salidas') || msgLower.includes('líneas') || msgLower.includes('lineas') || msgLower.includes('tren') || msgLower.includes('renfe') || msgLower.includes('cercan') || msgLower.includes('trambahia') || msgLower.includes('trambahía');
-        const isRoutingQuery = msgLower.includes('como ir') || msgLower.includes('cómo ir') || msgLower.includes('ruta') || msgLower.includes('alternativa') || msgLower.includes('como voy') || msgLower.includes('cómo voy') || msgLower.includes('como llegar') || msgLower.includes('cómo llegar');
-        const isBeachQuery = msgLower.includes('playa') || msgLower.includes('caleta') || msgLower.includes('victoria') || msgLower.includes('cortadura') || msgLower.includes('santa maría') || msgLower.includes('oleaje') || msgLower.includes('olas');
+        const transportKeywords = ['bus', 'autobús', 'autobuses', 'catamaran', 'catamarán', 'barco', 'barquito', 'horario', 'salidas', 'líneas', 'lineas', 'tren', 'renfe', 'cercan', 'trambahia', 'trambahía'];
+        const isTransportQuery = transportKeywords.some(kw => msgLower.includes(kw));
+
+        const routingKeywords = ['como ir', 'cómo ir', 'ruta', 'alternativa', 'como voy', 'cómo voy', 'como llegar', 'cómo llegar', 'llevame', 'llévame', 'quiero ir', 'me gustaria ir', 'me gustaría ir', 'viajar a', 'desplazarme a', 'llegar a', 'voy a', 'ir para', 'ir a'];
+        const isRoutingQuery = routingKeywords.some(kw => msgLower.includes(kw));
+
+        const beachKeywords = ['playa', 'caleta', 'victoria', 'cortadura', 'santa maría', 'oleaje', 'olas'];
+        const isBeachQuery = beachKeywords.some(kw => msgLower.includes(kw));
 
         if (isTransportQuery || isRoutingQuery || isBeachQuery) {
             try {
