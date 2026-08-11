@@ -5,6 +5,7 @@ import { IconCar, IconBus, IconTrain, IconShip, IconTraffic } from '../Icons';
 
 export const RouteCard = ({ data }: { data: CardData }) => {
     const [expandedOpt, setExpandedOpt] = useState<number | null>(null);
+    const [selectedSchedules, setSelectedSchedules] = useState<Record<number, number>>({});
 
     if (!data.routeData) return null;
     const { origin, destination, options } = data.routeData;
@@ -74,6 +75,19 @@ export const RouteCard = ({ data }: { data: CardData }) => {
                 {sortedOptions.map((opt, index) => {
                     const isFastest = index === 0;
                     
+                    let activeSched = null;
+                    let activeIndex = -1;
+                    if (opt.details?.schedules?.length > 0) {
+                        activeIndex = selectedSchedules[index] ?? opt.details.schedules.findIndex((s: any) => s.time === opt.nextDeparture);
+                        if (activeIndex < 0) activeIndex = 0;
+                        activeSched = opt.details.schedules[activeIndex];
+                    }
+
+                    const activeDurationText = activeSched?.durationText ?? opt.durationText;
+                    const activeStops = activeSched?.stops ?? opt.details?.stops ?? [];
+                    const activeLineCode = activeSched?.fullLineCode ?? opt.details?.lineCode ?? "";
+                    const activeTime = activeSched?.time ?? opt.nextDeparture;
+                    
                     return (
                         <div 
                             key={index} 
@@ -123,7 +137,7 @@ export const RouteCard = ({ data }: { data: CardData }) => {
                                     )}
                                 </div>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '13px', color: 'var(--text-secondary)' }}>
-                                    <span style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{opt.durationText}</span>
+                                    <span style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{activeDurationText}</span>
                                     
                                     {opt.distanceText && (
                                         <span>{opt.distanceText}</span>
@@ -136,9 +150,9 @@ export const RouteCard = ({ data }: { data: CardData }) => {
                                         </div>
                                     )}
                                     
-                                    {opt.nextDeparture && (
+                                    {activeTime && (
                                         <span style={{ background: 'var(--bg-color)', padding: '2px 6px', borderRadius: '4px', border: '1px solid var(--border-color)' }}>
-                                            Sale a las {opt.nextDeparture}
+                                            Sale a las {activeTime}
                                         </span>
                                     )}
                                 </div>
@@ -156,16 +170,16 @@ export const RouteCard = ({ data }: { data: CardData }) => {
                                     gap: '16px'
                                 }}>
                                     <div style={{ display: 'inline-block', background: 'var(--bg-color)', border: '1px solid var(--border-color)', borderRadius: '6px', padding: '4px 8px', fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)', alignSelf: 'flex-start' }}>
-                                        Línea: {opt.details.lineCode}
+                                        Línea: {activeLineCode}
                                     </div>
 
                                     {/* Stops Timeline */}
                                     <div style={{ paddingLeft: '8px' }}>
                                         <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px', textTransform: 'uppercase' }}>Recorrido</div>
                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-                                            {opt.details.stops.map((stop, i) => (
-                                                <div key={i} style={{ display: 'flex', position: 'relative', paddingBottom: i === opt.details.stops.length - 1 ? '0' : '12px' }}>
-                                                    {i !== opt.details.stops.length - 1 && (
+                                            {activeStops.map((stop: any, i: number) => (
+                                                <div key={i} style={{ display: 'flex', position: 'relative', paddingBottom: i === activeStops.length - 1 ? '0' : '12px' }}>
+                                                    {i !== activeStops.length - 1 && (
                                                         <div style={{ position: 'absolute', left: '3px', top: '10px', bottom: '0', width: '2px', background: 'var(--border-color)' }} />
                                                     )}
                                                     <div style={{ 
@@ -194,17 +208,24 @@ export const RouteCard = ({ data }: { data: CardData }) => {
                                     <div>
                                         <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px', textTransform: 'uppercase' }}>Horarios ({opt.details.schedules.length})</div>
                                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(60px, 1fr))', gap: '8px' }}>
-                                            {opt.details.schedules.map((sched, i) => {
-                                                const isNext = opt.nextDeparture && sched.time === opt.nextDeparture;
+                                            {opt.details.schedules.map((sched: any, i: number) => {
+                                                const isActive = activeIndex === i;
                                                 return (
-                                                    <div key={i} style={{
+                                                    <div 
+                                                        key={i} 
+                                                        onClick={(e) => {
+                                                            e.stopPropagation(); // prevent toggling the accordion
+                                                            setSelectedSchedules(prev => ({ ...prev, [index]: i }));
+                                                        }}
+                                                        style={{
                                                         padding: '4px 0',
                                                         textAlign: 'center',
                                                         fontSize: '13px',
-                                                        fontWeight: isNext ? 600 : 400,
+                                                        fontWeight: isActive ? 600 : 400,
                                                         borderRadius: '6px',
-                                                        background: isNext ? 'var(--success-color, #10b981)' : (sched.isPast ? 'var(--bg-color)' : 'var(--bg-secondary)'),
-                                                        color: isNext ? 'white' : (sched.isPast ? 'var(--text-secondary)' : 'var(--text-primary)'),
+                                                        cursor: 'pointer',
+                                                        background: isActive ? 'var(--success-color, #10b981)' : (sched.isPast ? 'var(--bg-color)' : 'var(--bg-secondary)'),
+                                                        color: isActive ? 'white' : (sched.isPast ? 'var(--text-secondary)' : 'var(--text-primary)'),
                                                         border: sched.isPast ? '1px dashed var(--border-color)' : '1px solid transparent',
                                                         textDecoration: sched.isPast ? 'line-through' : 'none'
                                                     }}>

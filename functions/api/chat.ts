@@ -480,14 +480,50 @@ ${b.content}
                                             
                                             const schedules = allDayTrips.map(t => {
                                                 let lc = 'C-1';
+                                                let fullLc = 'Cercanías C-1';
                                                 const rt = renfeData.routes[t.trip.r];
                                                 if (rt && rt.short_name) {
                                                     lc = rt.short_name === 'Cercanías C-1' ? 'C-1' : rt.short_name;
+                                                    fullLc = rt.short_name;
                                                 }
+                                                
+                                                const tStops = [];
+                                                for (let i = t.oIdx; i <= t.dIdx; i++) {
+                                                    const stopId = t.trip.st[i][0];
+                                                    const stopInfo = renfeData.stops[stopId];
+                                                    if (stopInfo) {
+                                                        tStops.push({
+                                                            name: stopInfo.name,
+                                                            isOrigin: i === t.oIdx,
+                                                            isDest: i === t.dIdx
+                                                        });
+                                                    }
+                                                }
+                                                
+                                                let durationText = "40 min";
+                                                try {
+                                                    const tOrigin = t.trip.st[t.oIdx][1];
+                                                    const tDest = t.trip.st[t.dIdx][1];
+                                                    const [oH, oM] = tOrigin.split(':').map(Number);
+                                                    const [dH, dM] = tDest.split(':').map(Number);
+                                                    let mins = (dH * 60 + dM) - (oH * 60 + oM);
+                                                    if (mins < 0) mins += 24 * 60;
+                                                    if (mins >= 60) {
+                                                        const h = Math.floor(mins / 60);
+                                                        const m = mins % 60;
+                                                        durationText = m > 0 ? `${h} h ${m} min` : `${h} h`;
+                                                    } else {
+                                                        durationText = `${mins} min`;
+                                                    }
+                                                } catch(e) {}
+
                                                 return {
                                                     time: t.time,
                                                     isPast: t.time < nowStr,
-                                                    lineCode: lc
+                                                    lineCode: lc,
+                                                    fullLineCode: fullLc,
+                                                    stops: tStops,
+                                                    durationText
                                                 };
                                             });
 
