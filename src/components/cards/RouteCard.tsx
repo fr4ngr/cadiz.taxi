@@ -1,5 +1,5 @@
 import { h, Fragment } from 'preact';
-import { useState, useRef, useEffect } from 'preact/hooks';
+import { useState } from 'preact/hooks';
 import type { CardData } from './types';
 import { IconCar, IconBus, IconTrain, IconShip, IconTraffic } from '../Icons';
 
@@ -10,7 +10,6 @@ export const RouteCard = ({ data }: { data: CardData }) => {
     if (!data.routeData) return null;
     const { origin, destination, options } = data.routeData;
 
-    // Sort options: Public transport first (by duration), then Car at the bottom
     const sortedOptions = [...options].sort((a, b) => {
         if (a.mode === 'car' && b.mode !== 'car') return 1;
         if (b.mode === 'car' && a.mode !== 'car') return -1;
@@ -29,13 +28,22 @@ export const RouteCard = ({ data }: { data: CardData }) => {
 
     const getTrafficColor = (condition?: string) => {
         switch (condition) {
-            case 'heavy': return 'var(--danger-color, #ef4444)';
-            case 'moderate': return 'var(--warning-color, #f59e0b)';
-            case 'good': return 'var(--success-color, #10b981)';
+            case 'heavy': return '#ef4444'; // Red
+            case 'moderate': return '#f59e0b'; // Orange
+            case 'good': return '#10b981'; // Green
             default: return 'var(--text-secondary)';
         }
     };
-    
+
+    const getTrafficBackground = (condition?: string) => {
+        switch (condition) {
+            case 'heavy': return 'rgba(239, 68, 68, 0.1)';
+            case 'moderate': return 'rgba(245, 158, 11, 0.1)';
+            case 'good': return 'rgba(16, 185, 129, 0.1)';
+            default: return 'var(--bg-secondary)';
+        }
+    };
+
     const getModeLabel = (opt: any, activeLineCode?: string) => {
         switch (opt.mode) {
             case 'car': return 'Coche';
@@ -43,7 +51,7 @@ export const RouteCard = ({ data }: { data: CardData }) => {
             case 'train': 
                 const code = activeLineCode || opt.details?.lineCode;
                 if (code) {
-                    if (code === 'MD') return 'Tren Media Distancia';
+                    if (code === 'MD') return 'Tren MD';
                     return `Tren ${code}`;
                 }
                 return 'Tren';
@@ -55,20 +63,68 @@ export const RouteCard = ({ data }: { data: CardData }) => {
     return (
         <div className="card route-card" style={{
             background: 'var(--bg-color)',
-            borderRadius: '16px',
-            padding: '16px',
+            borderRadius: '24px',
+            padding: '20px',
             border: '1px solid var(--border-color)',
-            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+            boxShadow: '0 8px 24px -8px rgba(0, 0, 0, 0.08)',
             width: '100%',
             fontFamily: 'Inter, system-ui, sans-serif'
         }}>
-            {/* Header: Origin to Destination */}
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
-                <div style={{ flex: 1 }}>
-                    <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 600, color: 'var(--text-primary)' }}>
-                        {origin} <span style={{ color: 'var(--text-secondary)', margin: '0 8px' }}>➔</span> {destination}
-                    </h3>
-                </div>
+            <style dangerouslySetInnerHTML={{__html: `
+                @keyframes heartbeat {
+                    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+                    70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+                    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+                }
+                @keyframes heartbeat-red {
+                    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+                    70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+                    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+                }
+                .blinking-dot {
+                    width: 8px;
+                    height: 8px;
+                    background-color: #10b981;
+                    border-radius: 50%;
+                    display: inline-block;
+                    animation: heartbeat 2s infinite;
+                    margin-right: 6px;
+                }
+                .blinking-dot.delayed {
+                    background-color: #ef4444;
+                    animation: heartbeat-red 2s infinite;
+                }
+                .timeline-stop {
+                    display: flex;
+                    position: relative;
+                    padding-bottom: 16px;
+                }
+                .timeline-stop:last-child {
+                    padding-bottom: 0;
+                }
+                .timeline-line {
+                    position: absolute;
+                    left: 5px;
+                    top: 14px;
+                    bottom: -2px;
+                    width: 2px;
+                }
+                .timeline-circle {
+                    width: 12px;
+                    height: 12px;
+                    border-radius: 50%;
+                    background: white;
+                    margin-top: 4px;
+                    margin-right: 12px;
+                    z-index: 1;
+                }
+            `}} />
+
+            {/* Header */}
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+                <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)' }}>
+                    {origin} <span style={{ color: 'var(--text-secondary)', margin: '0 8px', fontWeight: 400 }}>➔</span> {destination}
+                </h3>
             </div>
 
             {/* Options List */}
@@ -89,6 +145,21 @@ export const RouteCard = ({ data }: { data: CardData }) => {
                     const activeLineCode = activeSched?.fullLineCode ?? opt.details?.lineCode ?? "";
                     const activeTime = activeSched?.time ?? opt.nextDeparture;
                     
+                    // Brand Color for the transit mode
+                    let brandColor = 'var(--primary-color)';
+                    if (opt.mode === 'train') brandColor = '#e11d48'; // Renfe Red
+                    if (opt.mode === 'bus') brandColor = '#0f766e'; // Consorcio Teal
+                    if (opt.mode === 'boat') brandColor = '#0284c7'; // Sea Blue
+                    
+                    // Traffic styling for cars
+                    const isCar = opt.mode === 'car';
+                    const bgStyle = isCar 
+                        ? getTrafficBackground(opt.trafficCondition)
+                        : (isFastest ? 'var(--primary-color-light, rgba(59, 130, 246, 0.05))' : 'var(--bg-secondary)');
+                    const borderStyle = isCar
+                        ? `1px solid ${getTrafficColor(opt.trafficCondition)}`
+                        : (isFastest ? '1px solid var(--primary-color)' : '1px solid transparent');
+
                     return (
                         <div 
                             key={index} 
@@ -96,107 +167,117 @@ export const RouteCard = ({ data }: { data: CardData }) => {
                             style={{
                             display: 'flex',
                             flexDirection: 'column',
-                            padding: '12px',
-                            background: isFastest ? 'var(--primary-color-light, rgba(59, 130, 246, 0.1))' : 'var(--bg-secondary)',
-                            borderRadius: '12px',
-                            border: isFastest ? '1px solid var(--primary-color)' : '1px solid transparent',
-                            cursor: opt.details ? 'pointer' : 'default'
+                            padding: '16px',
+                            background: bgStyle,
+                            borderRadius: '20px',
+                            border: borderStyle,
+                            cursor: opt.details ? 'pointer' : 'default',
+                            transition: 'all 0.3s ease'
                         }}>
                             <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-                            {/* Icon */}
-                            <div style={{ 
-                                width: '40px', 
-                                height: '40px', 
-                                borderRadius: '50%', 
-                                background: isFastest ? 'var(--primary-color)' : 'var(--border-color)',
-                                color: isFastest ? 'white' : 'var(--text-secondary)',
-                                display: 'flex', 
-                                alignItems: 'center', 
-                                justifyContent: 'center',
-                                marginRight: '16px'
-                            }}>
-                                {getIconForMode(opt.mode)}
+                                {/* Icon */}
+                                <div style={{ 
+                                    width: '48px', 
+                                    height: '48px', 
+                                    borderRadius: '50%', 
+                                    background: isCar ? getTrafficColor(opt.trafficCondition) : (isFastest ? 'var(--primary-color)' : 'var(--border-color)'),
+                                    color: isCar || isFastest ? 'white' : 'var(--text-secondary)',
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    justifyContent: 'center',
+                                    marginRight: '16px',
+                                    flexShrink: 0
+                                }}>
+                                    {getIconForMode(opt.mode)}
+                                </div>
+                                
+                                {/* Details */}
+                                <div style={{ flex: 1 }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                                        <span style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: '16px' }}>
+                                            {getModeLabel(opt, activeLineCode)}
+                                        </span>
+                                        {isFastest && !isCar && (
+                                            <span style={{ 
+                                                fontSize: '11px', 
+                                                background: 'var(--primary-color)', 
+                                                color: 'white',
+                                                padding: '2px 8px',
+                                                borderRadius: '12px',
+                                                fontWeight: 600
+                                            }}>
+                                                MÁS RÁPIDO
+                                            </span>
+                                        )}
+                                        {isCar && opt.trafficCondition && (
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', fontWeight: 600, color: getTrafficColor(opt.trafficCondition) }}>
+                                                <IconTraffic size={14} />
+                                                {opt.trafficCondition === 'heavy' ? 'Tráfico denso' : (opt.trafficCondition === 'moderate' ? 'Tráfico moderado' : 'Sin tráfico')}
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '14px', color: 'var(--text-secondary)', flexWrap: 'wrap' }}>
+                                        <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{activeDurationText}</span>
+                                        
+                                        {opt.distanceText && (
+                                            <span>{opt.distanceText}</span>
+                                        )}
+                                        
+                                        {activeTime && (
+                                            <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-color)', padding: '2px 8px', borderRadius: '12px', border: '1px solid var(--border-color)', fontSize: '13px' }}>
+                                                Sale a las {activeTime}
+                                            </div>
+                                        )}
+                                        
+                                        {opt.status && opt.status !== 'theoretical' && (
+                                            <div style={{ display: 'flex', alignItems: 'center', fontSize: '13px', fontWeight: 600, color: opt.status === 'delayed' ? '#ef4444' : '#10b981' }}>
+                                                <span className={`blinking-dot ${opt.status === 'delayed' ? 'delayed' : ''}`}></span>
+                                                {opt.status === 'delayed' ? `Retraso ${opt.delay} min` : 'En hora'}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Chevron Indicator */}
+                                {opt.details && (
+                                    <div style={{ marginLeft: '12px', color: 'var(--text-secondary)', transform: expandedOpt === index ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }}>
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                    </div>
+                                )}
                             </div>
                             
-                            {/* Details */}
-                            <div style={{ flex: 1 }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                                    <span style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '15px' }}>
-                                        {getModeLabel(opt, activeLineCode)}
-                                    </span>
-                                    {isFastest && (
-                                        <span style={{ 
-                                            fontSize: '11px', 
-                                            background: 'var(--success-color, #10b981)', 
-                                            color: 'white',
-                                            padding: '2px 6px',
-                                            borderRadius: '12px',
-                                            fontWeight: 600
-                                        }}>
-                                            MÁS RÁPIDO
-                                        </span>
-                                    )}
-                                </div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '13px', color: 'var(--text-secondary)' }}>
-                                    <span style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{activeDurationText}</span>
-                                    
-                                    {opt.distanceText && (
-                                        <span>{opt.distanceText}</span>
-                                    )}
-                                    
-                                    {opt.mode === 'car' && opt.trafficCondition && (
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: getTrafficColor(opt.trafficCondition) }}>
-                                            <IconTraffic size={14} />
-                                            Tráfico
-                                        </div>
-                                    )}
-                                    
-                                    {activeTime && (
-                                        <span style={{ background: 'var(--bg-color)', padding: '2px 6px', borderRadius: '4px', border: '1px solid var(--border-color)' }}>
-                                            Sale a las {activeTime}
-                                        </span>
-                                    )}
-                                </div>
-                            </div>
-                            </div>
-                            
-                            {/* Transit Accordion Details */}
+                            {/* Transit Accordion Details (Google Maps Timeline Style) */}
                             {expandedOpt === index && opt.details && (
                                 <div style={{ 
-                                    marginTop: '16px', 
-                                    paddingTop: '16px', 
+                                    marginTop: '20px', 
+                                    paddingTop: '20px', 
                                     borderTop: '1px solid var(--border-color)',
                                     display: 'flex',
                                     flexDirection: 'column',
-                                    gap: '16px'
+                                    gap: '20px'
                                 }}>
-                                    <div style={{ display: 'inline-block', background: 'var(--bg-color)', border: '1px solid var(--border-color)', borderRadius: '6px', padding: '4px 8px', fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)', alignSelf: 'flex-start' }}>
-                                        Línea: {activeLineCode}
+                                    <div style={{ display: 'inline-flex', alignItems: 'center', background: brandColor, borderRadius: '8px', padding: '6px 12px', fontSize: '13px', fontWeight: 600, color: 'white', alignSelf: 'flex-start' }}>
+                                        {getIconForMode(opt.mode)}
+                                        <span style={{ marginLeft: '8px' }}>Línea: {activeLineCode}</span>
                                     </div>
 
                                     {/* Stops Timeline */}
                                     <div style={{ paddingLeft: '8px' }}>
-                                        <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px', textTransform: 'uppercase' }}>Recorrido</div>
                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
                                             {activeStops.map((stop: any, i: number) => (
-                                                <div key={i} style={{ display: 'flex', position: 'relative', paddingBottom: i === activeStops.length - 1 ? '0' : '12px' }}>
+                                                <div key={i} className="timeline-stop">
                                                     {i !== activeStops.length - 1 && (
-                                                        <div style={{ position: 'absolute', left: '3px', top: '10px', bottom: '0', width: '2px', background: 'var(--border-color)' }} />
+                                                        <div className="timeline-line" style={{ background: brandColor }} />
                                                     )}
-                                                    <div style={{ 
-                                                        width: '8px', 
-                                                        height: '8px', 
-                                                        borderRadius: '50%', 
-                                                        background: stop.isOrigin || stop.isDest ? 'var(--primary-color)' : 'white', 
-                                                        border: '2px solid var(--primary-color)',
-                                                        marginTop: '4px',
-                                                        marginRight: '12px',
-                                                        zIndex: 1
+                                                    <div className="timeline-circle" style={{ 
+                                                        border: `3px solid ${brandColor}`,
+                                                        background: stop.isOrigin || stop.isDest ? brandColor : 'var(--bg-color)'
                                                     }} />
                                                     <div style={{ 
-                                                        fontSize: '13px', 
-                                                        fontWeight: stop.isOrigin || stop.isDest ? 600 : 400,
-                                                        color: stop.isOrigin || stop.isDest ? 'var(--text-primary)' : 'var(--text-secondary)'
+                                                        fontSize: '14px', 
+                                                        fontWeight: stop.isOrigin || stop.isDest ? 600 : 500,
+                                                        color: stop.isOrigin || stop.isDest ? 'var(--text-primary)' : 'var(--text-secondary)',
+                                                        marginTop: '2px'
                                                     }}>
                                                         {stop.name}
                                                     </div>
@@ -207,7 +288,7 @@ export const RouteCard = ({ data }: { data: CardData }) => {
 
                                     {/* Full Schedule Grid */}
                                     <div>
-                                        <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px', textTransform: 'uppercase' }}>Horarios ({opt.details.schedules.length})</div>
+                                        <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Horarios ({opt.details.schedules.length})</div>
                                         <div 
                                             id={`schedule-scroll-${index}`}
                                             style={{ 
@@ -216,16 +297,10 @@ export const RouteCard = ({ data }: { data: CardData }) => {
                                                 overflowX: 'auto', 
                                                 paddingBottom: '8px',
                                                 scrollBehavior: 'smooth',
-                                                scrollbarWidth: 'none', // Firefox
-                                                msOverflowStyle: 'none'  // IE 10+
+                                                scrollbarWidth: 'none',
+                                                msOverflowStyle: 'none'
                                             }}
-                                            className="hide-scrollbar"
                                         >
-                                            <style>{`
-                                                #schedule-scroll-${index}::-webkit-scrollbar {
-                                                    display: none;
-                                                }
-                                            `}</style>
                                             {opt.details.schedules.map((sched: any, i: number) => {
                                                 const isActive = activeIndex === i;
                                                 const isPast = sched.isPast && !isActive;
@@ -235,38 +310,25 @@ export const RouteCard = ({ data }: { data: CardData }) => {
                                                         id={isActive ? `active-schedule-${index}` : undefined}
                                                         onClick={(e) => {
                                                             e.stopPropagation();
-                                                            if (!isPast) {
-                                                                setSelectedSchedules(prev => ({ ...prev, [index]: i }));
-                                                                
-                                                                // Scroll into view on click
-                                                                setTimeout(() => {
-                                                                    const container = document.getElementById(`schedule-scroll-${index}`);
-                                                                    const item = document.getElementById(`active-schedule-${index}`);
-                                                                    if (container && item) {
-                                                                        const scrollLeft = item.offsetLeft - (container.clientWidth / 2) + (item.clientWidth / 2);
-                                                                        container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
-                                                                    }
-                                                                }, 50);
-                                                            }
+                                                            if (!isPast) setSelectedSchedules(prev => ({ ...prev, [index]: i }));
                                                         }}
                                                         style={{
                                                         flexShrink: 0,
-                                                        minWidth: '60px',
-                                                        padding: '6px 8px',
+                                                        minWidth: '64px',
+                                                        padding: '8px 12px',
                                                         textAlign: 'center',
-                                                        fontSize: '13px',
-                                                        fontWeight: isActive ? 600 : 400,
-                                                        borderRadius: '8px',
+                                                        fontSize: '14px',
+                                                        fontWeight: isActive ? 600 : 500,
+                                                        borderRadius: '12px',
                                                         cursor: isPast ? 'not-allowed' : 'pointer',
-                                                        opacity: isPast ? 0.6 : 1,
-                                                        background: isActive ? 'var(--success-color, #10b981)' : (isPast ? 'var(--bg-color)' : 'var(--bg-secondary)'),
-                                                        color: isActive ? 'white' : (isPast ? 'var(--text-secondary)' : 'var(--text-primary)'),
-                                                        border: isPast ? '1px dashed var(--border-color)' : '1px solid transparent',
-                                                        boxShadow: isActive ? '0 2px 4px rgba(16, 185, 129, 0.3)' : 'none',
-                                                        transition: 'all 0.2s ease-in-out'
+                                                        opacity: isPast ? 0.5 : 1,
+                                                        background: isActive ? brandColor : (isPast ? 'var(--bg-color)' : 'var(--bg-color)'),
+                                                        color: isActive ? 'white' : 'var(--text-primary)',
+                                                        border: isPast ? '1px dashed var(--border-color)' : (isActive ? `1px solid ${brandColor}` : '1px solid var(--border-color)'),
+                                                        boxShadow: isActive ? `0 4px 12px ${brandColor}40` : 'none',
                                                     }}>
                                                         {sched.lineCode && (
-                                                            <div style={{ fontSize: '10px', opacity: isActive ? 0.9 : 0.7, marginBottom: '2px', fontWeight: 600 }}>
+                                                            <div style={{ fontSize: '11px', opacity: isActive ? 0.9 : 0.6, marginBottom: '4px', fontWeight: 600 }}>
                                                                 {sched.lineCode}
                                                             </div>
                                                         )}
@@ -274,24 +336,8 @@ export const RouteCard = ({ data }: { data: CardData }) => {
                                                     </div>
                                                 )
                                             })}
-                                            {/* Spacer to allow centering the last items */}
-                                            <div style={{ flexShrink: 0, width: '40%' }}></div>
                                         </div>
                                     </div>
-                                    
-                                    {/* Auto-scroll effect when accordion is opened */}
-                                    {expandedOpt === index && (
-                                        <script dangerouslySetInnerHTML={{__html: `
-                                            setTimeout(() => {
-                                                const container = document.getElementById('schedule-scroll-${index}');
-                                                const item = document.getElementById('active-schedule-${index}');
-                                                if (container && item) {
-                                                    const scrollLeft = item.offsetLeft - (container.clientWidth / 2) + (item.clientWidth / 2);
-                                                    container.scrollTo({ left: scrollLeft, behavior: 'auto' });
-                                                }
-                                            }, 100);
-                                        `}} />
-                                    )}
                                 </div>
                             )}
                         </div>
@@ -299,26 +345,30 @@ export const RouteCard = ({ data }: { data: CardData }) => {
                 })}
             </div>
             
-            {/* Open in Maps button if Car is present */}
+            {/* Open in Maps button */}
             {options.some(o => o.mode === 'car') && (
                 <a 
                     href={`https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{
-                        display: 'block',
-                        marginTop: '16px',
-                        padding: '10px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        marginTop: '24px',
+                        padding: '14px',
                         background: 'var(--primary-color)',
                         color: 'white',
-                        textAlign: 'center',
-                        borderRadius: '8px',
+                        borderRadius: '100px', // Material You Pill shape
                         textDecoration: 'none',
-                        fontWeight: 500,
-                        fontSize: '14px'
+                        fontWeight: 600,
+                        fontSize: '15px',
+                        boxShadow: '0 4px 12px var(--primary-color-light)'
                     }}
                 >
-                    📍 Iniciar navegación
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>
+                    Iniciar navegación
                 </a>
             )}
         </div>

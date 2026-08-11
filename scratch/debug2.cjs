@@ -332,19 +332,7 @@ ${b.content}
                         { name: 'Medina', keywords: ['medina', 'medina sidonia'], busId: 188, consorcioId: 2, trainName: null },
                         { name: 'Algeciras', keywords: ['algeciras'], busId: 1, consorcioId: 5, trainName: null },
                         { name: 'La Línea', keywords: ['la línea', 'linea de la concepción', 'la linea'], busId: 116, consorcioId: 5, trainName: null },
-                        { name: 'Tarifa', keywords: ['tarifa'], busId: 143, consorcioId: 5, trainName: null },
-                        { name: 'Barbate', keywords: ['barbate'], busId: null, consorcioId: 2, trainName: null },
-                        { name: 'Los Caños de Meca', keywords: ['caños', 'caños de meca'], busId: null, consorcioId: 2, trainName: null },
-                        { name: 'Zahara de los Atunes', keywords: ['zahara de los atunes', 'zahara'], busId: null, consorcioId: 2, trainName: null },
-                        { name: 'Chipiona', keywords: ['chipiona'], busId: null, consorcioId: 2, trainName: null },
-                        { name: 'Sanlúcar de Barrameda', keywords: ['sanlucar', 'sanlúcar', 'sanlúcar de barrameda'], busId: null, consorcioId: 2, trainName: null },
-                        { name: 'Arcos de la Frontera', keywords: ['arcos', 'arcos de la frontera'], busId: null, consorcioId: 2, trainName: null },
-                        { name: 'Vejer de la Frontera', keywords: ['vejer', 'vejer de la frontera'], busId: null, consorcioId: 2, trainName: null },
-                        { name: 'El Colorado', keywords: ['colorado', 'el colorado'], busId: null, consorcioId: 2, trainName: null },
-                        { name: 'La Barrosa', keywords: ['la barrosa', 'barrosa'], busId: null, consorcioId: 2, trainName: null },
-                        { name: 'Novo Sancti Petri', keywords: ['novo', 'sancti petri', 'novo sancti petri'], busId: null, consorcioId: 2, trainName: null },
-                        { name: 'Costa Ballena', keywords: ['costa ballena'], busId: null, consorcioId: 2, trainName: null },
-                        { name: 'Atlanterra', keywords: ['atlanterra'], busId: null, consorcioId: 2, trainName: null }
+                        { name: 'Tarifa', keywords: ['tarifa'], busId: 143, consorcioId: 5, trainName: null }
                     ];
 
                     let originTown = towns[0]; // Default to Cádiz
@@ -439,111 +427,72 @@ ${b.content}
                                         let rtData = null;
                                         if (rtRes && rtRes.ok) rtData = await rtRes.json();
                                         
-                                        let upcoming = allDayTrips.filter(t => t.time >= nowStr);
-                                        
-                                        let nextDeparture = null, nextDelay = null, nextStatus = null;
-                                        const upcomingDepartures = [];
-                                        
-                                        for (let i = 0; i < Math.min(upcoming.length, 4); i++) {
-                                            const u = upcoming[i];
-                                            let delay = null;
-                                            let status = 'on_time';
-                                            if (rtData && rtData.entity) {
-                                                const rtEntity = rtData.entity.find(e => e.id === 'TUUPDATE_' + u.trip.t);
-                                                if (rtEntity && rtEntity.tripUpdate) {
-                                                    if (rtEntity.tripUpdate.trip && rtEntity.tripUpdate.trip.scheduleRelationship === 'CANCELED') status = 'canceled';
-                                                    if (rtEntity.tripUpdate.delay) {
-                                                        delay = Math.round(rtEntity.tripUpdate.delay / 60);
-                                                        if (delay > 0) status = 'delayed';
-                                                    }
-                                                }
-                                            }
-                                            if (i === 0) {
-                                                nextDeparture = u.time; nextDelay = delay; nextStatus = status;
-                                            } else {
-                                                upcomingDepartures.push(u.time);
-                                            }
-                                        }
-                                        
-                                        if (nextDeparture || allDayTrips.length > 0) {
-                                            const referenceTrip = upcoming.length > 0 ? upcoming[0] : allDayTrips[0];
+                                        const groupedTrips = {};
+                                        for (const t of allDayTrips) {
                                             let lineCode = 'Cercanías C-1';
-                                            if (referenceTrip) {
-                                                const route = renfeData.routes[referenceTrip.trip.r];
-                                                if (route && route.short_name) {
-                                                    lineCode = route.short_name;
-                                                }
+                                            const route = renfeData.routes[t.trip.r];
+                                            if (route && route.short_name) {
+                                                lineCode = route.short_name;
                                             }
-                                            
-                                            const stops = [];
-                                            if (referenceTrip) {
-                                                for (let i = referenceTrip.oIdx; i <= referenceTrip.dIdx; i++) {
-                                                    const stopId = referenceTrip.trip.st[i][0];
-                                                    const stopInfo = renfeData.stops[stopId];
-                                                    if (stopInfo) {
-                                                        stops.push({
-                                                            name: stopInfo.name,
-                                                            isOrigin: i === referenceTrip.oIdx,
-                                                            isDest: i === referenceTrip.dIdx
-                                                        });
-                                                    }
-                                                }
-                                            }
-                                            
-                                            const schedules = allDayTrips.map(t => {
-                                                let lc = 'C-1';
-                                                let fullLc = 'Cercanías C-1';
-                                                const rt = renfeData.routes[t.trip.r];
-                                                if (rt && rt.short_name) {
-                                                    lc = rt.short_name === 'Cercanías C-1' ? 'C-1' : rt.short_name;
-                                                    fullLc = rt.short_name;
-                                                }
-                                                
-                                                const tStops = [];
-                                                for (let i = t.oIdx; i <= t.dIdx; i++) {
-                                                    const stopId = t.trip.st[i][0];
-                                                    const stopInfo = renfeData.stops[stopId];
-                                                    if (stopInfo) {
-                                                        tStops.push({
-                                                            name: stopInfo.name,
-                                                            isOrigin: i === t.oIdx,
-                                                            isDest: i === t.dIdx
-                                                        });
-                                                    }
-                                                }
-                                                
-                                                let durationText = "40 min";
-                                                try {
-                                                    const tOrigin = t.trip.st[t.oIdx][1];
-                                                    const tDest = t.trip.st[t.dIdx][1];
-                                                    const [oH, oM] = tOrigin.split(':').map(Number);
-                                                    const [dH, dM] = tDest.split(':').map(Number);
-                                                    let mins = (dH * 60 + dM) - (oH * 60 + oM);
-                                                    if (mins < 0) mins += 24 * 60;
-                                                    if (mins >= 60) {
-                                                        const h = Math.floor(mins / 60);
-                                                        const m = mins % 60;
-                                                        durationText = m > 0 ? `${h} h ${m} min` : `${h} h`;
-                                                    } else {
-                                                        durationText = `${mins} min`;
-                                                    }
-                                                } catch(e) {}
+                                            if (!groupedTrips[lineCode]) groupedTrips[lineCode] = [];
+                                            groupedTrips[lineCode].push(t);
+                                        }
 
-                                                return {
+                                        for (const [lineCode, tripsInGroup] of Object.entries(groupedTrips)) {
+                                            let upcoming = tripsInGroup.filter(t => t.time >= nowStr);
+                                            
+                                            let nextDeparture = null, nextDelay = null, nextStatus = null;
+                                            const upcomingDepartures = [];
+                                            
+                                            for (let i = 0; i < Math.min(upcoming.length, 4); i++) {
+                                                const u = upcoming[i];
+                                                let delay = null;
+                                                let status = 'on_time';
+                                                if (rtData && rtData.entity) {
+                                                    const rtEntity = rtData.entity.find(e => e.id === 'TUUPDATE_' + u.trip.t);
+                                                    if (rtEntity && rtEntity.tripUpdate) {
+                                                        if (rtEntity.tripUpdate.trip && rtEntity.tripUpdate.trip.scheduleRelationship === 'CANCELED') status = 'canceled';
+                                                        if (rtEntity.tripUpdate.delay) {
+                                                            delay = Math.round(rtEntity.tripUpdate.delay / 60);
+                                                            if (delay > 0) status = 'delayed';
+                                                        }
+                                                    }
+                                                }
+                                                if (i === 0) {
+                                                    nextDeparture = u.time; nextDelay = delay; nextStatus = status;
+                                                } else {
+                                                    upcomingDepartures.push(u.time);
+                                                }
+                                            }
+                                            
+                                            if (nextDeparture || tripsInGroup.length > 0) {
+                                                const firstTrip = tripsInGroup[0];
+                                                const stops = [];
+                                                if (firstTrip) {
+                                                    for (let i = firstTrip.oIdx; i <= firstTrip.dIdx; i++) {
+                                                        const stopId = firstTrip.trip.st[i][0];
+                                                        const stopInfo = renfeData.stops[stopId];
+                                                        if (stopInfo) {
+                                                            stops.push({
+                                                                name: stopInfo.name,
+                                                                isOrigin: i === firstTrip.oIdx,
+                                                                isDest: i === firstTrip.dIdx
+                                                            });
+                                                        }
+                                                    }
+                                                }
+                                                
+                                                const schedules = tripsInGroup.map(t => ({
                                                     time: t.time,
-                                                    isPast: t.time < nowStr,
-                                                    lineCode: lc,
-                                                    fullLineCode: fullLc,
-                                                    stops: tStops,
-                                                    durationText
-                                                };
-                                            });
+                                                    isPast: t.time < nowStr
+                                                }));
 
-                                            transportRoutes.push({ 
-                                                mode: 'train', origin: originName, destination: destName, 
-                                                nextDeparture, upcomingDepartures, delay: nextDelay, status: nextStatus,
-                                                details: { lineCode, stops, schedules }
-                                            });
+                                                transportRoutes.push({ 
+                                                    mode: 'train', origin: originName, destination: destName, 
+                                                    nextDeparture, upcomingDepartures, delay: nextDelay, status: nextStatus,
+                                                    details: { lineCode, stops, schedules }
+                                                });
+                                            }
                                         }
                                     }
                                 }
@@ -553,263 +502,122 @@ ${b.content}
                         }
                     }
 
-                    // BUS & CATAMARAN GTFS-like LOGIC
-                    if (env.ASSETS && originTown && destTown && originTown.name !== destTown.name) {
-                        try {
-                            const busReq = new Request(new URL('/data/bus_cadiz.json', request.url));
-                            const busRes = await env.ASSETS.fetch(busReq);
-                            if (busRes.ok) {
-                                const busData = await busRes.json();
-                                const formatter = new Intl.DateTimeFormat("es-ES", { timeZone: "Europe/Madrid", hour: "2-digit", minute: "2-digit", hour12: false });
-                                const nowStr = formatter.format(new Date());
-                                const madridDate = new Date(new Date().toLocaleString("en-US", {timeZone: "Europe/Madrid"}));
-                                const dayOfWeek = madridDate.getDay(); // 0 is Sunday
-                                const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
-                                
-                                const originStr = originTown.name.toLowerCase();
-                                const destStr = destTown.name.toLowerCase();
-                                
-                                for (const [id, ruta] of Object.entries(busData.rutas)) {
-                                    const lineaInfo = busData.lineas[id];
-                                    if (!lineaInfo) continue;
-                                    
-                                    const processDirection = (nucleos, bloques, horarios, isVuelta) => {
-                                        const originIdx = nucleos.findIndex(n => n.toLowerCase().includes(originStr) || originStr.includes(n.toLowerCase()));
-                                        const destIdx = nucleos.findIndex(n => n.toLowerCase().includes(destStr) || destStr.includes(n.toLowerCase()));
-                                        
-                                        if (originIdx !== -1 && destIdx !== -1 && originIdx < destIdx) {
-                                            let validTrips = horarios.filter(h => {
-                                                if (!h.frecuencia) return true;
-                                                const f = h.frecuencia.toUpperCase();
-                                                if (f.includes('S-D-F') && !isWeekend) return false;
-                                                if (f.includes('L-V') && isWeekend) return false;
-                                                return true;
-                                            });
-                                            
-                                            if (validTrips.length > 0) {
-                                                let schedules = [];
-                                                for (const trip of validTrips) {
-                                                    const validTimes = trip.horas.filter(t => t && t.trim() !== '' && t !== '-');
-                                                    if (validTimes.length >= 2) {
-                                                        const depTime = validTimes[0];
-                                                        const arrTime = validTimes[validTimes.length - 1];
-                                                        if (depTime && arrTime) {
-                                                            schedules.push({
-                                                                time: depTime,
-                                                                isPast: depTime < nowStr,
-                                                                lineCode: lineaInfo.codigo,
-                                                                fullLineCode: lineaInfo.nombre,
-                                                                durationText: '-',
-                                                                stops: [
-                                                                    { name: originTown.name, isOrigin: true, isDest: false },
-                                                                    { name: destTown.name, isOrigin: false, isDest: true }
-                                                                ]
-                                                            });
-                                                        }
-                                                    }
+                    if (destinationsToSearch.length > 0) {
+                        for (const item of destinationsToSearch) {
+                            const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Madrid" }).format(new Date());
+                            const cacheKey = `transport_${item.consorcioId}_${item.idParada}_${today}`;
+                            const cacheResult = await env.DB.prepare('SELECT value, updated_at FROM system_cache WHERE key = ?').bind(cacheKey).first();
+                            
+                            let servicios = [];
+                            let shouldFetch = true;
+                            if (cacheResult && cacheResult.value) {
+                                servicios = JSON.parse(cacheResult.value);
+                                const updatedTime = new Date(cacheResult.updated_at + "Z").getTime();
+                                if (Date.now() - updatedTime < 60000) {
+                                    shouldFetch = false; // Fresh enough (< 1 min)
+                                }
+                            }
+                            
+                            if (shouldFetch) {
+                                const fetchPromise = fetch(`http://api.ctan.es/v1/Consorcios/${item.consorcioId}/paradas/${item.idParada}/servicios`, { signal: AbortSignal.timeout(4000) })
+                                    .then(res => res.ok ? res.json() : null)
+                                    .then(json => {
+                                        if (json && json.servicios) {
+                                            const newServicios = json.servicios;
+                                            const merged = [...servicios];
+                                            for (const s of newServicios) {
+                                                if (!merged.find(m => m.idLinea === s.idLinea && m.servicio === s.servicio && m.destino === s.destino)) {
+                                                    merged.push(s);
                                                 }
-                                                
-                                                if (schedules.length > 0) {
-                                                    schedules.sort((a,b) => a.time.localeCompare(b.time));
-                                                    // Map duration for the first one if possible
-                                                    for (let s of schedules) {
-                                                        try {
-                                                            const tOrigin = s.time;
-                                                            const tDest = validTrips.find(t=>t.horas.includes(tOrigin)).horas.slice(-1)[0] || tOrigin;
-                                                            if (tOrigin !== tDest) {
-                                                                const [oH, oM] = tOrigin.split(':').map(Number);
-                                                                const [dH, dM] = tDest.split(':').map(Number);
-                                                                let mins = (dH * 60 + dM) - (oH * 60 + oM);
-                                                                if (mins < 0) mins += 24 * 60;
-                                                                if (mins >= 60) {
-                                                                    s.durationText = `${Math.floor(mins/60)} h ${mins%60} min`;
-                                                                } else {
-                                                                    s.durationText = `${mins} min`;
-                                                                }
-                                                            }
-                                                        } catch(e) {}
-                                                    }
+                                            }
+                                            merged.sort((a, b) => a.servicio.localeCompare(b.servicio));
+                                            
+                                            return env.DB.prepare(`
+                                                INSERT INTO system_cache (key, value) VALUES (?, ?)
+                                                ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP
+                                            `).bind(cacheKey, JSON.stringify(merged)).run();
+                                        }
+                                    }).catch(e => console.error("Error fetching consorcio", e));
+                                
+                                if (servicios.length === 0) {
+                                    await fetchPromise;
+                                    const newCache = await env.DB.prepare('SELECT value FROM system_cache WHERE key = ?').bind(cacheKey).first();
+                                    if (newCache && newCache.value) servicios = JSON.parse(newCache.value);
+                                } else {
+                                    context.waitUntil(fetchPromise);
+                                }
+                            }
+                            
+                            if (servicios) {
+                                const formatter = new Intl.DateTimeFormat("es-ES", {
+                                    timeZone: "Europe/Madrid",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    hour12: false
+                                });
+                                const nowMadrid = formatter.format(new Date()).trim();
+                                let filteredServicios = servicios;
+                                if (item.targetDestino) {
+                                    filteredServicios = servicios.filter(s => s.destino && s.destino.toLowerCase().includes((item.targetDestino || "").toLowerCase()));
+                                }
+                                
+                                let upcoming = filteredServicios.filter(s => s.servicio && s.servicio >= nowMadrid);
+                                const nextDeparture = upcoming.length > 0 ? upcoming[0].servicio : null;
+                                const upcomingDepartures = upcoming.slice(1, 4).map(s => s.servicio);
+                                
+                                const originName = item.originName || (item.idParada === 300 || item.idParada === 14 ? 'Cádiz' : (item.idParada === 193 ? 'Cádiz (Terminal)' : (item.idParada === 1 ? 'Algeciras' : `Parada ${item.idParada}`)));
+                                
+                                let lineCode = item.route.startsWith('catamaran') ? 'Catamarán' : 'Autobús';
+                                let stops = [];
+                                let schedules = [];
+                                
+                                if (filteredServicios.length > 0) {
+                                    lineCode = filteredServicios[0].linea || lineCode;
+                                    const idLinea = filteredServicios[0].idLinea;
+                                    const sentido = filteredServicios[0].sentido;
+                                    
+                                    if (idLinea && sentido) {
+                                        const stopsCacheKey = `stops_${item.consorcioId}_${idLinea}_${sentido}`;
+                                        const stopsCache = await env.DB.prepare('SELECT value FROM system_cache WHERE key = ?').bind(stopsCacheKey).first();
+                                        
+                                        if (stopsCache && stopsCache.value) {
+                                            stops = JSON.parse(stopsCache.value);
+                                        } else {
+                                            const stopsRes = await fetch(`http://api.ctan.es/v1/Consorcios/${item.consorcioId}/lineas/${idLinea}/paradas`).catch(() => null);
+                                            if (stopsRes && stopsRes.ok) {
+                                                const stopsJson = await stopsRes.json();
+                                                if (stopsJson && stopsJson.paradas) {
+                                                    const lineStops = stopsJson.paradas.filter(p => p.sentido === sentido).sort((a, b) => parseInt(a.orden) - parseInt(b.orden));
+                                                    const originIdx = lineStops.findIndex(p => p.idParada === item.idParada.toString() || p.idParada === item.idParada);
+                                                    const sliced = originIdx !== -1 ? lineStops.slice(originIdx) : lineStops;
                                                     
-                                                    const upcoming = schedules.filter(s => !s.isPast);
-                                                    const nextDeparture = upcoming.length > 0 ? upcoming[0].time : null;
-                                                    const upcomingDepartures = upcoming.slice(1, 4).map(s => s.time);
+                                                    stops = sliced.map((p, idx) => ({
+                                                        name: p.nombre,
+                                                        isOrigin: idx === 0,
+                                                        isDest: idx === sliced.length - 1
+                                                    }));
                                                     
-                                                    const isBoat = lineaInfo.codigo.startsWith('B-');
-                                                    
-                                                    transportRoutes.push({
-                                                        mode: isBoat ? 'boat' : 'bus',
-                                                        origin: originTown.name,
-                                                        destination: destTown.name,
-                                                        nextDeparture,
-                                                        upcomingDepartures,
-                                                        details: { 
-                                                            lineCode: lineaInfo.codigo,
-                                                            stops: [
-                                                                { name: originTown.name, isOrigin: true, isDest: false },
-                                                                { name: destTown.name, isOrigin: false, isDest: true }
-                                                            ],
-                                                            schedules
-                                                        }
-                                                    });
+                                                    context.waitUntil(env.DB.prepare('INSERT INTO system_cache (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').bind(stopsCacheKey, JSON.stringify(stops)).run());
                                                 }
                                             }
                                         }
-                                    };
-                                    
-                                    processDirection(ruta.nucleosIda || [], ruta.bloquesIda || [], ruta.horarioIda || [], false);
-                                    processDirection(ruta.nucleosVuelta || [], ruta.bloquesVuelta || [], ruta.horarioVuelta || [], true);
-                                }
-                            }
-                        } catch(e) {
-                            console.error("Error loading bus JSON", e);
-                        }
-                    }
-
-                    // FALLBACK: Si no hay rutas de transporte locales (Renfe/Consorcio), usamos Google Maps directamente
-                    if (transportRoutes.length === 0 && isRoutingQuery && env.GOOGLE_MAPS_API_KEY && destTown) {
-                        try {
-                            const originStr = `${originTown.name}, Cádiz, Spain`;
-                            const destStr = `${destTown.name}, Cádiz, Spain`;
-                            const options = [];
-                            
-                            // 1. Fetch DRIVE route
-                            const cacheKeyDrive = `gmaps_drive_${originStr}_${destStr}`.replace(/\s+/g, '_').toLowerCase();
-                            let cachedDrive = null;
-                            if (env.DB) {
-                                const cr = await env.DB.prepare('SELECT value, updated_at FROM system_cache WHERE key = ?').bind(cacheKeyDrive).first();
-                                if (cr && cr.value) {
-                                    const updatedAt = new Date(cr.updated_at).getTime();
-                                    // Cache for 30 days
-                                    if (Date.now() - updatedAt < 30 * 24 * 60 * 60 * 1000) {
-                                        cachedDrive = JSON.parse(cr.value);
                                     }
+                                    
+                                    schedules = filteredServicios.map(s => ({
+                                        time: s.servicio,
+                                        isPast: s.servicio < nowMadrid
+                                    }));
                                 }
-                            }
-                            
-                            if (cachedDrive) {
-                                options.push(cachedDrive);
-                            } else {
-                                const googleResDrive = await fetch('https://routes.googleapis.com/directions/v2:computeRoutes', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        'X-Goog-Api-Key': env.GOOGLE_MAPS_API_KEY,
-                                        'X-Goog-FieldMask': 'routes.duration,routes.distanceMeters,routes.staticDuration'
-                                    },
-                                    body: JSON.stringify({
-                                        origin: { address: originStr },
-                                        destination: { address: destStr },
-                                        travelMode: 'DRIVE',
-                                        routingPreference: 'TRAFFIC_AWARE',
-                                        computeAlternativeRoutes: false
-                                    })
-                                });
                                 
-                                if (googleResDrive.ok) {
-                                    const googleData = await googleResDrive.json();
-                                    if (googleData.routes && googleData.routes.length > 0) {
-                                        const route = googleData.routes[0];
-                                        const durSecs = parseInt(route.duration.replace('s', ''));
-                                        const staticDurSecs = route.staticDuration ? parseInt(route.staticDuration.replace('s', '')) : durSecs;
-                                        const distKm = (route.distanceMeters / 1000).toFixed(1);
-                                        
-                                        const trafficRatio = durSecs / staticDurSecs;
-                                        let trafficCondition = 'good';
-                                        if (trafficRatio > 1.2) trafficCondition = 'heavy';
-                                        else if (trafficRatio > 1.05) trafficCondition = 'moderate';
-
-                                        const driveOption = {
-                                            mode: 'car',
-                                            durationText: `${Math.round(durSecs / 60)} min`,
-                                            durationValue: durSecs,
-                                            distanceText: `${distKm} km`,
-                                            trafficCondition: trafficCondition
-                                        };
-                                        options.push(driveOption);
-                                        
-                                        if (env.DB) {
-                                            context.waitUntil(env.DB.prepare(
-                                                "INSERT INTO system_cache (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP;"
-                                            ).bind(cacheKeyDrive, JSON.stringify(driveOption)).run().catch(console.error));
-                                        }
-                                    }
-                                }
-                            }
-                            
-                            // 2. Fetch TRANSIT route
-                            const googleResTransit = await fetch('https://routes.googleapis.com/directions/v2:computeRoutes', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-Goog-Api-Key': env.GOOGLE_MAPS_API_KEY,
-                                    'X-Goog-FieldMask': 'routes.duration,routes.distanceMeters,routes.legs.steps.transitDetails'
-                                },
-                                body: JSON.stringify({
-                                    origin: { address: originStr },
-                                    destination: { address: destStr },
-                                    travelMode: 'TRANSIT',
-                                    computeAlternativeRoutes: false
-                                })
-                            });
-                            
-                            if (googleResTransit.ok) {
-                                const googleData = await googleResTransit.json();
-                                if (googleData.routes && googleData.routes.length > 0) {
-                                    const route = googleData.routes[0];
-                                    const durSecs = parseInt(route.duration.replace('s', ''));
-                                    
-                                    let transitDetails = null;
-                                    if (route.legs && route.legs[0] && route.legs[0].steps) {
-                                        const transitStep = route.legs[0].steps.find(s => s.transitDetails);
-                                        if (transitStep) transitDetails = transitStep.transitDetails;
-                                    }
-                                    
-                                    let nextDep = null;
-                                    let lineCode = 'Transporte Público';
-                                    if (transitDetails && transitDetails.stopDetails && transitDetails.stopDetails.departureTime) {
-                                        const date = new Date(transitDetails.stopDetails.departureTime);
-                                        nextDep = date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Madrid' });
-                                    }
-                                    if (transitDetails && transitDetails.transitLine && transitDetails.transitLine.name) {
-                                        lineCode = transitDetails.transitLine.name;
-                                    }
-                                    
-                                    options.push({
-                                        mode: 'bus', 
-                                        durationText: `${Math.round(durSecs / 60)} min`,
-                                        durationValue: durSecs,
-                                        nextDeparture: nextDep || 'Consultar',
-                                        details: { lineCode: lineCode }
-                                    });
-                                }
-                            }
-                            
-                            if (options.length > 0) {
-                                const parsedData = {
-                                    cardType: 'RouteCard',
-                                    content: `No tengo horarios detallados en mi base de datos local para ir a ${destTown.name}, pero he consultado a Google Maps en tiempo real y aquí tienes las mejores alternativas:`,
-                                    intentCategory: 'Transporte y movilidad',
-                                    suggestedBlocks: ['Ver playas cercanas', 'Ver mapa'],
-                                    routeData: {
-                                        origin: originTown.name,
-                                        destination: destTown.name,
-                                        options: options
-                                    }
-                                };
-                                
-                                if (env.DB) {
-                                    context.waitUntil(env.DB.prepare(
-                                        "INSERT INTO chat_logs (user_message, bot_response, intent_category, latency_ms, tokens_used, brains_injected, input_type, ab_variant) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-                                    ).bind(userMessage, parsedData.content, 'Transporte y movilidad', Date.now() - startTime, 0, 'Fast-Path Fallback', 'typed', activeVariant).run().catch(console.error));
-                                }
-
-                                return new Response(JSON.stringify(parsedData), {
-                                    status: 200,
-                                    headers: { 'Content-Type': 'application/json' }
+                                transportRoutes.push({
+                                    mode: item.route.startsWith('catamaran') ? 'boat' : 'bus',
+                                    origin: originName,
+                                    destination: item.targetDestino,
+                                    nextDeparture,
+                                    upcomingDepartures,
+                                    details: { lineCode, stops, schedules }
                                 });
                             }
-                        } catch(e) {
-                            console.error("Error on fallback", e);
                         }
                     }
 
@@ -843,28 +651,12 @@ ${b.content}
                                 const destStr = `${destTown ? destTown.name : target}, Cádiz, Spain`;
 
                                 try {
-                                    const cacheKeyDrive = `gmaps_drive_${originStr}_${destStr}`.replace(/\s+/g, '_').toLowerCase();
-                                let cachedDrive = null;
-                                if (env.DB) {
-                                    const cr = await env.DB.prepare('SELECT value, updated_at FROM system_cache WHERE key = ?').bind(cacheKeyDrive).first();
-                                    if (cr && cr.value) {
-                                        const updatedAt = new Date(cr.updated_at).getTime();
-                                        // Cache for 30 days
-                                        if (Date.now() - updatedAt < 30 * 24 * 60 * 60 * 1000) {
-                                            cachedDrive = JSON.parse(cr.value);
-                                        }
-                                    }
-                                }
-                                
-                                if (cachedDrive) {
-                                    options.push(cachedDrive);
-                                } else {
                                     const googleRes = await fetch('https://routes.googleapis.com/directions/v2:computeRoutes', {
                                         method: 'POST',
                                         headers: {
                                             'Content-Type': 'application/json',
                                             'X-Goog-Api-Key': env.GOOGLE_MAPS_API_KEY,
-                                            'X-Goog-FieldMask': 'routes.duration,routes.distanceMeters,routes.staticDuration'
+                                            'X-Goog-FieldMask': 'routes.duration,routes.distanceMeters'
                                         },
                                         body: JSON.stringify({
                                             origin: { address: originStr },
@@ -874,37 +666,23 @@ ${b.content}
                                             computeAlternativeRoutes: false
                                         })
                                     });
-                                    
+
                                     if (googleRes.ok) {
                                         const googleData = await googleRes.json();
                                         if (googleData.routes && googleData.routes.length > 0) {
                                             const route = googleData.routes[0];
                                             const durSecs = parseInt(route.duration.replace('s', ''));
-                                            const staticDurSecs = route.staticDuration ? parseInt(route.staticDuration.replace('s', '')) : durSecs;
                                             const distKm = (route.distanceMeters / 1000).toFixed(1);
                                             
-                                            const trafficRatio = durSecs / staticDurSecs;
-                                            let trafficCondition = 'good';
-                                            if (trafficRatio > 1.2) trafficCondition = 'heavy';
-                                            else if (trafficRatio > 1.05) trafficCondition = 'moderate';
-                                            
-                                            const driveOption = {
+                                            options.push({
                                                 mode: 'car',
                                                 durationText: `${Math.round(durSecs / 60)} min`,
                                                 durationValue: durSecs,
                                                 distanceText: `${distKm} km`,
-                                                trafficCondition: trafficCondition
-                                            };
-                                            options.push(driveOption);
-                                            
-                                            if (env.DB) {
-                                                context.waitUntil(env.DB.prepare(
-                                                    "INSERT INTO system_cache (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP;"
-                                                ).bind(cacheKeyDrive, JSON.stringify(driveOption)).run().catch(console.error));
-                                            }
+                                                trafficCondition: durSecs > 3000 ? 'heavy' : (durSecs > 2100 ? 'moderate' : 'good')
+                                            });
                                         }
                                     }
-                                }
                                 } catch(e) {
                                     console.error("Error fetching Google Maps:", e);
                                 }
@@ -1078,7 +856,7 @@ ${b.content}
                                             return json.servicios;
                                         }
                                     }
-                                } catch (err) {
+                                } catch (err) { console.error(err.stack);
                                     console.error("Error revalidando transportes en background:", err);
                                 }
                                 return null;
@@ -1176,7 +954,7 @@ ${b.content}
                                         toolResponseData.instruccion_extra = "OBLIGATORIO: Enumera de forma EXPLÍCITA y EXACTA los eventos mencionados en 'eventos_en_prensa'. NO hagas resúmenes genéricos (ej. no digas 'hay más conciertos y ferias'). Tienes que dar los nombres exactos de los eventos que aparecen en la lista.";
                                     }
                                 }
-                            } catch (err) {
+                            } catch (err) { console.error(err.stack);
                                 console.error("Error inyectando prensa en eventos:", err);
                             }
                         } else {
@@ -1534,3 +1312,25 @@ async function fetchElectricityWithHistory() {
     return { hoursData, percentChange };
 }
 
+
+  const context = {
+    request: {
+      json: async () => ({ messages: [{role: 'user', content: 'como voy de cadiz al aeropuerto de jerez?'}] }),
+      url: 'http://localhost/'
+    },
+    env: {
+      ASSETS: {
+        fetch: async () => ({
+          ok: true,
+          json: async () => require('./public/data/renfe_cadiz.json')
+        })
+      },
+      AI: { run: async () => ({ response: 'fake' }) },
+      DB: { prepare: () => ({ bind: () => ({ first: async () => null, all: async () => ({results:[]}), run: async () => {} }) }) }
+    },
+    waitUntil: () => {}
+  };
+  run(context).then(async (r) => {
+     const t = await r.text();
+     console.log(r.status, t);
+  }).catch(e => console.error(e));

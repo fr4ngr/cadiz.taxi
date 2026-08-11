@@ -1,0 +1,273 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!-- 
+
+/**
+ * INFO ARCHIVO
+ *
+ * @author      I3NET 
+ * @author      Juan Carlos
+ * @copyright 2020
+ * @version 1.0
+ * @internal
+ * v1.0 Versión base del SIU 1.0
+ */
+ -->
+<html xmlns="https://www.w3.org/1999/xhtml" lang="es">
+<head>
+
+
+
+<!-- Metas basicos
+================================================== -->
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="description" content=""/>
+	<meta name="author" content=""/>
+
+<!-- Metas especificos
+================================================== -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<!-- Incrustados
+================================================== -->
+	<link rel="stylesheet" href="/stylesheets/base.css"/>
+	<link rel="stylesheet" href="/stylesheets/estructura.css"/>
+	<link rel="stylesheet" href="/stylesheets/rca-det_styles.css"/>
+    
+    <!--link href='/media/fonts/css?family=Signika+Negative:400,700' rel='stylesheet' type='text/css'/-->
+
+
+
+<!-- Favicons
+================================================== -->
+	<link rel="shortcut icon" href="https://siu.cmtbc.es/images/favicon/favicon.ico"/>
+	<link rel="apple-touch-icon" href="https://siu.cmtbc.es/images/favicon/apple-touch-icon.png"/>
+	<link rel="apple-touch-icon" href="https://siu.cmtbc.es/images/favicon/apple-touch-icon-72x72.png"/>
+	<link rel="apple-touch-icon" href="https://siu.cmtbc.es/images/favicon/apple-touch-icon-114x114.png"/>
+    
+
+<!-- JS
+==================================================-->
+
+<!-- Tabs-->
+
+<script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="/js/jquery-ui-1.8.18.custom.min.js"></script>
+<script>
+function cambiaIdioma(idioma){
+	var url="gestIdiomas.php";
+	$.get(url,{ lang: idioma },function(){
+		location.reload();
+	});
+}
+
+$(function($){
+	$.datepicker.regional['es'] = {
+		closeText: 'Cerrar',
+		prevText: '&#x3c;Ant',
+		nextText: 'Sig&#x3e;',
+		currentText: 'Hoy',
+		monthNames: ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+		'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
+		monthNamesShort: ['Ene','Feb','Mar','Abr','May','Jun',
+		'Jul','Ago','Sep','Oct','Nov','Dic'],
+		dayNames: ['Domingo','Lunes','Martes','Mi&eacute;rcoles','Jueves','Viernes','S&aacute;bado'],
+		dayNamesShort: ['Dom','Lun','Mar','Mi&eacute;','Juv','Vie','S&aacute;b'],
+		dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','S&aacute;'],
+		weekHeader: 'Sm',
+		dateFormat: 'dd/mm/yy',
+		firstDay: 1,
+		isRTL: false,
+		minDate: 0,
+		showMonthAfterYear: false,
+		yearSuffix: ''};
+	$.datepicker.setDefaults($.datepicker.regional['es']);
+});
+</script><script type="text/javascript" src="/js/smartpaginator.js"></script>
+<script type="text/javascript" src="/js/jquery.printElement.js"></script>
+<script type="text/javascript" src="/js/jquery.tooltipster.min.js"></script>
+<script type="text/javascript" src="/js/md5.js"></script>
+<link href="/css/custom-theme/jquery-ui-1.8.18.custom.css" rel="stylesheet" type="text/css"/>
+<link href="/stylesheets/smartpaginator.css" rel="stylesheet" type="text/css"/>
+<link rel="stylesheet" type="text/css" href="/css/tooltipster.css" />
+	<link type="application/rss+xml" href="rss.php" rel="alternate"/>
+<!-- <script src="js/tabs.js"></script> -->
+
+
+
+<title>Consorcio de Transportes de Andalucía</title>
+</head>
+<body><div class="horarios_lineas">
+
+<div id="cabecera"><div class="container">
+	<h1><a href="http://www.cmtbc.es" title="Ir al inicio">
+		<img src="/images/index/logo.jpg" alt="Consorcio de Transportes de Andalucía"/>
+    	<span>Consorcio de Transportes de Andalucía</span> 
+	</a></h1>
+    
+	
+		
+    <div class="idioma">
+    	<ul>
+        	<li class="autobus"><a href="/datosabiertos/cmtbc_gtfs.zip" title="Web en español"><span>Español</span><img src="/images/index/flag_es.png"  alt="Español"/></a></li>
+        	<li class="autobus"><a href="/datosabiertos/cmtbc_gtfs.zip" title="Web in english"><span>English</span><img src="/images/index/flag_gb.png"  alt="English"/></a></li>
+        </ul>
+    </div>
+    
+		
+    <span class="telefono">
+		<a href="atencion.php" class="telefono">
+    	<strong>955 038 665</strong>
+        <em>atención al usuario</em>
+		</a>
+    </span>
+    
+    <div class="areas">
+    	<select id="consorcios" onchange="document.location=this.value;">
+    		<option>Otras áreas metropolitanas</option>
+							<option value="http://siu.ctal.es/es/index.php">Área de Almería</option>
+							<option value="http://siu.ctco.es/es/index.php">Área de Córdoba</option>
+							<option value="http://siu.ctagr.es/es/index.php">Área de Granada</option>
+							<option value="http://siu.ctja.es/es/index.php">Área de Jaén</option>
+							<option value="http://siu.ctmam.ctan.es/es/index.php">Área de Málaga</option>
+							<option value="http://siu.ctas.ctan.es/es/index.php">Área de Sevilla</option>
+							<option value="http://siu.ctmcg.es/es/index.php">Campo de Gibraltar</option>
+							<option value="http://siu.cthu.es/es/index.php">Costa de Huelva</option>
+			        </select>    </div>
+</div></div>
+<!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-XK4N8JFFEG"></script>
+        <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'G-XK4N8JFFEG');
+        </script>
+        <div id="menu"><div class="container">
+            <ul>
+                <li class="autobus"><a href="index.php" title="Inicio" id="m_inicio" accesskey="i">Inicio</a></li>
+                <li class="autobus"><a href="ruta.php" title="Cálculo de ruta" id="m_ruta" accesskey="c">Cálculo de ruta</a></li>
+                <li class="autobus"><a href="horarios.php" title="Horarios" id="m_horarios" accesskey="h">Horarios</a></li>
+                <li class="autobus"><a href="lineas.php" title="Líneas" id="m_lineas" accesskey="l">Líneas</a></li>
+                <li class="autobus"><a href="puntos_de_venta.php" title="Puntos de venta" id="m_puntos" accesskey="p">Puntos de venta</a></li>
+                <li class="autobus"><a href="tarifas.php" title="Tarifas" id="m_tarifas" accesskey="t">Tarifas</a></li>
+                <li class="autobus"><a href="noticias.php" title="Noticias" id="m_noticias" accesskey="n">Noticias</a></li>
+                <li class="autobus"><a href="acceso.php" title="Transporte a la demanda" id="m_demanda" accesskey="d">Transporte a la demanda</a></li>
+            </ul>
+        </div></div>
+
+<div id="encabezado"><div class="container"><h1>Página no encontrada</h1>
+<div class="migas">
+	<span class="home"><a href="index.php">Inicio</a></span>
+</div>
+
+</div></div><div id="contenidos">
+
+<div class="container error">
+<h2>Error</h2>
+<p>Lá página solicitada no esta disponible. Puede deberse a que el recurso al que intentas acceder ya no exista o haya cambiado de ubicación.</p>
+<p>Para encontrar la información que buscas, puedes intentar lo siguiente:</p>
+<ul>
+  <li>
+  <img src="/images/error/revise.png" alt="Lápiz" /> 
+  <strong>Si has tecleado la dirección directamente</strong> en el navegador, comprueba que no hayas cometido algún error tipográfico.</li>
+  <li>
+  <img src="/images/error/home.png"  alt="Revise" />Trata de navegar hasta el contenido a partir de la <a href="index.php" title="Página de inicio del portal"><strong>página de inicio</strong> del portal</a>.</li>
+  <li>
+  <img src="/images/error/escriba.png"  alt="Registrado" />De todas formas te informamos que tu incidencia ha quedado registrada en el sistema y será estudiada y corregida lo antes posible.</li>
+</ul>
+</div></div>
+
+<!-- 
+
+/**
+ * INFO ARCHIVO
+ *
+ * @author      I3NET 
+ * @author      Juan Carlos
+ * @copyright 2020
+ * @version 1.0
+ * @internal
+ * v1.0 Versión base del SIU 1.0
+ * v1.1 Quitamos los estandares de la w3
+ */
+ -->
+<div id="pie"><div class="container">
+	
+    
+    <div class="grid_17">
+    	<h2>Horarios</h2>
+        <ul>
+        	<li><a href="horarios.php" title="Líneas">Líneas</a></li>
+			        	<li><a href="horarios.php" title="Corredores">Corredores</a></li>
+			        	<li><a href="horarios.php" title="Origen y destino">Origen y destino</a></li>
+        </ul>
+    </div>
+    
+    <div class="grid_17">
+    	<h2>Líneas</h2>
+        <ul>
+        	<li><a href="lineas.php?ordenacion=1" title="Ordenadas por medio">Ordenadas por medio</a></li>
+        	<li><a href="lineas.php?ordenacion=2" title="Ordenadas por nombre">Ordenadas por nombre</a></li>
+        </ul>
+    </div>
+    
+    <div class="grid_17"> 
+    	<h2>Puntos de venta</h2>
+        <ul>
+        	<li><a href="puntos_de_venta.php?ordenacion=0" title="Ordenados por tipo">Ordenados por tipo</a></li>
+        	<li><a href="puntos_de_venta.php?ordenacion=2" title="Ordenados por núcleo">Ordenados por núcleo</a></li>
+        	<li><a href="puntos_de_venta.php?ordenacion=1" title="Ordenados por municipio">Ordenados por municipio</a></li>
+        </ul>
+    </div>
+	
+	<div class="grid_17"> 
+    	<h2>Tarifas</h2>
+        <ul>
+			        	<li><a href="tarifa.php" title="Urbanas e interurbanas">Urbanas e interurbanas</a></li>
+			        	<li><a href="tarifas_simulador.php" title="Simulador de viajes">Simulador de viajes</a></li>
+			        	<li><a href="tarifas_saltos.php" title="Saltos">Saltos</a></li>
+			        </ul>
+    </div>
+    
+    <div class="grid_17 omega">
+    	<h2>Noticias</h2>
+        <ul>
+        	<li><a href="noticias.php?ordenacion=1" title="Ordenadas por categoría">Ordenadas por categoría</a></li>
+        	<li><a href="noticias.php" title="Ordenadas por fecha">Ordenadas por fecha</a></li>
+       </ul>
+    </div>
+ 
+	  
+ 		<div class="social_region">
+    	<p><span>También puede encontrarnos en: </span></p>
+		        <p><a href="http://www.facebook.com/cmtbc.es" target="_blank"><img src="../images/icons/facebook.png" alt="Facebook" /><span>Facebook</span></a></p>
+		    </div>
+	    
+		
+	
+	<div class="datos">
+
+    	<p><strong>Bahía de Cádiz:</strong> EDIFICIO GLORIETA, PLANTA 5ª, MÓDULOS 3 Y 4. ZONA FRANCA, 11011 - Cádiz, Cádiz</p>
+		<p>Teléfonos: 856100495           | Fax: 856582000 </p>
+    </div>
+    
+    <div class="estandares"><div>
+    <p>
+    <a href="rss.php" onclick="this.target='_blank'">
+        <img style="border:0;"
+            src="/images/rss.png"
+            alt="RSS" />
+    </a>
+  </p>
+    </div></div>
+</div></div>
+
+
+
+
+</div></body>
+
+</html>
+
