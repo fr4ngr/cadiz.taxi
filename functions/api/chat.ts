@@ -389,9 +389,12 @@ ${b.content}
                                     const renfeData = await renfeRes.json();
                                     let originId, destId;
                                     let originName = originStr, destName = destStr;
-                                    for (const [id, stop] of Object.entries(renfeData.stops)) {
-                                        if (stop.name.toLowerCase().includes(originStr.toLowerCase())) { originId = id; originName = stop.name; }
-                                        if (stop.name.toLowerCase().includes(destStr.toLowerCase())) { destId = id; destName = stop.name; }
+                                    
+                                    if (originStr && destStr) {
+                                        for (const [id, stop] of Object.entries(renfeData.stops)) {
+                                            if (stop.name.toLowerCase().includes(originStr.toLowerCase())) { originId = id; originName = stop.name; }
+                                            if (stop.name.toLowerCase().includes(destStr.toLowerCase())) { destId = id; destName = stop.name; }
+                                        }
                                     }
                                     
                                     if (originId && destId) {
