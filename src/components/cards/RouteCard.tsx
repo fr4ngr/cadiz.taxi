@@ -1,8 +1,11 @@
-import { h } from 'preact';
+import { h, Fragment } from 'preact';
+import { useState } from 'preact/hooks';
 import type { CardData } from './types';
 import { IconCar, IconBus, IconTrain, IconShip, IconTraffic } from '../Icons';
 
 export const RouteCard = ({ data }: { data: CardData }) => {
+    const [expandedOpt, setExpandedOpt] = useState<number | null>(null);
+
     if (!data.routeData) return null;
     const { origin, destination, options } = data.routeData;
 
@@ -67,14 +70,19 @@ export const RouteCard = ({ data }: { data: CardData }) => {
                     const isFastest = index === 0;
                     
                     return (
-                        <div key={index} style={{
+                        <div 
+                            key={index} 
+                            onClick={() => opt.details ? setExpandedOpt(expandedOpt === index ? null : index) : undefined}
+                            style={{
                             display: 'flex',
-                            alignItems: 'center',
+                            flexDirection: 'column',
                             padding: '12px',
                             background: isFastest ? 'var(--primary-color-light, rgba(59, 130, 246, 0.1))' : 'var(--bg-secondary)',
                             borderRadius: '12px',
-                            border: isFastest ? '1px solid var(--primary-color)' : '1px solid transparent'
+                            border: isFastest ? '1px solid var(--primary-color)' : '1px solid transparent',
+                            cursor: opt.details ? 'pointer' : 'default'
                         }}>
+                            <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                             {/* Icon */}
                             <div style={{ 
                                 width: '40px', 
@@ -130,6 +138,78 @@ export const RouteCard = ({ data }: { data: CardData }) => {
                                     )}
                                 </div>
                             </div>
+                            
+                            {/* Accordion Details */}
+                            {expandedOpt === index && opt.details && (
+                                <div style={{ 
+                                    marginTop: '16px', 
+                                    paddingTop: '16px', 
+                                    borderTop: '1px solid var(--border-color)',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: '16px'
+                                }}>
+                                    <div style={{ display: 'inline-block', background: 'var(--bg-color)', border: '1px solid var(--border-color)', borderRadius: '6px', padding: '4px 8px', fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)', alignSelf: 'flex-start' }}>
+                                        Línea: {opt.details.lineCode}
+                                    </div>
+
+                                    {/* Stops Timeline */}
+                                    <div style={{ paddingLeft: '8px' }}>
+                                        <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px', textTransform: 'uppercase' }}>Recorrido</div>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+                                            {opt.details.stops.map((stop, i) => (
+                                                <div key={i} style={{ display: 'flex', position: 'relative', paddingBottom: i === opt.details.stops.length - 1 ? '0' : '12px' }}>
+                                                    {i !== opt.details.stops.length - 1 && (
+                                                        <div style={{ position: 'absolute', left: '3px', top: '10px', bottom: '0', width: '2px', background: 'var(--border-color)' }} />
+                                                    )}
+                                                    <div style={{ 
+                                                        width: '8px', 
+                                                        height: '8px', 
+                                                        borderRadius: '50%', 
+                                                        background: stop.isOrigin || stop.isDest ? 'var(--primary-color)' : 'white', 
+                                                        border: '2px solid var(--primary-color)',
+                                                        marginTop: '4px',
+                                                        marginRight: '12px',
+                                                        zIndex: 1
+                                                    }} />
+                                                    <div style={{ 
+                                                        fontSize: '13px', 
+                                                        fontWeight: stop.isOrigin || stop.isDest ? 600 : 400,
+                                                        color: stop.isOrigin || stop.isDest ? 'var(--text-primary)' : 'var(--text-secondary)'
+                                                    }}>
+                                                        {stop.name}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Full Schedule Grid */}
+                                    <div>
+                                        <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px', textTransform: 'uppercase' }}>Horarios ({opt.details.schedules.length})</div>
+                                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(60px, 1fr))', gap: '8px' }}>
+                                            {opt.details.schedules.map((sched, i) => {
+                                                const isNext = opt.nextDeparture && sched.time === opt.nextDeparture;
+                                                return (
+                                                    <div key={i} style={{
+                                                        padding: '4px 0',
+                                                        textAlign: 'center',
+                                                        fontSize: '13px',
+                                                        fontWeight: isNext ? 600 : 400,
+                                                        borderRadius: '6px',
+                                                        background: isNext ? 'var(--success-color, #10b981)' : (sched.isPast ? 'var(--bg-color)' : 'var(--bg-secondary)'),
+                                                        color: isNext ? 'white' : (sched.isPast ? 'var(--text-secondary)' : 'var(--text-primary)'),
+                                                        border: sched.isPast ? '1px dashed var(--border-color)' : '1px solid transparent',
+                                                        textDecoration: sched.isPast ? 'line-through' : 'none'
+                                                    }}>
+                                                        {sched.time}
+                                                    </div>
+                                                )
+                                            })}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     );
                 })}

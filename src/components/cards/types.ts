@@ -51,12 +51,17 @@ export interface CardData {
         destination: string;
         options: Array<{
             mode: 'car' | 'bus' | 'train' | 'boat';
-            durationText: string; // ej. "35 min"
-            durationValue: number; // en segundos
-            distanceText?: string; // ej. "42 km"
-            trafficCondition?: 'good' | 'moderate' | 'heavy'; // solo para coche
-            nextDeparture?: string; // solo para transporte público
-            price?: string;
+            durationText: string; // e.g. "25 min"
+            durationValue: number; // in seconds
+            distanceText?: string; // e.g. "30 km"
+            nextDeparture?: string; // Next departure, e.g. "13:45"
+            nextDepartures?: string[]; // Upcoming departures
+            trafficCondition?: 'good' | 'moderate' | 'heavy';
+            details?: {
+                lineCode: string;
+                stops: Array<{ name: string; isOrigin?: boolean; isDest?: boolean }>;
+                schedules: Array<{ time: string; isPast: boolean }>;
+            };
         }>;
     };
     places?: any[];

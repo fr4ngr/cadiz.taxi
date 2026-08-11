@@ -394,7 +394,7 @@ ${b.content}
                                     }
                                     
                                     if (originId && destId) {
-                                        let upcoming = [];
+                                        let allDayTrips = [];
                                         const formatter = new Intl.DateTimeFormat("es-ES", { timeZone: "Europe/Madrid", hour: "2-digit", minute: "2-digit", hour12: false });
                                         const nowStr = formatter.format(new Date());
                                         const madridDate = new Date(new Date().toLocaleString("en-US", {timeZone: "Europe/Madrid"}));
@@ -407,12 +407,15 @@ ${b.content}
                                                 const dIdx = trip.st.findIndex(s => s[0] === destId);
                                                 if (oIdx !== -1 && dIdx !== -1 && oIdx < dIdx) {
                                                     const time = trip.st[oIdx][1];
-                                                    if (time >= nowStr) upcoming.push({ time, tripId: trip.t });
+                                                    allDayTrips.push({ time, trip, oIdx, dIdx });
                                                 }
                                             }
                                         }
                                         
-                                        upcoming.sort((a, b) => a.time.localeCompare(b.time));
+                                        allDayTrips.sort((a, b) => a.time.localeCompare(b.time));
+                                        
+                                        let upcoming = allDayTrips.filter(t => t.time >= nowStr);
+                                        
                                         const rtRes = await fetch("https://gtfsrt.renfe.com/trip_updates.json", { signal: AbortSignal.timeout(3000) }).catch(() => null);
                                         let rtData = null;
                                         if (rtRes && rtRes.ok) rtData = await rtRes.json();
@@ -425,7 +428,7 @@ ${b.content}
                                             let delay = null;
                                             let status = 'on_time';
                                             if (rtData && rtData.entity) {
-                                                const rtEntity = rtData.entity.find(e => e.id === 'TUUPDATE_' + u.tripId);
+                                                const rtEntity = rtData.entity.find(e => e.id === 'TUUPDATE_' + u.trip.t);
                                                 if (rtEntity && rtEntity.tripUpdate) {
                                                     if (rtEntity.tripUpdate.trip && rtEntity.tripUpdate.trip.scheduleRelationship === 'CANCELED') status = 'canceled';
                                                     if (rtEntity.tripUpdate.delay) {
@@ -442,7 +445,38 @@ ${b.content}
                                         }
                                         
                                         if (nextDeparture) {
-                                            transportRoutes.push({ mode: 'train', origin: originName, destination: destName, nextDeparture, upcomingDepartures, delay: nextDelay, status: nextStatus });
+                                            const firstTrip = allDayTrips[0];
+                                            let lineCode = 'Renfe';
+                                            if (firstTrip) {
+                                                const route = renfeData.routes[firstTrip.trip.r];
+                                                if (route) lineCode = route.short_name;
+                                            }
+                                            
+                                            const stops = [];
+                                            if (firstTrip) {
+                                                for (let i = firstTrip.oIdx; i <= firstTrip.dIdx; i++) {
+                                                    const stopId = firstTrip.trip.st[i][0];
+                                                    const stopInfo = renfeData.stops[stopId];
+                                                    if (stopInfo) {
+                                                        stops.push({
+                                                            name: stopInfo.name,
+                                                            isOrigin: i === firstTrip.oIdx,
+                                                            isDest: i === firstTrip.dIdx
+                                                        });
+                                                    }
+                                                }
+                                            }
+                                            
+                                            const schedules = allDayTrips.map(t => ({
+                                                time: t.time,
+                                                isPast: t.time < nowStr
+                                            }));
+
+                                            transportRoutes.push({ 
+                                                mode: 'train', origin: originName, destination: destName, 
+                                                nextDeparture, upcomingDepartures, delay: nextDelay, status: nextStatus,
+                                                details: { lineCode, stops, schedules }
+                                            });
                                         }
                                     }
                                 }
@@ -454,23 +488,47 @@ ${b.content}
 
                     if (destinationsToSearch.length > 0) {
                         for (const item of destinationsToSearch) {
-                            const cacheKey = `transport_${item.consorcioId}_${item.idParada}`;
+                            const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Madrid" }).format(new Date());
+                            const cacheKey = `transport_${item.consorcioId}_${item.idParada}_${today}`;
                             const cacheResult = await env.DB.prepare('SELECT value, updated_at FROM system_cache WHERE key = ?').bind(cacheKey).first();
                             
-                            let servicios = null;
+                            let servicios = [];
+                            let shouldFetch = true;
                             if (cacheResult && cacheResult.value) {
                                 servicios = JSON.parse(cacheResult.value);
-                            } else {
-                                const res = await fetch(`http://api.ctan.es/v1/Consorcios/${item.consorcioId}/paradas/${item.idParada}/servicios`, { signal: AbortSignal.timeout(4000) }).catch(() => null);
-                                if (res && res.ok) {
-                                    const json = await res.json();
-                                    if (json && json.servicios) {
-                                        servicios = json.servicios;
-                                        context.waitUntil(env.DB.prepare(`
-                                            INSERT INTO system_cache (key, value) VALUES (?, ?)
-                                            ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP
-                                        `).bind(cacheKey, JSON.stringify(servicios)).run());
-                                    }
+                                const updatedTime = new Date(cacheResult.updated_at + "Z").getTime();
+                                if (Date.now() - updatedTime < 60000) {
+                                    shouldFetch = false; // Fresh enough (< 1 min)
+                                }
+                            }
+                            
+                            if (shouldFetch) {
+                                const fetchPromise = fetch(`http://api.ctan.es/v1/Consorcios/${item.consorcioId}/paradas/${item.idParada}/servicios`, { signal: AbortSignal.timeout(4000) })
+                                    .then(res => res.ok ? res.json() : null)
+                                    .then(json => {
+                                        if (json && json.servicios) {
+                                            const newServicios = json.servicios;
+                                            const merged = [...servicios];
+                                            for (const s of newServicios) {
+                                                if (!merged.find(m => m.idLinea === s.idLinea && m.servicio === s.servicio && m.destino === s.destino)) {
+                                                    merged.push(s);
+                                                }
+                                            }
+                                            merged.sort((a, b) => a.servicio.localeCompare(b.servicio));
+                                            
+                                            return env.DB.prepare(`
+                                                INSERT INTO system_cache (key, value) VALUES (?, ?)
+                                                ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP
+                                            `).bind(cacheKey, JSON.stringify(merged)).run();
+                                        }
+                                    }).catch(e => console.error("Error fetching consorcio", e));
+                                
+                                if (servicios.length === 0) {
+                                    await fetchPromise;
+                                    const newCache = await env.DB.prepare('SELECT value FROM system_cache WHERE key = ?').bind(cacheKey).first();
+                                    if (newCache && newCache.value) servicios = JSON.parse(newCache.value);
+                                } else {
+                                    context.waitUntil(fetchPromise);
                                 }
                             }
                             
@@ -482,22 +540,66 @@ ${b.content}
                                     hour12: false
                                 });
                                 const nowMadrid = formatter.format(new Date()).trim();
-                                let upcoming = servicios.filter(s => s.servicio && s.servicio >= nowMadrid);
+                                let filteredServicios = servicios;
                                 if (item.targetDestino) {
-                                    upcoming = upcoming.filter(s => s.destino && s.destino.toLowerCase().includes(item.targetDestino.toLowerCase()));
+                                    filteredServicios = servicios.filter(s => s.destino && s.destino.toLowerCase().includes(item.targetDestino.toLowerCase()));
                                 }
                                 
+                                let upcoming = filteredServicios.filter(s => s.servicio && s.servicio >= nowMadrid);
                                 const nextDeparture = upcoming.length > 0 ? upcoming[0].servicio : null;
                                 const upcomingDepartures = upcoming.slice(1, 4).map(s => s.servicio);
                                 
-                                const originName = item.idParada === 300 ? 'Cádiz' : (item.idParada === 193 ? 'Cádiz (Terminal)' : (item.idParada === 1 ? 'Algeciras' : `Parada ${item.idParada}`));
+                                const originName = item.idParada === 300 || item.idParada === 14 ? 'Cádiz' : (item.idParada === 193 ? 'Cádiz (Terminal)' : (item.idParada === 1 ? 'Algeciras' : `Parada ${item.idParada}`));
+                                
+                                let lineCode = item.route.startsWith('catamaran') ? 'Catamarán' : 'Autobús';
+                                let stops = [];
+                                let schedules = [];
+                                
+                                if (filteredServicios.length > 0) {
+                                    lineCode = filteredServicios[0].linea || lineCode;
+                                    const idLinea = filteredServicios[0].idLinea;
+                                    const sentido = filteredServicios[0].sentido;
+                                    
+                                    if (idLinea && sentido) {
+                                        const stopsCacheKey = `stops_${item.consorcioId}_${idLinea}_${sentido}`;
+                                        const stopsCache = await env.DB.prepare('SELECT value FROM system_cache WHERE key = ?').bind(stopsCacheKey).first();
+                                        
+                                        if (stopsCache && stopsCache.value) {
+                                            stops = JSON.parse(stopsCache.value);
+                                        } else {
+                                            const stopsRes = await fetch(`http://api.ctan.es/v1/Consorcios/${item.consorcioId}/lineas/${idLinea}/paradas`).catch(() => null);
+                                            if (stopsRes && stopsRes.ok) {
+                                                const stopsJson = await stopsRes.json();
+                                                if (stopsJson && stopsJson.paradas) {
+                                                    const lineStops = stopsJson.paradas.filter(p => p.sentido === sentido).sort((a, b) => parseInt(a.orden) - parseInt(b.orden));
+                                                    const originIdx = lineStops.findIndex(p => p.idParada === item.idParada.toString() || p.idParada === item.idParada);
+                                                    const sliced = originIdx !== -1 ? lineStops.slice(originIdx) : lineStops;
+                                                    
+                                                    stops = sliced.map((p, idx) => ({
+                                                        name: p.nombre,
+                                                        isOrigin: idx === 0,
+                                                        isDest: idx === sliced.length - 1
+                                                    }));
+                                                    
+                                                    context.waitUntil(env.DB.prepare('INSERT INTO system_cache (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').bind(stopsCacheKey, JSON.stringify(stops)).run());
+                                                }
+                                            }
+                                        }
+                                    }
+                                    
+                                    schedules = filteredServicios.map(s => ({
+                                        time: s.servicio,
+                                        isPast: s.servicio < nowMadrid
+                                    }));
+                                }
                                 
                                 transportRoutes.push({
                                     mode: item.route.startsWith('catamaran') ? 'boat' : 'bus',
                                     origin: originName,
                                     destination: item.targetDestino,
                                     nextDeparture,
-                                    upcomingDepartures
+                                    upcomingDepartures,
+                                    details: { lineCode, stops, schedules }
                                 });
                             }
                         }
