@@ -308,7 +308,7 @@ ${b.content}
         // ----------------------------------------------------
         const msgLower = userMessage.toLowerCase().trim();
         const isTransportQuery = msgLower.includes('bus') || msgLower.includes('autobús') || msgLower.includes('autobuses') || msgLower.includes('catamaran') || msgLower.includes('catamarán') || msgLower.includes('barco') || msgLower.includes('barquito') || msgLower.includes('horario') || msgLower.includes('salidas') || msgLower.includes('líneas') || msgLower.includes('lineas') || msgLower.includes('tren') || msgLower.includes('renfe') || msgLower.includes('cercan') || msgLower.includes('trambahia') || msgLower.includes('trambahía');
-        const isRoutingQuery = msgLower.includes('como ir') || msgLower.includes('cómo ir') || msgLower.includes('ruta') || msgLower.includes('alternativa');
+        const isRoutingQuery = msgLower.includes('como ir') || msgLower.includes('cómo ir') || msgLower.includes('ruta') || msgLower.includes('alternativa') || msgLower.includes('como voy') || msgLower.includes('cómo voy') || msgLower.includes('como llegar') || msgLower.includes('cómo llegar');
         const isBeachQuery = msgLower.includes('playa') || msgLower.includes('caleta') || msgLower.includes('victoria') || msgLower.includes('cortadura') || msgLower.includes('santa maría') || msgLower.includes('oleaje') || msgLower.includes('olas');
 
         if (isTransportQuery || isRoutingQuery || isBeachQuery) {
