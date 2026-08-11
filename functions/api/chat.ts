@@ -644,7 +644,8 @@ ${b.content}
                                     
                                     schedules = filteredServicios.map(s => ({
                                         time: s.servicio,
-                                        isPast: s.servicio < nowMadrid
+                                        isPast: s.servicio < nowMadrid,
+                                        lineCode: s.linea || lineCode
                                     }));
                                 }
                                 

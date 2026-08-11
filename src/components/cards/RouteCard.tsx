@@ -78,7 +78,7 @@ export const RouteCard = ({ data }: { data: CardData }) => {
                     
                     let activeSched = null;
                     let activeIndex = -1;
-                    if (opt.mode === 'train' && opt.details?.schedules?.length > 0) {
+                    if (opt.details?.schedules?.length > 0) {
                         activeIndex = selectedSchedules[index] ?? opt.details.schedules.findIndex((s: any) => s.time === opt.nextDeparture);
                         if (activeIndex < 0) activeIndex = 0;
                         activeSched = opt.details.schedules[activeIndex];
@@ -160,8 +160,8 @@ export const RouteCard = ({ data }: { data: CardData }) => {
                             </div>
                             </div>
                             
-                            {/* Train Accordion Details */}
-                            {expandedOpt === index && opt.details && opt.mode === 'train' && (
+                            {/* Transit Accordion Details */}
+                            {expandedOpt === index && opt.details && (
                                 <div style={{ 
                                     marginTop: '16px', 
                                     paddingTop: '16px', 
@@ -292,19 +292,6 @@ export const RouteCard = ({ data }: { data: CardData }) => {
                                             }, 100);
                                         `}} />
                                     )}
-                                </div>
-                            )}
-
-                            {/* Bus Accordion Details (Placeholder para no romper el tren) */}
-                            {expandedOpt === index && opt.details && opt.mode === 'bus' && (
-                                <div style={{ 
-                                    marginTop: '16px', 
-                                    paddingTop: '16px', 
-                                    borderTop: '1px solid var(--border-color)',
-                                    fontSize: '13px',
-                                    color: 'var(--text-secondary)'
-                                }}>
-                                    Información de autobuses próximamente...
                                 </div>
                             )}
                         </div>
