@@ -333,7 +333,7 @@ ${b.content}
 
                     const transportRoutes = [];
 
-                    if (msgLower.includes('tren') || msgLower.includes('renfe') || msgLower.includes('cercan') || msgLower.includes('trambahia') || msgLower.includes('trambahía')) {
+                    if (isRoutingQuery || msgLower.includes('tren') || msgLower.includes('renfe') || msgLower.includes('cercan') || msgLower.includes('trambahia') || msgLower.includes('trambahía')) {
                         let originStr = 'cádiz';
                         let destStr = 'jerez';
                         if (msgLower.includes('san fernando') || msgLower.includes('isla')) destStr = 'san fernando-bahía sur';
