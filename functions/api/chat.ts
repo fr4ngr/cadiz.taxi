@@ -476,7 +476,7 @@ ${b.content}
                             suggestedBlocks: ['¿Qué tiempo hace en La Caleta?', 'Ver paradas en el mapa', '¿Cómo ir a San Fernando?']
                         };
 
-                        if (isRoutingQuery && env.GOOGLE_MAPS_API_KEY) {
+                        if (isRoutingQuery) {
                             // Convert transit routes to route options
                             const options = transportRoutes.map(tr => ({
                                 mode: tr.mode,
@@ -486,46 +486,49 @@ ${b.content}
                                 price: tr.mode === 'train' ? '4.10€' : '2.50€'
                             }));
 
-                            // Fetch car route
                             const target = transportRoutes[0].destination;
-                            const originStr = "Cádiz, Spain";
-                            const destStr = `${target}, Cádiz, Spain`;
 
-                            try {
-                                const googleRes = await fetch('https://routes.googleapis.com/directions/v2:computeRoutes', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        'X-Goog-Api-Key': env.GOOGLE_MAPS_API_KEY,
-                                        'X-Goog-FieldMask': 'routes.duration,routes.distanceMeters'
-                                    },
-                                    body: JSON.stringify({
-                                        origin: { address: originStr },
-                                        destination: { address: destStr },
-                                        travelMode: 'DRIVE',
-                                        routingPreference: 'TRAFFIC_AWARE',
-                                        computeAlternativeRoutes: false
-                                    })
-                                });
+                            if (env.GOOGLE_MAPS_API_KEY) {
+                                // Fetch car route
+                                const originStr = "Cádiz, Spain";
+                                const destStr = `${target}, Cádiz, Spain`;
 
-                                if (googleRes.ok) {
-                                    const googleData = await googleRes.json();
-                                    if (googleData.routes && googleData.routes.length > 0) {
-                                        const route = googleData.routes[0];
-                                        const durSecs = parseInt(route.duration.replace('s', ''));
-                                        const distKm = (route.distanceMeters / 1000).toFixed(1);
-                                        
-                                        options.push({
-                                            mode: 'car',
-                                            durationText: `${Math.round(durSecs / 60)} min`,
-                                            durationValue: durSecs,
-                                            distanceText: `${distKm} km`,
-                                            trafficCondition: durSecs > 3000 ? 'heavy' : (durSecs > 2100 ? 'moderate' : 'good')
-                                        });
+                                try {
+                                    const googleRes = await fetch('https://routes.googleapis.com/directions/v2:computeRoutes', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-Goog-Api-Key': env.GOOGLE_MAPS_API_KEY,
+                                            'X-Goog-FieldMask': 'routes.duration,routes.distanceMeters'
+                                        },
+                                        body: JSON.stringify({
+                                            origin: { address: originStr },
+                                            destination: { address: destStr },
+                                            travelMode: 'DRIVE',
+                                            routingPreference: 'TRAFFIC_AWARE',
+                                            computeAlternativeRoutes: false
+                                        })
+                                    });
+
+                                    if (googleRes.ok) {
+                                        const googleData = await googleRes.json();
+                                        if (googleData.routes && googleData.routes.length > 0) {
+                                            const route = googleData.routes[0];
+                                            const durSecs = parseInt(route.duration.replace('s', ''));
+                                            const distKm = (route.distanceMeters / 1000).toFixed(1);
+                                            
+                                            options.push({
+                                                mode: 'car',
+                                                durationText: `${Math.round(durSecs / 60)} min`,
+                                                durationValue: durSecs,
+                                                distanceText: `${distKm} km`,
+                                                trafficCondition: durSecs > 3000 ? 'heavy' : (durSecs > 2100 ? 'moderate' : 'good')
+                                            });
+                                        }
                                     }
+                                } catch(e) {
+                                    console.error("Error fetching Google Maps:", e);
                                 }
-                            } catch(e) {
-                                console.error("Error fetching Google Maps:", e);
                             }
 
                             parsedData.routeData = {
