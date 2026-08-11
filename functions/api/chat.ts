@@ -322,7 +322,7 @@ ${b.content}
                     const towns = [
                         { name: 'Cádiz', keywords: ['cádiz', 'cadiz'], busId: 14, consorcioId: 2, trainName: 'cádiz' },
                         { name: 'Aeropuerto de Jerez', keywords: ['aeropuerto de jerez', 'aeropuerto'], busId: null, consorcioId: 2, trainName: 'aeropuerto de jerez' },
-                        { name: 'Jerez', keywords: ['jerez'], busId: 161, consorcioId: 2, trainName: 'jerez' },
+                        { name: 'Jerez', keywords: ['jerez'], busId: 161, consorcioId: 2, trainName: 'jerez de la frontera' },
                         { name: 'San Fernando', keywords: ['san fernando', 'la isla'], busId: 47, consorcioId: 2, trainName: 'san fernando-bahía sur' },
                         { name: 'El Puerto de Santa María', keywords: ['puerto de santa maría', 'el puerto', 'pto de sta maria', 'pto de santa maria'], busId: 125, consorcioId: 2, trainName: 'puerto de santa maría' },
                         { name: 'Puerto Real', keywords: ['puerto real'], busId: 86, consorcioId: 2, trainName: 'puerto real' },
@@ -392,8 +392,8 @@ ${b.content}
                                     
                                     if (originStr && destStr) {
                                         for (const [id, stop] of Object.entries(renfeData.stops)) {
-                                            if (stop.name && stop.name.toLowerCase().includes((originStr || "").toLowerCase())) { originId = id; originName = stop.name; }
-                                            if (stop.name && stop.name.toLowerCase().includes((destStr || "").toLowerCase())) { destId = id; destName = stop.name; }
+                                            if (stop.name && stop.name.toLowerCase() === (originStr || "").toLowerCase()) { originId = id; originName = stop.name; }
+                                            if (stop.name && stop.name.toLowerCase() === (destStr || "").toLowerCase()) { destId = id; destName = stop.name; }
                                         }
                                     }
                                     
