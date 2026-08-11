@@ -35,11 +35,16 @@ export const RouteCard = ({ data }: { data: CardData }) => {
         }
     };
     
-    const getModeLabel = (mode: string) => {
-        switch (mode) {
+    const getModeLabel = (opt: any) => {
+        switch (opt.mode) {
             case 'car': return 'Coche';
             case 'bus': return 'Autobús';
-            case 'train': return 'Tren';
+            case 'train': 
+                if (opt.details?.lineCode) {
+                    if (opt.details.lineCode === 'MD') return 'Tren Media Distancia';
+                    return `Tren ${opt.details.lineCode}`;
+                }
+                return 'Tren';
             case 'boat': return 'Catamarán';
             default: return 'Transporte';
         }
@@ -102,7 +107,7 @@ export const RouteCard = ({ data }: { data: CardData }) => {
                             <div style={{ flex: 1 }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
                                     <span style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '15px' }}>
-                                        {getModeLabel(opt.mode)}
+                                        {getModeLabel(opt)}
                                     </span>
                                     {isFastest && (
                                         <span style={{ 

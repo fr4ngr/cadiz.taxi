@@ -56,12 +56,13 @@ export const IconAlert = ({ size = 20, color = 'currentColor' }) => (
 
 export const IconBus = ({ size = 20, color = 'currentColor' }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M4 6c0-2.2 1.8-4 4-4h8c2.2 0 4 1.8 4 4v10c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2V6z"></path>
-    <path d="M4 10h16"></path>
-    <path d="M7 22v-4"></path>
-    <path d="M17 22v-4"></path>
-    <circle cx="8" cy="15" r="1.5"></circle>
-    <circle cx="16" cy="15" r="1.5"></circle>
+    <path d="M8 6v6"/>
+    <path d="M15 6v6"/>
+    <path d="M2 12h19.6"/>
+    <path d="M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3"/>
+    <circle cx="7" cy="18" r="2"/>
+    <path d="M9 18h5"/>
+    <circle cx="16" cy="18" r="2"/>
   </svg>
 );
 
