@@ -541,127 +541,117 @@ ${b.content}
                         }
                     }
 
-                    if (destinationsToSearch.length > 0) {
-                        for (const item of destinationsToSearch) {
-                            const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Madrid" }).format(new Date());
-                            const cacheKey = `transport_${item.consorcioId}_${item.idParada}_${today}`;
-                            const cacheResult = await env.DB.prepare('SELECT value, updated_at FROM system_cache WHERE key = ?').bind(cacheKey).first();
-                            
-                            let servicios = [];
-                            let shouldFetch = true;
-                            if (cacheResult && cacheResult.value) {
-                                servicios = JSON.parse(cacheResult.value);
-                                const updatedTime = new Date(cacheResult.updated_at + "Z").getTime();
-                                if (Date.now() - updatedTime < 60000) {
-                                    shouldFetch = false; // Fresh enough (< 1 min)
-                                }
-                            }
-                            
-                            if (shouldFetch) {
-                                const fetchPromise = fetch(`http://api.ctan.es/v1/Consorcios/${item.consorcioId}/paradas/${item.idParada}/servicios`, { signal: AbortSignal.timeout(4000) })
-                                    .then(res => res.ok ? res.json() : null)
-                                    .then(json => {
-                                        if (json && json.servicios) {
-                                            const newServicios = json.servicios;
-                                            const merged = [...servicios];
-                                            for (const s of newServicios) {
-                                                if (!merged.find(m => m.idLinea === s.idLinea && m.servicio === s.servicio && m.destino === s.destino)) {
-                                                    merged.push(s);
-                                                }
-                                            }
-                                            merged.sort((a, b) => a.servicio.localeCompare(b.servicio));
-                                            
-                                            return env.DB.prepare(`
-                                                INSERT INTO system_cache (key, value) VALUES (?, ?)
-                                                ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP
-                                            `).bind(cacheKey, JSON.stringify(merged)).run();
-                                        }
-                                    }).catch(e => console.error("Error fetching consorcio", e));
+                    // BUS & CATAMARAN GTFS-like LOGIC
+                    if (env.ASSETS && originTown && destTown && originTown.name !== destTown.name) {
+                        try {
+                            const busReq = new Request(new URL('/data/bus_cadiz.json', request.url));
+                            const busRes = await env.ASSETS.fetch(busReq);
+                            if (busRes.ok) {
+                                const busData = await busRes.json();
+                                const formatter = new Intl.DateTimeFormat("es-ES", { timeZone: "Europe/Madrid", hour: "2-digit", minute: "2-digit", hour12: false });
+                                const nowStr = formatter.format(new Date());
+                                const madridDate = new Date(new Date().toLocaleString("en-US", {timeZone: "Europe/Madrid"}));
+                                const dayOfWeek = madridDate.getDay(); // 0 is Sunday
+                                const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
                                 
-                                if (servicios.length === 0) {
-                                    await fetchPromise;
-                                    const newCache = await env.DB.prepare('SELECT value FROM system_cache WHERE key = ?').bind(cacheKey).first();
-                                    if (newCache && newCache.value) servicios = JSON.parse(newCache.value);
-                                } else {
-                                    context.waitUntil(fetchPromise);
-                                }
-                            }
-                            
-                            if (servicios) {
-                                const formatter = new Intl.DateTimeFormat("es-ES", {
-                                    timeZone: "Europe/Madrid",
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                    hour12: false
-                                });
-                                const nowMadrid = formatter.format(new Date()).trim();
-                                let filteredServicios = servicios;
-                                if (item.targetDestino) {
-                                    filteredServicios = servicios.filter(s => s.destino && s.destino.toLowerCase().includes((item.targetDestino || "").toLowerCase()));
-                                }
+                                const originStr = originTown.name.toLowerCase();
+                                const destStr = destTown.name.toLowerCase();
                                 
-                                let upcoming = filteredServicios.filter(s => s.servicio && s.servicio >= nowMadrid);
-                                const nextDeparture = upcoming.length > 0 ? upcoming[0].servicio : null;
-                                const upcomingDepartures = upcoming.slice(1, 4).map(s => s.servicio);
-                                
-                                const originName = item.originName || (item.idParada === 300 || item.idParada === 14 ? 'Cádiz' : (item.idParada === 193 ? 'Cádiz (Terminal)' : (item.idParada === 1 ? 'Algeciras' : `Parada ${item.idParada}`)));
-                                
-                                let lineCode = item.route.startsWith('catamaran') ? 'Catamarán' : 'Autobús';
-                                let stops = [];
-                                let schedules = [];
-                                
-                                if (filteredServicios.length > 0) {
-                                    lineCode = filteredServicios[0].linea || lineCode;
-                                    const idLinea = filteredServicios[0].idLinea;
-                                    const sentido = filteredServicios[0].sentido;
+                                for (const [id, ruta] of Object.entries(busData.rutas)) {
+                                    const lineaInfo = busData.lineas[id];
+                                    if (!lineaInfo) continue;
                                     
-                                    if (idLinea && sentido) {
-                                        const stopsCacheKey = `stops_${item.consorcioId}_${idLinea}_${sentido}`;
-                                        const stopsCache = await env.DB.prepare('SELECT value FROM system_cache WHERE key = ?').bind(stopsCacheKey).first();
+                                    const processDirection = (nucleos, bloques, horarios, isVuelta) => {
+                                        const originIdx = nucleos.findIndex(n => n.toLowerCase().includes(originStr) || originStr.includes(n.toLowerCase()));
+                                        const destIdx = nucleos.findIndex(n => n.toLowerCase().includes(destStr) || destStr.includes(n.toLowerCase()));
                                         
-                                        if (stopsCache && stopsCache.value) {
-                                            stops = JSON.parse(stopsCache.value);
-                                        } else {
-                                            const stopsRes = await fetch(`http://api.ctan.es/v1/Consorcios/${item.consorcioId}/lineas/${idLinea}/paradas`).catch(() => null);
-                                            if (stopsRes && stopsRes.ok) {
-                                                const stopsJson = await stopsRes.json();
-                                                if (stopsJson && stopsJson.paradas) {
-                                                    const lineStops = stopsJson.paradas.filter(p => p.sentido === sentido).sort((a, b) => parseInt(a.orden) - parseInt(b.orden));
-                                                    const originIdx = lineStops.findIndex(p => p.idParada === item.idParada.toString() || p.idParada === item.idParada);
-                                                    const sliced = originIdx !== -1 ? lineStops.slice(originIdx) : lineStops;
+                                        if (originIdx !== -1 && destIdx !== -1 && originIdx < destIdx) {
+                                            let validTrips = horarios.filter(h => {
+                                                if (!h.frecuencia) return true;
+                                                const f = h.frecuencia.toUpperCase();
+                                                if (f.includes('S-D-F') && !isWeekend) return false;
+                                                if (f.includes('L-V') && isWeekend) return false;
+                                                return true;
+                                            });
+                                            
+                                            if (validTrips.length > 0) {
+                                                let schedules = [];
+                                                for (const trip of validTrips) {
+                                                    const validTimes = trip.horas.filter(t => t && t.trim() !== '' && t !== '-');
+                                                    if (validTimes.length >= 2) {
+                                                        const depTime = validTimes[0];
+                                                        const arrTime = validTimes[validTimes.length - 1];
+                                                        if (depTime && arrTime) {
+                                                            schedules.push({
+                                                                time: depTime,
+                                                                isPast: depTime < nowStr,
+                                                                lineCode: lineaInfo.codigo,
+                                                                fullLineCode: lineaInfo.nombre,
+                                                                durationText: '-',
+                                                                stops: [
+                                                                    { name: originTown.name, isOrigin: true, isDest: false },
+                                                                    { name: destTown.name, isOrigin: false, isDest: true }
+                                                                ]
+                                                            });
+                                                        }
+                                                    }
+                                                }
+                                                
+                                                if (schedules.length > 0) {
+                                                    schedules.sort((a,b) => a.time.localeCompare(b.time));
+                                                    // Map duration for the first one if possible
+                                                    for (let s of schedules) {
+                                                        try {
+                                                            const tOrigin = s.time;
+                                                            const tDest = validTrips.find(t=>t.horas.includes(tOrigin)).horas.slice(-1)[0] || tOrigin;
+                                                            if (tOrigin !== tDest) {
+                                                                const [oH, oM] = tOrigin.split(':').map(Number);
+                                                                const [dH, dM] = tDest.split(':').map(Number);
+                                                                let mins = (dH * 60 + dM) - (oH * 60 + oM);
+                                                                if (mins < 0) mins += 24 * 60;
+                                                                if (mins >= 60) {
+                                                                    s.durationText = `${Math.floor(mins/60)} h ${mins%60} min`;
+                                                                } else {
+                                                                    s.durationText = `${mins} min`;
+                                                                }
+                                                            }
+                                                        } catch(e) {}
+                                                    }
                                                     
-                                                    stops = sliced.map((p, idx) => ({
-                                                        name: p.nombre,
-                                                        isOrigin: idx === 0,
-                                                        isDest: idx === sliced.length - 1
-                                                    }));
+                                                    const upcoming = schedules.filter(s => !s.isPast);
+                                                    const nextDeparture = upcoming.length > 0 ? upcoming[0].time : null;
+                                                    const upcomingDepartures = upcoming.slice(1, 4).map(s => s.time);
                                                     
-                                                    context.waitUntil(env.DB.prepare('INSERT INTO system_cache (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').bind(stopsCacheKey, JSON.stringify(stops)).run());
+                                                    const isBoat = lineaInfo.codigo.startsWith('B-');
+                                                    
+                                                    transportRoutes.push({
+                                                        mode: isBoat ? 'boat' : 'bus',
+                                                        origin: originTown.name,
+                                                        destination: destTown.name,
+                                                        nextDeparture,
+                                                        upcomingDepartures,
+                                                        details: { 
+                                                            lineCode: lineaInfo.codigo,
+                                                            stops: [
+                                                                { name: originTown.name, isOrigin: true, isDest: false },
+                                                                { name: destTown.name, isOrigin: false, isDest: true }
+                                                            ],
+                                                            schedules
+                                                        }
+                                                    });
                                                 }
                                             }
                                         }
-                                    }
+                                    };
                                     
-                                    schedules = filteredServicios.map(s => ({
-                                        time: s.servicio,
-                                        isPast: s.servicio < nowMadrid,
-                                        lineCode: s.linea || lineCode
-                                    }));
+                                    processDirection(ruta.nucleosIda || [], ruta.bloquesIda || [], ruta.horarioIda || [], false);
+                                    processDirection(ruta.nucleosVuelta || [], ruta.bloquesVuelta || [], ruta.horarioVuelta || [], true);
                                 }
-                                
-                                transportRoutes.push({
-                                    mode: item.route.startsWith('catamaran') ? 'boat' : 'bus',
-                                    origin: originName,
-                                    destination: item.targetDestino,
-                                    nextDeparture,
-                                    upcomingDepartures,
-                                    details: { lineCode, stops, schedules }
-                                });
                             }
+                        } catch(e) {
+                            console.error("Error loading bus JSON", e);
                         }
-                    }
-
-                    if (transportRoutes.length > 0) {
+                    }\n\n                    if (transportRoutes.length > 0) {
                         let finalCardType = isRoutingQuery ? 'RouteCard' : 'TransportCard';
                         let finalContent = `He consultado los horarios en tiempo real. Aquí tienes las próximas salidas disponibles:`;
                         
