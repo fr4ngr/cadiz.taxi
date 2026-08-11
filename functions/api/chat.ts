@@ -151,7 +151,7 @@ ${b.content}
                 contextStr += `- Proveedor (ASN): ${clientContext.geo.asn || 'Desconocido'}\n`;
             }
             if (clientContext.userAgent) {
-                const ua = clientContext.userAgent.toLowerCase();
+                const ua = (clientContext.userAgent || "").toLowerCase();
                 const device = ua.includes('mobile') ? 'Móvil' : 'Escritorio';
                 const os = ua.includes('iphone') || ua.includes('mac') ? 'Apple/iOS' : ua.includes('windows') ? 'Windows' : ua.includes('android') ? 'Android' : 'Otro';
                 contextStr += `- Dispositivo: ${device} (${os})\n`;
@@ -392,8 +392,8 @@ ${b.content}
                                     
                                     if (originStr && destStr) {
                                         for (const [id, stop] of Object.entries(renfeData.stops)) {
-                                            if (stop.name.toLowerCase().includes(originStr.toLowerCase())) { originId = id; originName = stop.name; }
-                                            if (stop.name.toLowerCase().includes(destStr.toLowerCase())) { destId = id; destName = stop.name; }
+                                            if (stop.name && stop.name.toLowerCase().includes((originStr || "").toLowerCase())) { originId = id; originName = stop.name; }
+                                            if (stop.name && stop.name.toLowerCase().includes((destStr || "").toLowerCase())) { destId = id; destName = stop.name; }
                                         }
                                     }
                                     
@@ -551,7 +551,7 @@ ${b.content}
                                 const nowMadrid = formatter.format(new Date()).trim();
                                 let filteredServicios = servicios;
                                 if (item.targetDestino) {
-                                    filteredServicios = servicios.filter(s => s.destino && s.destino.toLowerCase().includes(item.targetDestino.toLowerCase()));
+                                    filteredServicios = servicios.filter(s => s.destino && s.destino.toLowerCase().includes((item.targetDestino || "").toLowerCase()));
                                 }
                                 
                                 let upcoming = filteredServicios.filter(s => s.servicio && s.servicio >= nowMadrid);
@@ -878,7 +878,7 @@ ${b.content}
                                 let upcoming = servicios.filter(s => s.servicio && s.servicio >= nowMadrid);
                                 
                                 if (targetDestino) {
-                                    upcoming = upcoming.filter(s => s.destino && s.destino.toLowerCase().includes(targetDestino.toLowerCase()));
+                                    upcoming = upcoming.filter(s => s.destino && s.destino.toLowerCase().includes((targetDestino || "").toLowerCase()));
                                 }
                                 
                                 toolResponseData = {
