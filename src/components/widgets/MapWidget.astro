@@ -56,7 +56,7 @@
     </div>
 
     <!-- Filtros Container (Top) -->
-    <div id="map-filters-pills" style="position: absolute; top: 84px; left: 50%; z-index: 1001; transform: translateX(-50%) translateY(-20px); width: calc(100% - 32px); display: flex; justify-content: center; gap: 8px; opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); flex-wrap: wrap;">
+    <div id="map-filters-pills" style="position: absolute; top: 84px; left: 50%; z-index: 1001; width: calc(100% - 32px); display: flex; justify-content: center; gap: 8px; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); flex-wrap: wrap;">
         <button class="filter-pill active" onclick="window.selectMapLayer('popular')">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
             Popular
@@ -199,6 +199,11 @@
     .radial-menu-wrapper.open .radial-pill-item:nth-child(2) { transition-delay: 0.1s; }
     .radial-menu-wrapper.open .radial-pill-item:nth-child(3) { transition-delay: 0.15s; }
 
+    #map-filters-pills {
+        opacity: 0;
+        pointer-events: none;
+        transform: translateX(-50%) translateY(-20px);
+    }
     #map-filters-pills.open {
         opacity: 1;
         pointer-events: auto;
