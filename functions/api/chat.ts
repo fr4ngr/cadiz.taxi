@@ -568,6 +568,7 @@ ${b.content}
                                 
                                 const originStr = originTown.name.toLowerCase();
                                 const destStr = destTown.name.toLowerCase();
+                                const groupedRoutes = {};
                                 
                                 for (const [id, ruta] of Object.entries(busData.rutas)) {
                                     const lineaInfo = busData.lineas[id];
@@ -630,27 +631,14 @@ ${b.content}
                                                         } catch(e) {}
                                                     }
                                                     
-                                                    const upcoming = schedules.filter(s => !s.isPast);
-                                                    const nextDeparture = upcoming.length > 0 ? upcoming[0].time : null;
-                                                    const upcomingDepartures = upcoming.slice(1, 4).map(s => s.time);
-                                                    
                                                     const isBoat = lineaInfo.codigo.startsWith('B-');
+                                                    const isTram = lineaInfo.codigo.startsWith('T-');
+                                                    const mode = isBoat ? 'boat' : (isTram ? 'train' : 'bus');
                                                     
-                                                    transportRoutes.push({
-                                                        mode: isBoat ? 'boat' : 'bus',
-                                                        origin: originTown.name,
-                                                        destination: destTown.name,
-                                                        nextDeparture,
-                                                        upcomingDepartures,
-                                                        details: { 
-                                                            lineCode: lineaInfo.codigo,
-                                                            stops: [
-                                                                { name: originTown.name, isOrigin: true, isDest: false },
-                                                                { name: destTown.name, isOrigin: false, isDest: true }
-                                                            ],
-                                                            schedules
-                                                        }
-                                                    });
+                                                    if (!groupedRoutes[mode]) {
+                                                        groupedRoutes[mode] = [];
+                                                    }
+                                                    groupedRoutes[mode].push(...schedules);
                                                 }
                                             }
                                         }
@@ -658,6 +646,44 @@ ${b.content}
                                     
                                     processDirection(ruta.nucleosIda || [], ruta.bloquesIda || [], ruta.horarioIda || [], false);
                                     processDirection(ruta.nucleosVuelta || [], ruta.bloquesVuelta || [], ruta.horarioVuelta || [], true);
+                                }
+                                
+                                // Process grouped routes and push them
+                                for (const [mode, allSchedules] of Object.entries(groupedRoutes)) {
+                                    if (allSchedules.length > 0) {
+                                        // Sort all schedules by time
+                                        allSchedules.sort((a,b) => a.time.localeCompare(b.time));
+                                        
+                                        const upcoming = allSchedules.filter(s => !s.isPast);
+                                        const nextDeparture = upcoming.length > 0 ? upcoming[0].time : null;
+                                        const upcomingDepartures = upcoming.slice(1, 4).map(s => s.time);
+                                        const firstValidSched = upcoming[0] || allSchedules[0];
+                                        
+                                        // Filter out schedules that have negative or weird durations (NaN)
+                                        // Actually just sanitize them
+                                        allSchedules.forEach(s => {
+                                            if (s.durationText && s.durationText.includes('NaN')) {
+                                                s.durationText = '-';
+                                            }
+                                        });
+
+                                        transportRoutes.push({
+                                            mode: mode,
+                                            origin: originTown.name,
+                                            destination: destTown.name,
+                                            nextDeparture,
+                                            upcomingDepartures,
+                                            durationText: firstValidSched.durationText,
+                                            details: {
+                                                lineCode: mode === 'train' ? 'TRAM' : 'Múltiples',
+                                                stops: [
+                                                    { name: originTown.name, isOrigin: true, isDest: false },
+                                                    { name: destTown.name, isOrigin: false, isDest: true }
+                                                ],
+                                                schedules: allSchedules
+                                            }
+                                        });
+                                    }
                                 }
                             }
                         } catch(e) {
