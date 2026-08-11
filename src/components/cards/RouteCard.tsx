@@ -1,5 +1,5 @@
 import { h, Fragment } from 'preact';
-import { useState } from 'preact/hooks';
+import { useState, useRef, useEffect } from 'preact/hooks';
 import type { CardData } from './types';
 import { IconCar, IconBus, IconTrain, IconShip, IconTraffic } from '../Icons';
 
@@ -208,30 +208,65 @@ export const RouteCard = ({ data }: { data: CardData }) => {
                                     {/* Full Schedule Grid */}
                                     <div>
                                         <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px', textTransform: 'uppercase' }}>Horarios ({opt.details.schedules.length})</div>
-                                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(60px, 1fr))', gap: '8px' }}>
+                                        <div 
+                                            id={`schedule-scroll-${index}`}
+                                            style={{ 
+                                                display: 'flex', 
+                                                gap: '8px', 
+                                                overflowX: 'auto', 
+                                                paddingBottom: '8px',
+                                                scrollBehavior: 'smooth',
+                                                scrollbarWidth: 'none', // Firefox
+                                                msOverflowStyle: 'none'  // IE 10+
+                                            }}
+                                            className="hide-scrollbar"
+                                        >
+                                            <style>{`
+                                                #schedule-scroll-${index}::-webkit-scrollbar {
+                                                    display: none;
+                                                }
+                                            `}</style>
                                             {opt.details.schedules.map((sched: any, i: number) => {
                                                 const isActive = activeIndex === i;
+                                                const isPast = sched.isPast && !isActive;
                                                 return (
                                                     <div 
                                                         key={i} 
+                                                        id={isActive ? `active-schedule-${index}` : undefined}
                                                         onClick={(e) => {
-                                                            e.stopPropagation(); // prevent toggling the accordion
-                                                            setSelectedSchedules(prev => ({ ...prev, [index]: i }));
+                                                            e.stopPropagation();
+                                                            if (!isPast) {
+                                                                setSelectedSchedules(prev => ({ ...prev, [index]: i }));
+                                                                
+                                                                // Scroll into view on click
+                                                                setTimeout(() => {
+                                                                    const container = document.getElementById(`schedule-scroll-${index}`);
+                                                                    const item = document.getElementById(`active-schedule-${index}`);
+                                                                    if (container && item) {
+                                                                        const scrollLeft = item.offsetLeft - (container.clientWidth / 2) + (item.clientWidth / 2);
+                                                                        container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+                                                                    }
+                                                                }, 50);
+                                                            }
                                                         }}
                                                         style={{
-                                                        padding: '4px 0',
+                                                        flexShrink: 0,
+                                                        minWidth: '60px',
+                                                        padding: '6px 8px',
                                                         textAlign: 'center',
                                                         fontSize: '13px',
                                                         fontWeight: isActive ? 600 : 400,
-                                                        borderRadius: '6px',
-                                                        cursor: 'pointer',
-                                                        background: isActive ? 'var(--success-color, #10b981)' : (sched.isPast ? 'var(--bg-color)' : 'var(--bg-secondary)'),
-                                                        color: isActive ? 'white' : (sched.isPast ? 'var(--text-secondary)' : 'var(--text-primary)'),
-                                                        border: sched.isPast ? '1px dashed var(--border-color)' : '1px solid transparent',
-                                                        textDecoration: sched.isPast ? 'line-through' : 'none'
+                                                        borderRadius: '8px',
+                                                        cursor: isPast ? 'not-allowed' : 'pointer',
+                                                        opacity: isPast ? 0.6 : 1,
+                                                        background: isActive ? 'var(--success-color, #10b981)' : (isPast ? 'var(--bg-color)' : 'var(--bg-secondary)'),
+                                                        color: isActive ? 'white' : (isPast ? 'var(--text-secondary)' : 'var(--text-primary)'),
+                                                        border: isPast ? '1px dashed var(--border-color)' : '1px solid transparent',
+                                                        boxShadow: isActive ? '0 2px 4px rgba(16, 185, 129, 0.3)' : 'none',
+                                                        transition: 'all 0.2s ease-in-out'
                                                     }}>
                                                         {sched.lineCode && (
-                                                            <div style={{ fontSize: '10px', opacity: 0.8, marginBottom: '2px', fontWeight: 500 }}>
+                                                            <div style={{ fontSize: '10px', opacity: isActive ? 0.9 : 0.7, marginBottom: '2px', fontWeight: 600 }}>
                                                                 {sched.lineCode}
                                                             </div>
                                                         )}
@@ -239,8 +274,24 @@ export const RouteCard = ({ data }: { data: CardData }) => {
                                                     </div>
                                                 )
                                             })}
+                                            {/* Spacer to allow centering the last items */}
+                                            <div style={{ flexShrink: 0, width: '40%' }}></div>
                                         </div>
                                     </div>
+                                    
+                                    {/* Auto-scroll effect when accordion is opened */}
+                                    {expandedOpt === index && (
+                                        <script dangerouslySetInnerHTML={{__html: `
+                                            setTimeout(() => {
+                                                const container = document.getElementById('schedule-scroll-${index}');
+                                                const item = document.getElementById('active-schedule-${index}');
+                                                if (container && item) {
+                                                    const scrollLeft = item.offsetLeft - (container.clientWidth / 2) + (item.clientWidth / 2);
+                                                    container.scrollTo({ left: scrollLeft, behavior: 'auto' });
+                                                }
+                                            }, 100);
+                                        `}} />
+                                    )}
                                 </div>
                             )}
                         </div>
