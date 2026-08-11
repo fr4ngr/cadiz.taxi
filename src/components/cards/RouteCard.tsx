@@ -138,6 +138,7 @@ export const RouteCard = ({ data }: { data: CardData }) => {
                                     )}
                                 </div>
                             </div>
+                            </div>
                             
                             {/* Accordion Details */}
                             {expandedOpt === index && opt.details && (
