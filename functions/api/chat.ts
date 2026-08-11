@@ -310,7 +310,7 @@ ${b.content}
         const transportKeywords = ['bus', 'autobús', 'autobuses', 'catamaran', 'catamarán', 'barco', 'barquito', 'horario', 'salidas', 'líneas', 'lineas', 'tren', 'renfe', 'cercan', 'trambahia', 'trambahía'];
         const isTransportQuery = transportKeywords.some(kw => msgLower.includes(kw));
 
-        const routingKeywords = ['como ir', 'cómo ir', 'ruta', 'alternativa', 'como voy', 'cómo voy', 'como llegar', 'cómo llegar', 'llevame', 'llévame', 'quiero ir', 'me gustaria ir', 'me gustaría ir', 'viajar a', 'desplazarme a', 'llegar a', 'voy a', 'ir para', 'ir a'];
+        const routingKeywords = ['como ir', 'cómo ir', 'ruta', 'alternativa', 'como voy', 'cómo voy', 'como llegar', 'cómo llegar', 'llevame', 'llévame', 'quiero ir', 'me gustaria ir', 'me gustaría ir', 'viajar a', 'desplazarme a', 'llegar a', 'voy a', 'ir para', 'ir a', 'ir de', 'ir desde'];
         const isRoutingQuery = routingKeywords.some(kw => msgLower.includes(kw));
 
         const beachKeywords = ['playa', 'caleta', 'victoria', 'cortadura', 'santa maría', 'oleaje', 'olas'];
@@ -338,7 +338,7 @@ ${b.content}
                     let originTown = towns[0]; // Default to Cádiz
                     let destTown = null;
 
-                    const originRegex = /(?:desde|de|salgo de)\s+([a-záéíóúñ\s]+)/i;
+                    const originRegex = /(?:desde|de|salgo de)\s+([a-záéíóúñ\s]+?)(?:\s+(?:a|hacia|para)\s+|$)/i;
                     const matchOrigin = msgLower.match(originRegex);
                     if (matchOrigin) {
                         const originStr = matchOrigin[1];
@@ -365,6 +365,7 @@ ${b.content}
                             route: `bus_${originTown.name}_${destTown.name}`,
                             idParada: originTown.busId,
                             consorcioId: originTown.consorcioId,
+                            originName: originTown.name,
                             targetDestino: destTown.name === 'El Puerto de Santa María' ? 'El Puerto' : destTown.name,
                             name: `🚌 Autobús a ${destTown.name}`
                         });
@@ -549,7 +550,7 @@ ${b.content}
                                 const nextDeparture = upcoming.length > 0 ? upcoming[0].servicio : null;
                                 const upcomingDepartures = upcoming.slice(1, 4).map(s => s.servicio);
                                 
-                                const originName = item.idParada === 300 || item.idParada === 14 ? 'Cádiz' : (item.idParada === 193 ? 'Cádiz (Terminal)' : (item.idParada === 1 ? 'Algeciras' : `Parada ${item.idParada}`));
+                                const originName = item.originName || (item.idParada === 300 || item.idParada === 14 ? 'Cádiz' : (item.idParada === 193 ? 'Cádiz (Terminal)' : (item.idParada === 1 ? 'Algeciras' : `Parada ${item.idParada}`)));
                                 
                                 let lineCode = item.route.startsWith('catamaran') ? 'Catamarán' : 'Autobús';
                                 let stops = [];
@@ -623,7 +624,8 @@ ${b.content}
                                 durationText: tr.mode === 'train' ? '40 min' : '50 min', // Approx
                                 durationValue: tr.mode === 'train' ? 2400 : 3000,
                                 nextDeparture: tr.nextDeparture,
-                                price: tr.mode === 'train' ? '4.10€' : '2.50€'
+                                price: tr.mode === 'train' ? '4.10€' : '2.50€',
+                                details: tr.details
                             }));
 
                             const target = transportRoutes[0].destination;
