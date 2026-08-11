@@ -319,34 +319,66 @@ ${b.content}
         if (isTransportQuery || isRoutingQuery || isBeachQuery) {
             try {
                 if (isTransportQuery || isRoutingQuery) {
-                    const destinationsToSearch = [];
-                    if (msgLower.includes('rota')) destinationsToSearch.push({ route: 'catamaran_rota', idParada: 193, consorcioId: 2, targetDestino: 'Rota', name: '🚢 Catamarán a Rota' });
-                    if (/\bpuerto\b/.test(msgLower)) destinationsToSearch.push({ route: 'catamaran_puerto', idParada: 193, consorcioId: 2, targetDestino: 'El Puerto', name: '🚢 Catamarán a El Puerto' });
-                    if (msgLower.includes('jerez') && !msgLower.includes('aeropuerto')) destinationsToSearch.push({ route: 'bus_jerez', idParada: 14, consorcioId: 2, targetDestino: 'Jerez', name: '🚌 Autobús a Jerez' });
-                    if (msgLower.includes('san fernando') || msgLower.includes('la isla')) destinationsToSearch.push({ route: 'bus_sanfernando', idParada: 300, consorcioId: 2, targetDestino: 'San Fernando', name: '🚌 Autobús a San Fernando' });
-                    if (msgLower.includes('chiclana')) destinationsToSearch.push({ route: 'bus_chiclana', idParada: 300, consorcioId: 2, targetDestino: 'Chiclana', name: '🚌 Autobús a Chiclana' });
-                    if (msgLower.includes('puerto real')) destinationsToSearch.push({ route: 'bus_puertoreal', idParada: 300, consorcioId: 2, targetDestino: 'Puerto Real', name: '🚌 Autobús a Puerto Real' });
-                    if (msgLower.includes('cementerio')) {
-                        if (msgLower.includes('vuelta') || msgLower.includes('regreso') || msgLower.includes('volver')) {
-                            destinationsToSearch.push({ route: 'bus_cementerio_vuelta', idParada: 56, consorcioId: 2, targetDestino: 'Cádiz', name: '🚌 Autobús Cementerio ➔ Cádiz' });
-                        } else {
-                            destinationsToSearch.push({ route: 'bus_cementerio_ida', idParada: 300, consorcioId: 2, targetDestino: 'Cementerio', name: '🚌 Autobús Cádiz ➔ Cementerio' });
-                        }
+                    const towns = [
+                        { name: 'Cádiz', keywords: ['cádiz', 'cadiz'], busId: 14, consorcioId: 2, trainName: 'cádiz' },
+                        { name: 'Jerez', keywords: ['jerez'], busId: 161, consorcioId: 2, trainName: 'jerez' },
+                        { name: 'San Fernando', keywords: ['san fernando', 'la isla'], busId: 47, consorcioId: 2, trainName: 'san fernando-bahía sur' },
+                        { name: 'El Puerto de Santa María', keywords: ['puerto de santa maría', 'el puerto', 'pto de sta maria', 'pto de santa maria'], busId: 125, consorcioId: 2, trainName: 'puerto de santa maría' },
+                        { name: 'Puerto Real', keywords: ['puerto real'], busId: 86, consorcioId: 2, trainName: 'puerto real' },
+                        { name: 'Chiclana', keywords: ['chiclana'], busId: 272, consorcioId: 2, trainName: 'pelagatos' },
+                        { name: 'Rota', keywords: ['rota'], busId: 181, consorcioId: 2, trainName: null },
+                        { name: 'Conil', keywords: ['conil'], busId: 296, consorcioId: 2, trainName: null },
+                        { name: 'Medina', keywords: ['medina', 'medina sidonia'], busId: 188, consorcioId: 2, trainName: null },
+                        { name: 'Algeciras', keywords: ['algeciras'], busId: 1, consorcioId: 5, trainName: null },
+                        { name: 'La Línea', keywords: ['la línea', 'linea de la concepción', 'la linea'], busId: 116, consorcioId: 5, trainName: null },
+                        { name: 'Tarifa', keywords: ['tarifa'], busId: 143, consorcioId: 5, trainName: null },
+                        { name: 'Aeropuerto de Jerez', keywords: ['aeropuerto de jerez', 'aeropuerto'], busId: null, consorcioId: 2, trainName: 'aeropuerto de jerez' }
+                    ];
+
+                    let originTown = towns[0]; // Default to Cádiz
+                    let destTown = null;
+
+                    const originRegex = /(?:desde|de|salgo de)\s+([a-záéíóúñ\s]+)/i;
+                    const matchOrigin = msgLower.match(originRegex);
+                    if (matchOrigin) {
+                        const originStr = matchOrigin[1];
+                        const found = towns.find(t => t.keywords.some(k => originStr.includes(k)));
+                        if (found) originTown = found;
                     }
-                    if (msgLower.includes('algeciras')) destinationsToSearch.push({ route: 'bus_algeciras', idParada: 1, consorcioId: 5, targetDestino: 'Algeciras', name: '🚌 Autobús a Algeciras' });
-                    if (msgLower.includes('linea') || msgLower.includes('línea')) destinationsToSearch.push({ route: 'bus_lalinea', idParada: 116, consorcioId: 5, targetDestino: 'La Línea', name: '🚌 Autobús a La Línea' });
-                    if (msgLower.includes('tarifa')) destinationsToSearch.push({ route: 'bus_tarifa', idParada: 143, consorcioId: 5, targetDestino: 'Tarifa', name: '🚌 Autobús a Tarifa' });
+
+                    const destRegex = /(?:a|hacia|para)\s+([a-záéíóúñ\s]+)/i;
+                    const matchDest = msgLower.match(destRegex);
+                    if (matchDest) {
+                        const destStr = matchDest[1];
+                        const found = towns.find(t => t.keywords.some(k => destStr.includes(k)));
+                        if (found && found.name !== originTown.name) destTown = found;
+                    }
+
+                    if (!destTown) {
+                        const found = towns.find(t => t.keywords.some(k => msgLower.includes(k)) && t.name !== originTown.name);
+                        if (found) destTown = found;
+                    }
+
+                    const destinationsToSearch = [];
+                    if (destTown && originTown.busId !== null) {
+                        destinationsToSearch.push({
+                            route: `bus_${originTown.name}_${destTown.name}`,
+                            idParada: originTown.busId,
+                            consorcioId: originTown.consorcioId,
+                            targetDestino: destTown.name === 'El Puerto de Santa María' ? 'El Puerto' : destTown.name,
+                            name: `🚌 Autobús a ${destTown.name}`
+                        });
+                    }
+
+                    if (originTown.name === 'Cádiz' && destTown?.name === 'Rota') destinationsToSearch.push({ route: 'catamaran_rota', idParada: 193, consorcioId: 2, targetDestino: 'Rota', name: '🚢 Catamarán a Rota' });
+                    if (originTown.name === 'Cádiz' && destTown?.name === 'El Puerto de Santa María') destinationsToSearch.push({ route: 'catamaran_puerto', idParada: 193, consorcioId: 2, targetDestino: 'El Puerto', name: '🚢 Catamarán a El Puerto' });
 
                     const transportRoutes = [];
 
                     if (isRoutingQuery || msgLower.includes('tren') || msgLower.includes('renfe') || msgLower.includes('cercan') || msgLower.includes('trambahia') || msgLower.includes('trambahía')) {
-                        let originStr = 'cádiz';
-                        let destStr = 'jerez';
-                        if (msgLower.includes('san fernando') || msgLower.includes('isla')) destStr = 'san fernando-bahía sur';
-                        else if (msgLower.includes('puerto real') || msgLower.includes('universidad')) destStr = 'puerto real';
-                        else if (msgLower.includes('aeropuerto')) destStr = 'aeropuerto de jerez';
-                        else if (/\bpuerto\b/.test(msgLower)) destStr = 'puerto de santa maría';
-                        else if (msgLower.includes('chiclana') || msgLower.includes('pelagatos')) destStr = 'pelagatos';
+                        let originStr = originTown.trainName;
+                        let destStr = destTown ? destTown.trainName : null;
+
                         
                         if (env.ASSETS) {
                             try {
@@ -496,8 +528,8 @@ ${b.content}
 
                             if (env.GOOGLE_MAPS_API_KEY) {
                                 // Fetch car route
-                                const originStr = "Cádiz, Spain";
-                                const destStr = `${target}, Cádiz, Spain`;
+                                const originStr = `${originTown.name}, Cádiz, Spain`;
+                                const destStr = `${destTown ? destTown.name : target}, Cádiz, Spain`;
 
                                 try {
                                     const googleRes = await fetch('https://routes.googleapis.com/directions/v2:computeRoutes', {
@@ -538,7 +570,7 @@ ${b.content}
                             }
 
                             parsedData.routeData = {
-                                origin: 'Cádiz',
+                                origin: originTown.name,
                                 destination: target,
                                 options: options
                             };
