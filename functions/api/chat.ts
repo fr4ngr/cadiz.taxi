@@ -316,7 +316,7 @@ ${b.content}
                 if (isTransportQuery || isRoutingQuery) {
                     const destinationsToSearch = [];
                     if (msgLower.includes('rota')) destinationsToSearch.push({ route: 'catamaran_rota', idParada: 193, consorcioId: 2, targetDestino: 'Rota', name: '🚢 Catamarán a Rota' });
-                    if (msgLower.includes('puerto')) destinationsToSearch.push({ route: 'catamaran_puerto', idParada: 193, consorcioId: 2, targetDestino: 'El Puerto', name: '🚢 Catamarán a El Puerto' });
+                    if (/\bpuerto\b/.test(msgLower)) destinationsToSearch.push({ route: 'catamaran_puerto', idParada: 193, consorcioId: 2, targetDestino: 'El Puerto', name: '🚢 Catamarán a El Puerto' });
                     if (msgLower.includes('san fernando') || msgLower.includes('la isla')) destinationsToSearch.push({ route: 'bus_sanfernando', idParada: 300, consorcioId: 2, targetDestino: 'San Fernando', name: '🚌 Autobús a San Fernando' });
                     if (msgLower.includes('chiclana')) destinationsToSearch.push({ route: 'bus_chiclana', idParada: 300, consorcioId: 2, targetDestino: 'Chiclana', name: '🚌 Autobús a Chiclana' });
                     if (msgLower.includes('puerto real')) destinationsToSearch.push({ route: 'bus_puertoreal', idParada: 300, consorcioId: 2, targetDestino: 'Puerto Real', name: '🚌 Autobús a Puerto Real' });
@@ -338,9 +338,9 @@ ${b.content}
                         let destStr = 'jerez';
                         if (msgLower.includes('san fernando') || msgLower.includes('isla')) destStr = 'san fernando-bahía sur';
                         else if (msgLower.includes('puerto real') || msgLower.includes('universidad')) destStr = 'puerto real';
-                        else if (msgLower.includes('puerto')) destStr = 'puerto de santa maría';
-                        else if (msgLower.includes('chiclana') || msgLower.includes('pelagatos')) destStr = 'pelagatos';
                         else if (msgLower.includes('aeropuerto')) destStr = 'aeropuerto de jerez';
+                        else if (/\bpuerto\b/.test(msgLower)) destStr = 'puerto de santa maría';
+                        else if (msgLower.includes('chiclana') || msgLower.includes('pelagatos')) destStr = 'pelagatos';
                         
                         if (env.ASSETS) {
                             try {

@@ -6,8 +6,12 @@ export const RouteCard = ({ data }: { data: CardData }) => {
     if (!data.routeData) return null;
     const { origin, destination, options } = data.routeData;
 
-    // Sort options by duration (fastest first)
-    const sortedOptions = [...options].sort((a, b) => a.durationValue - b.durationValue);
+    // Sort options: Public transport first (by duration), then Car at the bottom
+    const sortedOptions = [...options].sort((a, b) => {
+        if (a.mode === 'car' && b.mode !== 'car') return 1;
+        if (b.mode === 'car' && a.mode !== 'car') return -1;
+        return a.durationValue - b.durationValue;
+    });
 
     const getIconForMode = (mode: string) => {
         switch (mode) {
