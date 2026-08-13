@@ -13,7 +13,7 @@ export async function onRequest(context) {
         return response;
     }
 
-    const openaqKey = env.OPENAQ_API_KEY || "1e184a172f89ccb2beef04c48cb08835a073a5650dd35a5171a01ea190e99d1f";
+    const openaqKey = env.OPENAQ_API_KEY;
     const headers = {
         'X-API-Key': openaqKey,
         'Content-Type': 'application/json'

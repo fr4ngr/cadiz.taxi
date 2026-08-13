@@ -288,7 +288,11 @@ import { renderCardDOM } from '../components/cards/CardRenderer';
                 tap: !isMobile
             });
             
-            mapL.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { maxZoom: 20 }).addTo(map);
+            mapL.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
             map.setView([36.516, -6.283], 13);
             
             window.currentMap = map;
@@ -395,21 +399,10 @@ import { renderCardDOM } from '../components/cards/CardRenderer';
             devControl.addTo(map);
 
             mapL.control.zoom({ position: 'bottomright' }).addTo(map);
-            
-            map.createPane('labels');
-            map.getPane('labels').style.zIndex = 500;
-            map.getPane('labels').style.pointerEvents = 'none';
-            
-            mapL.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', {
-                attribution: '© OpenStreetMap, © CartoDB', subdomains: 'abcd', maxZoom: 20
+            mapL.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
-
-            mapL.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', {
-                subdomains: 'abcd', maxZoom: 20,
-                pane: 'labels'
-            }).addTo(map);
-
-
 
             window.doNearestPOI = function(userLat: number, userLon: number, poiType: 'stop' | 'airport' = 'stop') {
                 const loadingHtml = `
@@ -1870,19 +1863,10 @@ import { renderCardDOM } from '../components/cards/CardRenderer';
             const mapL = (window as any).L;
             if (!liveMap) {
                 liveMap = mapL.map('nav-map', { zoomControl: false }).setView([destLat, destLon], 16);
-                liveMap.createPane('labels');
-                liveMap.getPane('labels').style.zIndex = 500;
-                liveMap.getPane('labels').style.pointerEvents = 'none';
-
-                mapL.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', {
-                    attribution: '© OpenStreetMap, © CartoDB', subdomains: 'abcd', maxZoom: 20
+                mapL.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 }).addTo(liveMap);
-
-                mapL.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', {
-                    subdomains: 'abcd', maxZoom: 20,
-                    pane: 'labels'
-                }).addTo(liveMap);
-                
                 mapL.control.zoom({ position: 'bottomright' }).addTo(liveMap);
             }
 

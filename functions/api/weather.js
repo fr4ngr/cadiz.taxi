@@ -268,8 +268,9 @@ export async function onRequest(context) {
                 const currentFechaStr = spainTime.toISOString().substring(0, 10);
                 const currentHourStr = spainTime.getHours().toString().padStart(2, '0');
                 
-                let matched = cachedData.hourly.find(h => h.fecha === currentFechaStr && h.periodo === currentHourStr) || 
-                            cachedData.hourly.find(h => h.fecha > currentFechaStr || (h.fecha === currentFechaStr && h.periodo >= currentHourStr));
+                let matched = cachedData.hourly.find(h => h.fecha.substring(0, 10) === currentFechaStr && h.periodo === currentHourStr) || 
+                            cachedData.hourly.find(h => h.fecha.substring(0, 10) > currentFechaStr || (h.fecha.substring(0, 10) === currentFechaStr && h.periodo >= currentHourStr)) ||
+                            cachedData.hourly[0];
                 
                 if (matched) {
                     cachedData.current = { 
