@@ -618,7 +618,7 @@
                     return {
                         label: 'ESTACIÓN METEOROLÓGICA',
                         labelColor: station.color,
-                        title: `Estación ${station.name}`,
+                        title: station.name,
                         recenter: [station.lat - 0.05, station.lon],
                         showActions: false,
                         desc: `
@@ -632,15 +632,13 @@
                                             <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">
                                                 <span style="font-size: 18px; font-weight: 700; color: var(--text-primary); line-height: 1;">${station.status}</span>
                                                 <span style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">EAQI (${eaqiRange})</span>
+                                                <span style="font-size: 9px; color: var(--text-secondary); font-style: italic; margin-top: -2px;">Índice Europeo de Calidad del Aire</span>
                                             </div>
                                         </div>
                                         
                                         <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 10px;">
                                             <div style="width: 100%; height: 6px; background: var(--chat-bg); border-radius: 3px; overflow: hidden; border: 1px solid var(--header-border);">
                                                 <div style="width: ${Math.min((station.aqi / 110) * 100, 100)}%; height: 100%; background: ${station.color}; border-radius: 3px;"></div>
-                                            </div>
-                                            <div style="display: flex; justify-content: flex-end;">
-                                                <span style="font-size: 9px; color: var(--text-secondary); font-style: italic;">Índice Europeo de Calidad del Aire</span>
                                             </div>
                                         </div>
                                     </div>
@@ -675,7 +673,10 @@
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                                         Fuente: AEMA (Agencia Europea de Medio Ambiente) y OpenAQ
                                     </div>
-                                    <div style="font-style: italic; font-size: 10px; margin-left: 20px;">Actualizado ${timeStr}</div>
+                                    <div style="font-style: italic; font-size: 10px; margin-left: 20px; display: flex; align-items: center; gap: 4px;">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                        Actualizado ${timeStr}
+                                    </div>
                                 </div>
                             </div>`
                     };
