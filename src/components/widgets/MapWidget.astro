@@ -599,7 +599,15 @@
                     window.mapActionDirections = () => {
                         window.open(`https://www.google.com/maps/dir/?api=1&destination=${station.lat},${station.lon}`, '_blank');
                     };
-                    const eaqiRange = station.aqi <= 20 ? '(0-20)' : (station.aqi <= 40 ? '(21-40)' : (station.aqi <= 60 ? '(41-60)' : (station.aqi <= 100 ? '(61-100)' : '(>100)')));
+                    const eaqiRange = station.aqi <= 20 ? '0-20' : (station.aqi <= 40 ? '21-40' : (station.aqi <= 60 ? '41-60' : (station.aqi <= 100 ? '61-100' : '>100')));
+                    let timeStr = 'recientemente';
+                    if (station.timestamp) {
+                        const diffMins = Math.floor((Date.now() - station.timestamp) / 60000);
+                        if (diffMins < 1) timeStr = 'ahora mismo';
+                        else if (diffMins < 60) timeStr = `hace ${diffMins} min`;
+                        else if (diffMins < 1440) timeStr = `hace ${Math.floor(diffMins/60)} h`;
+                        else timeStr = `hace ${Math.floor(diffMins/1440)} d`;
+                    }
                     return {
                         label: 'ESTACIÓN METEOROLÓGICA',
                         labelColor: station.color,
@@ -610,22 +618,22 @@
                             <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 6px; font-family: 'Inter', system-ui, sans-serif;">
                                 <div style="display: flex; align-items: flex-start; justify-content: space-between; background: linear-gradient(to right, transparent, ${station.color}15); padding: 12px; border-radius: 8px; border-left: 4px solid ${station.color};">
                                     <div style="width: 100%;">
-                                        <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 2px;">CALIDAD DEL AIRE</div>
-                                        <div style="font-size: 20px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.5px; display: flex; align-items: baseline; gap: 6px;">
-                                            ${station.status}
-                                            <span style="font-size: 14px; color: var(--text-secondary); font-weight: 600;">${eaqiRange}</span>
+                                        <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px;">CALIDAD DEL AIRE</div>
+                                        
+                                        <div style="display: flex; align-items: baseline; justify-content: space-between;">
+                                            <div style="display: flex; align-items: baseline; gap: 6px;">
+                                                <span style="font-size: 32px; font-weight: 800; color: ${station.color}; letter-spacing: -1px; line-height: 1;">${station.aqi}</span>
+                                                <span style="font-size: 12px; color: var(--text-secondary); font-weight: 500;">EAQI (Rango ${eaqiRange})</span>
+                                            </div>
+                                            <div style="font-size: 18px; font-weight: 700; color: var(--text-primary);">${station.status}</div>
                                         </div>
                                         
                                         <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 10px;">
-                                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                                <div style="display: flex; flex-direction: column; gap: 1px;">
-                                                    <span style="font-size: 10px; font-weight: 700; color: var(--text-secondary); letter-spacing: 0.5px;">ÍNDICE EAQI</span>
-                                                    <span style="font-size: 9px; color: var(--text-secondary);">Índice Europeo de Calidad del Aire</span>
-                                                </div>
-                                                <span style="font-size: 12px; font-weight: 700; color: var(--text-primary);">${station.aqi}</span>
-                                            </div>
                                             <div style="width: 100%; height: 6px; background: var(--chat-bg); border-radius: 3px; overflow: hidden; border: 1px solid var(--header-border);">
                                                 <div style="width: ${Math.min((station.aqi / 110) * 100, 100)}%; height: 100%; background: ${station.color}; border-radius: 3px;"></div>
+                                            </div>
+                                            <div style="display: flex; justify-content: flex-end;">
+                                                <span style="font-size: 9px; color: var(--text-secondary); font-style: italic;">Índice Europeo de Calidad del Aire</span>
                                             </div>
                                         </div>
                                     </div>
@@ -654,17 +662,13 @@
                                         <div style="font-size: 9.5px; color: var(--text-secondary); margin-top: 2px; padding-top: 4px; border-top: 1px dashed var(--header-border);">Límite OMS: <span style="font-weight:600; color:${station.o3 > 100 ? '#ef4444' : 'var(--text-secondary)'};">100 μg/m³</span></div>
                                     </div>
                                 </div>
-                                
-                                <div style="background: rgba(0,0,0,0.02); border-radius: 10px; padding: 10px; font-size: 11px; color: var(--text-secondary); line-height: 1.4; border: 1px solid rgba(0,0,0,0.05); margin-top: 4px;">
-                                    <strong>Límites OMS:</strong> Recomendaciones de la Organización Mundial de la Salud (2021) para periodos de 24 horas.
-                                </div>
 
                                 <div style="margin-top: 4px; padding-top: 10px; border-top: 1px solid var(--header-border); font-size: 11px; color: var(--text-secondary); display: flex; align-items: center; justify-content: space-between;">
                                     <div style="display: flex; align-items: center; gap: 6px;">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                                         Fuente: AEMA / OpenAQ
                                     </div>
-                                    <div style="font-style: italic; font-size: 10px;">Actualizado cada hora</div>
+                                    <div style="font-style: italic; font-size: 10px;">Actualizado ${timeStr}</div>
                                 </div>
                             </div>`
                     };

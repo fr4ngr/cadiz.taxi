@@ -59,12 +59,26 @@ export async function onRequest(context) {
 
                     // Extract values
                     const readings = { pm10: 0, pm25: 0, no2: 0, o3: 0, so2: 0, co: 0 };
+                    let stationTimestamp = 0;
                     latestData.results.forEach(measurement => {
                         const param = sensorMap[measurement.sensorsId];
                         if (param && readings[param] !== undefined) {
                             readings[param] = measurement.value;
                         }
+                        try {
+                            if (measurement.period && measurement.period.datetimeTo && measurement.period.datetimeTo.utc) {
+                                const ts = new Date(measurement.period.datetimeTo.utc).getTime();
+                                if (ts > stationTimestamp) stationTimestamp = ts;
+                            } else if (measurement.datetime && measurement.datetime.utc) {
+                                const ts = new Date(measurement.datetime.utc).getTime();
+                                if (ts > stationTimestamp) stationTimestamp = ts;
+                            } else if (measurement.datetime) {
+                                const ts = new Date(measurement.datetime).getTime();
+                                if (ts > stationTimestamp) stationTimestamp = ts;
+                            }
+                        } catch (e) {}
                     });
+                    if (stationTimestamp === 0) stationTimestamp = Date.now();
 
                     // Calculate EAQI (European Air Quality Index) simplification
                     const no2 = readings.no2 || 0;
@@ -97,7 +111,8 @@ export async function onRequest(context) {
                         o3: o3.toFixed(1),
                         aqi: aqi,
                         status: status,
-                        color: color
+                        color: color,
+                        timestamp: stationTimestamp
                     });
                 } catch (err) {
                     console.error(`Error fetching latest for ${loc.name}:`, err);
