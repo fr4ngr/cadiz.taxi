@@ -1,86 +1,123 @@
 export async function onRequest(context) {
-    const { request } = context;
+    const { env } = context;
+    // Check cache first
+    const cache = caches.default;
+    const url = new URL(context.request.url);
+    const cacheKey = new Request(url.toString(), {
+        headers: context.request.headers,
+        method: 'GET'
+    });
+    
+    let response = await cache.match(cacheKey);
+    if (response) {
+        return response;
+    }
 
-    const cities = [
-        { name: "Cádiz Capital", lat: 36.529, lon: -6.292 },
-        { name: "Jerez de la Frontera", lat: 36.686, lon: -6.136 },
-        { name: "Algeciras", lat: 36.133, lon: -5.450 },
-        { name: "San Fernando", lat: 36.465, lon: -6.198 },
-        { name: "El Puerto de Sta. María", lat: 36.600, lon: -6.226 }
-    ];
-
-    const lats = cities.map(c => c.lat).join(',');
-    const lons = cities.map(c => c.lon).join(',');
+    const openaqKey = env.OPENAQ_API_KEY || "1e184a172f89ccb2beef04c48cb08835a073a5650dd35a5171a01ea190e99d1f";
+    const headers = {
+        'X-API-Key': openaqKey,
+        'Content-Type': 'application/json'
+    };
 
     try {
-        const url = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lats}&longitude=${lons}&current=european_aqi,pm10,pm2_5,nitrogen_dioxide,ozone`;
+        // 1. Fetch metadata for all locations in Cádiz province bounding box
+        const locationsRes = await fetch('https://api.openaq.org/v3/locations?bbox=-6.45,36.00,-5.25,36.95&limit=50', { headers });
+        if (!locationsRes.ok) {
+            throw new Error(`OpenAQ /locations returned ${locationsRes.status}`);
+        }
+        const locationsData = await locationsRes.json();
         
-        const response = await fetch(url, {
-            headers: {
-                'User-Agent': 'Gaditan-App/1.0',
-                'Accept': 'application/json'
+        // 2. Select the 5 major locations we want to display
+        const targetNames = ["CÁDIZ", "JEREZ DE LA FRONTERA", "SAN FERNANDO", "ALGECIRAS", "PUERTO REAL"]; // Puerto Real represents El Puerto area as it's the closest sensor
+        
+        // Find best match for each
+        const selectedLocations = [];
+        for (const target of targetNames) {
+            // Find a location whose city matches the target
+            const match = locationsData.results.find(l => l.locality && l.locality.toUpperCase().includes(target));
+            if (match) {
+                selectedLocations.push(match);
             }
-        });
-
-        if (!response.ok) {
-            throw new Error(`Open-Meteo API returned ${response.status}`);
         }
 
-        const data = await response.json();
+        // 3. For each selected location, fetch its latest measurements
+        const finalData = [];
         
-        // Open-Meteo returns an array when multiple coordinates are passed
-        const results = data.map((res, index) => {
-            const current = res.current || {};
-            const aqi = current.european_aqi || 0;
-            
-            let status = 'Desconocido';
-            let color = '#9ca3af'; // gris
-            
-            if (aqi > 0 && aqi <= 20) {
-                status = '🟢 Buena';
-                color = '#10b981'; // verde
-            } else if (aqi > 20 && aqi <= 40) {
-                status = '🟡 Regular';
-                color = '#eab308'; // amarillo
-            } else if (aqi > 40 && aqi <= 60) {
-                status = '🟠 Moderada';
-                color = '#f97316'; // naranja
-            } else if (aqi > 60) {
-                status = '🔴 Mala';
-                color = '#ef4444'; // rojo
+        await Promise.all(selectedLocations.map(async (loc) => {
+            try {
+                const latestRes = await fetch(`https://api.openaq.org/v3/locations/${loc.id}/latest`, { headers });
+                if (!latestRes.ok) return;
+                const latestData = await latestRes.json();
+                
+                // Map sensor IDs to parameter names using the metadata we fetched earlier
+                const sensorMap = {};
+                loc.sensors.forEach(s => {
+                    sensorMap[s.id] = s.parameter.name; // e.g. 'pm10', 'no2'
+                });
+
+                // Extract values
+                const readings = { pm10: 0, pm25: 0, no2: 0, o3: 0, so2: 0, co: 0 };
+                latestData.results.forEach(measurement => {
+                    const param = sensorMap[measurement.sensorsId];
+                    if (param && readings[param] !== undefined) {
+                        readings[param] = measurement.value;
+                    }
+                });
+
+                // Calculate EAQI (European Air Quality Index) simplification
+                const no2 = readings.no2 || 0;
+                const o3 = readings.o3 || 0;
+                const pm10 = readings.pm10 || 0;
+                const pm25 = readings.pm25 || 0;
+
+                let aqi = 10; // default good
+                if (no2 > 40 || o3 > 50 || pm10 > 20 || pm25 > 10) aqi = 30; // Fair
+                if (no2 > 90 || o3 > 100 || pm10 > 40 || pm25 > 20) aqi = 60; // Moderate
+                if (no2 > 120 || o3 > 130 || pm10 > 50 || pm25 > 25) aqi = 80; // Poor
+                if (no2 > 230 || o3 > 240 || pm10 > 100 || pm25 > 50) aqi = 110; // Very Poor
+
+                let status = "Buena";
+                let color = "#10b981"; // Green
+                
+                if (aqi > 20) { status = "Regular"; color = "#eab308"; } // Yellow
+                if (aqi > 40) { status = "Moderada"; color = "#f97316"; } // Orange
+                if (aqi > 60) { status = "Mala"; color = "#ef4444"; } // Red
+                if (aqi > 100) { status = "Muy Mala"; color = "#8b5cf6"; } // Purple
+
+                finalData.push({
+                    name: loc.name,
+                    city: loc.locality,
+                    lat: loc.coordinates.latitude,
+                    lon: loc.coordinates.longitude,
+                    pm10: pm10.toFixed(1),
+                    pm25: pm25.toFixed(1),
+                    no2: no2.toFixed(1),
+                    o3: o3.toFixed(1),
+                    aqi: aqi,
+                    status: status,
+                    color: color
+                });
+            } catch (err) {
+                console.error(`Error fetching latest for ${loc.name}:`, err);
             }
+        }));
 
-            return {
-                id: index,
-                name: cities[index].name,
-                lat: cities[index].lat,
-                lon: cities[index].lon,
-                aqi: aqi,
-                status: status,
-                color: color,
-                pm10: current.pm10 || 0,
-                pm25: current.pm2_5 || 0,
-                no2: current.nitrogen_dioxide || 0,
-                o3: current.ozone || 0
-            };
-        });
-
-        return new Response(JSON.stringify(results), {
+        const finalResponse = new Response(JSON.stringify(finalData), {
             headers: {
                 'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-                'Cache-Control': 'public, max-age=3600' // cache 1 hora
+                'Cache-Control': 'public, max-age=3600' // Cache for 1 hour
             }
         });
+
+        // Store in cache
+        context.waitUntil(cache.put(cacheKey, finalResponse.clone()));
+
+        return finalResponse;
 
     } catch (error) {
-        console.error("Error fetching air quality:", error);
         return new Response(JSON.stringify({ error: error.message }), {
             status: 500,
-            headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            }
+            headers: { 'Content-Type': 'application/json' }
         });
     }
 }
