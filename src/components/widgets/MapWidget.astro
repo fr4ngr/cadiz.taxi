@@ -580,7 +580,7 @@
                 _isActive: false,
                 autoZoom: false,
                 fetchData: async () => {
-                    const res = await fetch('/api/air-quality');
+                    const res = await fetch('/api/air-quality?v=2'); // Bust cache to force timestamp data
                     const data = await res.json();
                     if (!Array.isArray(data)) throw new Error("API error");
                     return data;
