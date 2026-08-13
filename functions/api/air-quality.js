@@ -21,24 +21,19 @@ export async function onRequest(context) {
 
     try {
         // 1. Fetch metadata for all locations in Cádiz province bounding box
-        const locationsRes = await fetch('https://api.openaq.org/v3/locations?bbox=-6.45,36.00,-5.25,36.95&limit=50', { headers });
+        // 1. Fetch metadata for all locations in the expanded bounding box (Cadiz, Ceuta, Melilla)
+        const locationsRes = await fetch('https://api.openaq.org/v3/locations?bbox=-6.5,35.0,-2.5,37.0&limit=100', { headers });
         if (!locationsRes.ok) {
             throw new Error(`OpenAQ /locations returned ${locationsRes.status}`);
         }
         const locationsData = await locationsRes.json();
         
-        // 2. Select the 5 major locations we want to display
-        const targetNames = ["CÁDIZ", "JEREZ DE LA FRONTERA", "SAN FERNANDO", "ALGECIRAS", "PUERTO REAL"]; // Puerto Real represents El Puerto area as it's the closest sensor
+        // 2. Filter locations to only include Cadiz province, Ceuta, and Melilla
+        const allowedLocalities = ["SAN ROQUE", "ALGECIRAS", "SAN FERNANDO", "CÁDIZ", "ARCOS", "JEREZ", "BARRIOS", "PUERTO REAL", "LÍNEA", "PRADO", "CEUTA", "MELILLA"];
         
-        // Find best match for each
-        const selectedLocations = [];
-        for (const target of targetNames) {
-            // Find a location whose city matches the target
-            const match = locationsData.results.find(l => l.locality && l.locality.toUpperCase().includes(target));
-            if (match) {
-                selectedLocations.push(match);
-            }
-        }
+        const selectedLocations = locationsData.results.filter(l => 
+            l.locality && allowedLocalities.some(allowed => l.locality.toUpperCase().includes(allowed))
+        );
 
         // 3. For each selected location, fetch its latest measurements
         const finalData = [];
