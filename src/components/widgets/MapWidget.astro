@@ -328,8 +328,9 @@
                     btn.style.color = '#f97316';
                 }
             });
-            if (event && event.currentTarget) {
-                const target = event.currentTarget;
+            const currentEvent = typeof window !== 'undefined' ? window.event : null;
+            if (currentEvent && currentEvent.currentTarget) {
+                const target = currentEvent.currentTarget;
                 target.classList.add('active');
                 if (layerId === 'incendios') {
                     target.style.background = '#ef4444';
