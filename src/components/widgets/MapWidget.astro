@@ -802,7 +802,7 @@
 
                             const el = marker.getElement();
                             if (el) {
-                                el.style.animation = `pulse-fire 3s infinite`;
+                                // Removed pulse animation to keep the markers static and clean
                             }
                             
                             marker.on('click', () => {
@@ -819,14 +819,40 @@
                                 title.textContent = station.name;
                                 
                                 desc.innerHTML = `
-                                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 6px;">
-                                        <div style="font-size: 15px; font-weight: 600; color: ${station.color};">Calidad: ${station.status} (EAQI: ${station.aqi})</div>
-                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 12px; color: var(--text-secondary);">
-                                            <div style="background: var(--chat-bg); padding: 6px; border-radius: 6px; border: 1px solid var(--header-border);"><b>PM10:</b> ${station.pm10} μg/m³</div>
-                                            <div style="background: var(--chat-bg); padding: 6px; border-radius: 6px; border: 1px solid var(--header-border);"><b>PM2.5:</b> ${station.pm25} μg/m³</div>
-                                            <div style="background: var(--chat-bg); padding: 6px; border-radius: 6px; border: 1px solid var(--header-border);"><b>NO2:</b> ${station.no2} μg/m³</div>
-                                            <div style="background: var(--chat-bg); padding: 6px; border-radius: 6px; border: 1px solid var(--header-border);"><b>O3:</b> ${station.o3} μg/m³</div>
+                                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 6px; font-family: 'Inter', system-ui, sans-serif;">
+                                        <div style="display: flex; align-items: center; justify-content: space-between; background: linear-gradient(to right, transparent, ${station.color}15); padding: 8px 12px; border-radius: 8px; border-left: 4px solid ${station.color};">
+                                            <div>
+                                                <div style="font-size: 18px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.5px;">${station.status}</div>
+                                                <div style="font-size: 12px; color: var(--text-secondary); font-weight: 500;">Índice Europeo (EAQI): ${station.aqi}</div>
+                                            </div>
+                                            <div style="width: 24px; height: 24px; border-radius: 50%; background-color: ${station.color}; box-shadow: 0 0 10px ${station.color}80; border: 2px solid var(--bg-color);"></div>
                                         </div>
+                                        
+                                        <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: -4px;">Agentes Contaminantes</div>
+                                        
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                            <div style="background: var(--chat-bg); padding: 8px; border-radius: 8px; border: 1px solid var(--header-border); display: flex; flex-direction: column; gap: 2px;">
+                                                <div style="font-size: 11px; color: var(--text-secondary);">Polvo Fino <span style="font-weight:700;">(PM2.5)</span></div>
+                                                <div style="font-size: 14px; font-weight: 600; color: var(--text-primary);">${station.pm25} <span style="font-size: 10px; font-weight: 400; color: var(--text-secondary);">μg/m³</span></div>
+                                                <div style="font-size: 10px; color: var(--text-secondary); font-style: italic;">Humo, escapes</div>
+                                            </div>
+                                            <div style="background: var(--chat-bg); padding: 8px; border-radius: 8px; border: 1px solid var(--header-border); display: flex; flex-direction: column; gap: 2px;">
+                                                <div style="font-size: 11px; color: var(--text-secondary);">Polvo <span style="font-weight:700;">(PM10)</span></div>
+                                                <div style="font-size: 14px; font-weight: 600; color: var(--text-primary);">${station.pm10} <span style="font-size: 10px; font-weight: 400; color: var(--text-secondary);">μg/m³</span></div>
+                                                <div style="font-size: 10px; color: var(--text-secondary); font-style: italic;">Polen, arena</div>
+                                            </div>
+                                            <div style="background: var(--chat-bg); padding: 8px; border-radius: 8px; border: 1px solid var(--header-border); display: flex; flex-direction: column; gap: 2px;">
+                                                <div style="font-size: 11px; color: var(--text-secondary);">Tráfico <span style="font-weight:700;">(NO2)</span></div>
+                                                <div style="font-size: 14px; font-weight: 600; color: var(--text-primary);">${station.no2} <span style="font-size: 10px; font-weight: 400; color: var(--text-secondary);">μg/m³</span></div>
+                                                <div style="font-size: 10px; color: var(--text-secondary); font-style: italic;">Coches, industria</div>
+                                            </div>
+                                            <div style="background: var(--chat-bg); padding: 8px; border-radius: 8px; border: 1px solid var(--header-border); display: flex; flex-direction: column; gap: 2px;">
+                                                <div style="font-size: 11px; color: var(--text-secondary);">Ozono <span style="font-weight:700;">(O3)</span></div>
+                                                <div style="font-size: 14px; font-weight: 600; color: var(--text-primary);">${station.o3} <span style="font-size: 10px; font-weight: 400; color: var(--text-secondary);">μg/m³</span></div>
+                                                <div style="font-size: 10px; color: var(--text-secondary); font-style: italic;">Sol + químicos</div>
+                                            </div>
+                                        </div>
+                                        
                                         <div style="margin-top: 4px; padding-top: 8px; border-top: 1px solid var(--header-border); font-size: 11px; color: var(--text-secondary); text-align: right; display: flex; align-items: center; justify-content: flex-end; gap: 4px;">
                                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
                                             Fuente: Agencia Europea de Medio Ambiente
