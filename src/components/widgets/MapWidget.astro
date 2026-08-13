@@ -8,15 +8,15 @@
     <!-- Contenedor UI de la InfoPill -->
     <div id="map-ui-container" style="position: absolute; top: 16px; left: 50%; z-index: 1001; transform: translateX(-50%); width: calc(100% - 32px); max-width: 448px; display: flex; flex-direction: column; gap: 8px; transition: opacity 0.3s, transform 0.3s; opacity: 0; pointer-events: none;">
         <!-- Píldora informativa de parada -->
-        <div id="map-info-pill" style="background: var(--header-bg); border-radius: 20px; padding: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); display: flex; flex-direction: column; gap: 14px; border: 1px solid var(--header-border); pointer-events: auto;">
+        <div id="map-info-pill" style="background: var(--header-bg); border-radius: 20px; padding: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); display: flex; flex-direction: column; gap: 14px; border: 1px solid var(--header-border);">
         
         <div style="display: flex; align-items: flex-start; gap: 12px;">
             <div style="flex: 1;">
                 <div id="map-info-label" style="font-size: 10px; font-weight: 700; color: var(--primary-color); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 2px;">UBICACIÓN</div>
                 <h3 id="map-info-title" style="margin: 0; font-size: 16px; color: var(--text-primary); font-weight: 600;">Nombre</h3>
-                <p id="map-info-desc" style="margin: 3px 0 0 0; font-size: 13px; color: var(--text-secondary); line-height: 1.3;">Descripción</p>
+                <div id="map-info-desc" style="margin: 3px 0 0 0; font-size: 13px; color: var(--text-secondary); line-height: 1.3;">Descripción</div>
             </div>
-            <button onclick="window.closeMapInfoPill()" style="background: var(--chat-bg); border: none; font-size: 14px; color: var(--text-secondary); cursor: pointer; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.2s; flex-shrink: 0;" aria-label="Cerrar información">✕</button>
+            <button id="btn-close-map-pill" style="background: var(--chat-bg); border: none; font-size: 14px; color: var(--text-secondary); cursor: pointer; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.2s; flex-shrink: 0; z-index: 9999;" aria-label="Cerrar información">✕</button>
         </div>
 
         <div id="map-pill-actions" style="display: flex; gap: 10px;">
@@ -67,14 +67,20 @@
         </button>
         <button class="filter-pill" onclick="window.selectMapLayer('incendios')" style="border-color: #ef4444; color: #ef4444;">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
-            Incendios
+            Incendios Activos
         </button>
-    </div>
-
-    <!-- Fire Warning Banner -->
-    <div id="fire-warning-banner" style="display: none; position: absolute; top: 124px; left: 50%; z-index: 1000; transform: translateX(-50%); width: calc(100% - 32px); max-width: 448px; background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; border-radius: 12px; padding: 10px 14px; align-items: center; gap: 10px; color: #ef4444; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-        <span style="font-size: 12px; font-weight: 600; line-height: 1.3;">Datos de anomalías térmicas satelitales (Copernicus/MODIS). Retraso aprox: 3h. No oficial.</span>
+        <button class="filter-pill" onclick="window.selectMapLayer('embalses')" style="border-color: #3b82f6; color: #3b82f6;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
+            Embalses
+        </button>
+        <button class="filter-pill" onclick="window.selectMapLayer('sismos')" style="border-color: #f97316; color: #f97316;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M12 19V5"></path><path d="M17 12H7"></path></svg>
+            Seísmos
+        </button>
+        <button class="filter-pill" onclick="window.selectMapLayer('aire')" style="border-color: #10b981; color: #10b981;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"></path></svg>
+            Calidad Aire
+        </button>
     </div>
 
     <!-- RADIAL MENUS CONTAINER -->
@@ -236,9 +242,58 @@
         border-color: var(--primary-color);
     }
 </style>
+<style is:global>
+    @keyframes pulse-fire {
+        0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+        70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+        100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+    
+    .fire-marker-icon {
+        background: #ef4444;
+        border: 2px solid #fff;
+        border-radius: 50%;
+        animation: pulse-fire 1.5s infinite;
+    }
+    
+    .fire-marker-icon.high-intensity {
+        background: #b91c1c;
+        animation: pulse-fire 1s infinite;
+    }
+</style>
 
 <script>
     if (typeof window !== 'undefined') {
+        const btnClose = document.getElementById('btn-close-map-pill');
+        if (btnClose) {
+            btnClose.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const pill = document.getElementById('map-ui-container');
+                const routeStats = document.getElementById('map-floating-route-stats');
+                const instruction = document.getElementById('route-instruction');
+                const actions = document.getElementById('map-pill-actions');
+                
+                if (pill) {
+                    pill.style.opacity = '0';
+                    pill.style.pointerEvents = 'none';
+                    pill.style.transform = 'translateX(-50%) translateY(20px)';
+                }
+                if (routeStats) routeStats.style.display = 'none';
+                if (instruction) instruction.style.display = 'none';
+                if (actions) actions.style.display = 'flex';
+                
+                // Si hay ruta dibujada, limpiarla (opcional, pero buena UX)
+                if (window.currentRouteControl && window.map) {
+                    try {
+                        window.map.removeControl(window.currentRouteControl);
+                        window.currentRouteControl = null;
+                    } catch(err) {}
+                }
+            });
+        }
+
         window.toggleRadialMenu = function(menuId) {
             const wrapper = document.getElementById('radial-menu-' + menuId);
             const filtersPills = document.getElementById('map-filters-pills');
@@ -265,6 +320,12 @@
                 if (btn.innerText.includes('Incendios')) {
                     btn.style.background = 'transparent';
                     btn.style.color = '#ef4444';
+                } else if (btn.innerText.includes('Embalses')) {
+                    btn.style.background = 'transparent';
+                    btn.style.color = '#3b82f6';
+                } else if (btn.innerText.includes('Seísmos')) {
+                    btn.style.background = 'transparent';
+                    btn.style.color = '#f97316';
                 }
             });
             if (event && event.currentTarget) {
@@ -272,6 +333,12 @@
                 target.classList.add('active');
                 if (layerId === 'incendios') {
                     target.style.background = '#ef4444';
+                    target.style.color = 'white';
+                } else if (layerId === 'embalses') {
+                    target.style.background = '#3b82f6';
+                    target.style.color = 'white';
+                } else if (layerId === 'sismos') {
+                    target.style.background = '#f97316';
                     target.style.color = 'white';
                 }
             }
@@ -283,43 +350,502 @@
             // Logica del Mapa
             const map = window.currentMap;
             const L = window.L;
-            if (!map || !L) return;
+            if (!map || !L) { console.error('Mapa no inicializado:', {map: !!window.currentMap, L: !!window.L}); return; }
 
-            // Limpiar capas previas de incendios
+            // Limpiar capas previas
             if (window.effisLayers) {
                 window.effisLayers.forEach(layer => map.removeLayer(layer));
                 window.effisLayers = [];
             }
+            if (window.waterLayers) {
+                window.waterLayers.forEach(layer => map.removeLayer(layer));
+                window.waterLayers = [];
+            }
+            if (window.currentFireMarkers) {
+                window.currentFireMarkers.forEach(layer => map.removeLayer(layer));
+                window.currentFireMarkers = [];
+            }
+            if (window.currentSismosMarkers) {
+                window.currentSismosMarkers.forEach(layer => map.removeLayer(layer));
+                window.currentSismosMarkers = [];
+            }
+            if (window.airLayers) {
+                window.airLayers.forEach(layer => map.removeLayer(layer));
+                window.airLayers = [];
+            }
             
-            const banner = document.getElementById('fire-warning-banner');
+            
+            if (layerId === 'sismos') {
+                fetch('/api/sismos')
+                    .then(res => res.json())
+                    .then(sismos => {
+                        window.currentSismosMarkers = [];
+                        
+                        const now = Date.now();
+                        const recentSismos = sismos.filter(sismo => (now - sismo.timestamp) <= 3 * 24 * 60 * 60 * 1000); // 3 días
+                        
+                        if (recentSismos.length === 0) {
+                            const pill = document.getElementById('map-info-pill');
+                            const container = document.getElementById('map-ui-container');
+                            if (pill && container) {
+                                document.getElementById('map-info-label').innerText = 'SISMOLOGÍA';
+                                document.getElementById('map-info-label').style.color = '#10b981';
+                                document.getElementById('map-info-title').innerText = 'Todo tranquilo 😌';
+                                document.getElementById('map-info-desc').innerHTML = 
+                                    '<div style="margin-top:8px; color:var(--text-secondary); line-height: 1.4;">No se han registrado seísmos en España en los últimos 3 días.</div>' +
+                                    '<div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--header-border); font-size: 11px; color: var(--text-secondary); display: flex; align-items: center; gap: 6px;">' +
+                                        '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>' +
+                                        'Fuente: Instituto Geográfico Nacional' +
+                                    '</div>';
+                                container.style.opacity = '1';
+                                container.style.pointerEvents = 'auto';
+                                container.style.transform = 'translate(-50%, 0)';
+                            }
+                            return;
+                        }
 
-            if (layerId === 'incendios') {
-                const today = new Date().toISOString().split('T')[0];
-                const lastWeek = new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0];
-                const timeRange = `${lastWeek}/${today}`;
+                        recentSismos.forEach(sismo => {
+                            let radius = 4;
+                            let color = '#9ca3af'; // gris por defecto
+                            
+                            // Escala Richter extendida (para prepararnos ante terremotos fuertes)
+                            if (sismo.mag < 2.0) {
+                                radius = 4; color = '#9ca3af'; // Micro
+                            } else if (sismo.mag < 3.0) {
+                                radius = 6; color = '#fbbf24'; // Menor
+                            } else if (sismo.mag < 4.0) {
+                                radius = 8; color = '#f97316'; // Ligero
+                            } else if (sismo.mag < 5.0) {
+                                radius = 12; color = '#ef4444'; // Moderado
+                            } else if (sismo.mag < 6.0) {
+                                radius = 18; color = '#dc2626'; // Fuerte
+                            } else if (sismo.mag < 7.0) {
+                                radius = 24; color = '#b91c1c'; // Mayor
+                            } else {
+                                radius = 32; color = '#7f1d1d'; // Gran terremoto
+                            }
 
-                const fires = L.tileLayer.wms("https://maps.effis.emergency.copernicus.eu/effis?", {
-                    layers: 'viirs.hs',
-                    format: 'image/png',
-                    transparent: true,
-                    version: '1.1.1',
-                    TIME: timeRange,
-                    attribution: "© Copernicus EFFIS"
-                });
-                const burned = L.tileLayer.wms("https://maps.effis.emergency.copernicus.eu/effis?", {
-                    layers: 'modis.ba',
-                    format: 'image/png',
-                    transparent: true,
-                    version: '1.1.1',
-                    TIME: timeRange
-                });
-                fires.addTo(map);
-                burned.addTo(map);
-                window.effisLayers = [fires, burned];
+                            const marker = L.circleMarker([sismo.lat, sismo.lon], {
+                                radius: radius,
+                                fillColor: color,
+                                color: '#ffffff', // borde blanco para destacar
+                                weight: 1,
+                                opacity: 1,
+                                fillOpacity: 0.7
+                            }).addTo(map);
+
+                            marker.on('click', () => {
+                                const pill = document.getElementById('map-info-pill');
+                                const container = document.getElementById('map-ui-container');
+                                if (!pill || !container) return;
+
+                                const diffHours = Math.floor((now - sismo.timestamp) / (1000 * 60 * 60));
+                                const diffMins = Math.floor((now - sismo.timestamp) / (1000 * 60));
+                                const diffDays = Math.floor(diffHours / 24);
+                                
+                                let timeStr = '';
+                                if (diffDays > 0) {
+                                    timeStr = diffDays === 1 ? 'Hace 1 día' : 'Hace ' + diffDays + ' días';
+                                } else if (diffHours > 0) {
+                                    timeStr = diffHours === 1 ? 'Hace 1 hora' : 'Hace ' + diffHours + ' horas';
+                                } else {
+                                    timeStr = diffMins === 1 ? 'Hace 1 minuto' : 'Hace ' + diffMins + ' minutos';
+                                }
+
+                                document.getElementById('map-info-label').innerText = 'TERREMOTO';
+                                document.getElementById('map-info-label').style.color = '#f97316';
+                                document.getElementById('map-info-title').innerText = 'Magnitud ' + sismo.mag;
+                                
+                                document.getElementById('map-info-desc').innerHTML = 
+                                    '<div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">' +
+                                        '<div style="display: flex; align-items: center; gap: 8px;">' +
+                                            '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #f97316;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' +
+                                            '<span style="font-weight: 600; color: var(--text-primary);">' + timeStr + '</span>' +
+                                        '</div>' +
+                                        '<div style="display: flex; align-items: flex-start; gap: 8px;">' +
+                                            '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-secondary); margin-top: 2px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>' +
+                                            '<span style="font-weight: 500; line-height: 1.4;">' + sismo.location + '</span>' +
+                                        '</div>' +
+                                        '<div style="margin-top: 8px; padding-top: 10px; border-top: 1px solid var(--header-border); font-size: 11px; color: var(--text-secondary); display: flex; align-items: center; gap: 6px;">' +
+                                            '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>' +
+                                            'Fuente: Instituto Geográfico Nacional' +
+                                        '</div>' +
+                                    '</div>';
+
+                                const actionsDiv = document.getElementById('map-pill-actions');
+                                if (actionsDiv) actionsDiv.style.display = 'none';
+
+                                container.style.opacity = '1';
+                                container.style.pointerEvents = 'auto';
+                                container.style.transform = 'translate(-50%, 0)';
+                            });
+
+                            window.currentSismosMarkers.push(marker);
+                        });
+                    })
+                    .catch(err => console.error("Error loading sismos:", err));
+            } else if (layerId === 'incendios') {
+                fetch('/api/fires')
+                    .then(res => res.json())
+                    .then(fires => {
+                        if (!Array.isArray(fires)) {
+                            console.error("Error from API:", fires);
+                            return;
+                        }
+                        
+                        window.currentFireMarkers = window.currentFireMarkers || [];
+                        window.currentFireMarkers.forEach(m => map.removeLayer(m));
+                        window.currentFireMarkers = [];
+
+                        fires.forEach(fire => {
+                            const isHighIntensity = fire.frp > 10;
+                            const marker = L.circleMarker([fire.lat, fire.lon], {
+                                radius: isHighIntensity ? 6 : 4,
+                                color: '#ffffff',
+                                weight: 1,
+                                fillColor: isHighIntensity ? '#b91c1c' : '#ef4444',
+                                fillOpacity: 0.9
+                            }).addTo(map);
+                            window.currentFireMarkers.push(marker);
+                            
+                            marker.on('click', () => {
+                                const pill = document.getElementById('map-ui-container');
+                                const title = document.getElementById('map-info-title');
+                                const desc = document.getElementById('map-info-desc');
+                                const label = document.getElementById('map-info-label');
+                                
+                                label.innerText = "ANOMALÍA TÉRMICA";
+                                label.style.color = "#f97316";
+                                title.innerText = "Foco Activo";
+                                
+                                const formatDateTime = (dateStr, timeStr) => {
+                                    if (!dateStr || !timeStr) return "Desconocido";
+                                    const fireDate = new Date(dateStr);
+                                    const today = new Date();
+                                    const isToday = fireDate.toDateString() === today.toDateString();
+                                    const dateText = isToday ? "Hoy" : fireDate.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+                                    const timeText = timeStr.length === 4 ? timeStr.substring(0,2) + ":" + timeStr.substring(2) + "h" : timeStr + "h";
+                                    return `${dateText} a las ${timeText}`;
+                                };
+
+                                desc.innerHTML = `
+                                    <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 12px;">
+                                        
+                                        <!-- 1. TECHNICAL STATS (Mini tarjetas) -->
+                                        <div style="display: flex; gap: 10px;">
+                                            ${fire.frp > 0 ? `
+                                            <div style="flex: 1; background: #fee2e2; border-radius: 12px; padding: 12px;">
+                                                <div style="font-size: 12px; color: #991b1b; font-weight: 600;">Intensidad térmica</div>
+                                                <div style="font-size: 18px; font-weight: 800; color: #b91c1c; margin-top: 4px;">${fire.frp} MW</div>
+                                            </div>` : ''}
+                                            <div style="flex: 1; background: rgba(0,0,0,0.03); border-radius: 12px; padding: 12px;">
+                                                <div style="font-size: 12px; color: var(--text-secondary); font-weight: 600;">Temp. superficie</div>
+                                                <div style="font-size: 18px; font-weight: 800; color: var(--text-primary); margin-top: 4px;">${Math.round(fire.tempC)}ºC</div>
+                                            </div>
+                                        </div>
+
+                                        <!-- 2. DATE, WIND & SATELLITE -->
+                                        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: var(--text-primary);">
+                                            
+                                            <!-- Date -->
+                                            <div style="display: flex; align-items: center; gap: 8px;">
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-secondary);"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                                <span style="color: var(--text-secondary);">Detectado:</span>
+                                                <span style="font-weight: 600;">${formatDateTime(fire.date, fire.time)}</span>
+                                            </div>
+
+                                            <!-- Wind -->
+                                            <div id="fire-weather-info" style="display: flex; align-items: center; gap: 8px;">
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-secondary);"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"></path></svg>
+                                                <span style="color: var(--text-secondary);">Cargando viento en la zona...</span>
+                                            </div>
+
+                                            <!-- Satellite -->
+                                            <div style="display: flex; align-items: center; gap: 8px;">
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-secondary);"><path d="M13 7 9 3 5 7l4 4"/><path d="m17 11 4 4-4 4-4-4"/><path d="m8 12 4 4 6-6-4-4Z"/><path d="m16 8 3-3"/><path d="M9 21a6 6 0 0 0-6-6"/></svg>
+                                                <span style="color: var(--text-secondary);">Satélite:</span>
+                                                <span style="font-weight: 600;">${fire.satellite || 'NASA'}</span>
+                                            </div>
+
+                                        </div>
+                                        
+                                        <!-- 3. DISCLAIMER (Small print) -->
+                                        <div style="background: rgba(0,0,0,0.02); border-radius: 10px; padding: 10px; font-size: 11px; color: var(--text-secondary); line-height: 1.4; border: 1px solid rgba(0,0,0,0.05);">
+                                            <div><strong>Nota:</strong> El satélite detecta calor anormal. Aunque filtramos fábricas e industrias, podría tratarse de una quema agrícola u otro foco térmico y no siempre un incendio forestal.</div>
+                                        </div>
+
+                                        <div style="margin-top: 4px; padding-top: 10px; border-top: 1px solid var(--header-border); font-size: 11px; color: var(--text-secondary); display: flex; align-items: center; gap: 6px;">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                            Fuente: NASA / Copernicus
+                                        </div>
+                                    </div>
+                                `;
+
+
+                                const pillActions = document.getElementById('map-pill-actions');
+                                if (pillActions) {
+                                    pillActions.style.display = 'none';
+                                    pillActions.innerHTML = ''; // Force remove any rogue icons like WhatsApp
+                                }
+
+                                pill.style.opacity = '1';
+                                pill.style.pointerEvents = 'auto';
+                                pill.style.transform = 'translateX(-50%) translateY(0)';
+                                
+
+                                // Fetch local wind via Open-Meteo
+                                fetch(`https://api.open-meteo.com/v1/forecast?latitude=${fire.lat}&longitude=${fire.lon}&current_weather=true`)
+                                    .then(r => r.json())
+                                    .then(wData => {
+                                        const wContainer = document.getElementById('fire-weather-info');
+                                        if (wContainer && wData && wData.current_weather) {
+                                            const wind = Math.round(wData.current_weather.windspeed);
+                                            const dirs = ['Norte', 'Noreste', 'Este', 'Sureste', 'Sur', 'Suroeste', 'Oeste', 'Noroeste', 'Norte'];
+                                            const dirIndex = Math.round(wData.current_weather.winddirection / 45);
+                                            const dirStr = dirs[dirIndex] || wData.current_weather.winddirection + '°';
+                                            wContainer.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-secondary);"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"></path></svg> <span style="color: var(--text-secondary);">Viento:</span> <span style="font-weight: 600;">${wind} km/h (${dirStr})</span>`;
+                                        }
+                                    }).catch(e => console.error(e));
+                                
+                                map.setView([fire.lat - 0.05, fire.lon], 11);
+                            });
+                        });
+                        
+
+                        
+                        // Hacer zoom automático para que se vean todos los incendios de España/Canarias en pantalla
+                        if (window.currentFireMarkers.length > 0) {
+                            const group = new L.featureGroup(window.currentFireMarkers);
+                            map.fitBounds(group.getBounds(), { padding: [50, 50], maxZoom: 8 });
+                        }
+
+                    }).catch(e => console.error(e));
+            } else if (layerId === 'embalses') {
+
+                // Fetch and draw water reservoirs
+                fetch('/api/water')
+                    .then(res => res.json())
+                    .then(data => {
+                        if (!data || data.error) return;
+                        window.waterLayers = [];
+                        
+                        // Icono custom gota de agua
+                        const waterIcon = L.divIcon({
+                            html: `<div style="background-color: #3b82f6; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.3); border: 2px solid white; color: white;">
+                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
+                                   </div>`,
+                            className: '',
+                            iconSize: [24, 24],
+                            iconAnchor: [12, 12]
+                        });
+
+                        data.forEach(embalse => {
+                            const marker = L.marker([embalse.lat, embalse.lon], { icon: waterIcon }).addTo(map);
+                            
+                            // Mapeo aproximado de pantanos a municipios para el clima
+                            const cityMap = {
+                                "Almodóvar": "Tarifa", "Arcos": "Arcos de la Frontera",
+                                "Barbate": "Alcalá de los Gazules", "Bornos": "Bornos",
+                                "Celemín": "Benalup-Casas Viejas", "Charco Redondo": "Los Barrios",
+                                "Guadalcacín": "San José del Valle", "Guadarranque": "Castellar de la Frontera",
+                                "Los Hurones": "Algar", "Zahara - El Gastor": "Zahara"
+                            };
+
+                            marker.on('click', () => {
+                                const pill = document.getElementById('map-ui-container');
+                                const title = document.getElementById('map-info-title');
+                                const desc = document.getElementById('map-info-desc');
+                                const label = document.getElementById('map-info-label');
+                                
+                                label.innerText = "EMBALSE";
+                                label.style.color = "#3b82f6";
+                                title.innerText = embalse.name;
+                                
+                                // Progress bar and Alert Status logic
+                                let barColor = embalse.percentage >= 50 ? '#00e676' : embalse.color; // Vibrant neon green for healthy
+                                let alertText = "🟢 Normalidad";
+                                let alertBg = "#dcfce7";
+                                let alertColor = "#166534";
+
+                                if (embalse.percentage < 20) {
+                                    barColor = '#ef4444'; // Rojo sequía
+                                    alertText = "🔴 Emergencia";
+                                    alertBg = "#fee2e2";
+                                    alertColor = "#991b1b";
+                                } else if (embalse.percentage < 35) {
+                                    barColor = '#f97316'; // Naranja
+                                    alertText = "🟠 Alerta";
+                                    alertBg = "#ffedd5";
+                                    alertColor = "#9a3412";
+                                } else if (embalse.percentage < 50) {
+                                    barColor = '#eab308'; // Amarillo
+                                    alertText = "🟡 Prealerta";
+                                    alertBg = "#fef9c3";
+                                    alertColor = "#854d0e";
+                                }
+                                
+                                const trendIcon = embalse.trend > 0 ? '📈' : (embalse.trend < 0 ? '📉' : '➖');
+                                const trendText = embalse.trend > 0 ? `+${embalse.trend}` : embalse.trend;
+
+                                desc.innerHTML = `
+                                    <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 12px;">
+                                        
+                                        <!-- HERO METRIC -->
+                                        <div style="display: flex; align-items: flex-end; justify-content: space-between;">
+                                            <div>
+                                                <div style="font-size: 32px; font-weight: 800; color: ${barColor}; line-height: 1; letter-spacing: -0.5px;">
+                                                    ${embalse.percentage}%
+                                                </div>
+                                                <div style="font-size: 13px; color: var(--text-secondary); margin-top: 6px; font-weight: 500;">
+                                                    ${embalse.current} de ${embalse.capacity} hm³
+                                                </div>
+                                            </div>
+                                            <div style="background: ${alertBg}; color: ${alertColor}; padding: 6px 12px; border-radius: 16px; font-size: 12px; font-weight: 700; display: flex; align-items: center;">
+                                                ${alertText}
+                                            </div>
+                                        </div>
+
+                                        <!-- PROGRESS BAR -->
+                                        <div style="width: 100%; background: var(--header-border); border-radius: 8px; height: 10px; overflow: hidden;">
+                                            <div style="width: ${embalse.percentage}%; background: ${barColor}; height: 100%; border-radius: 8px; transition: width 0.5s ease;"></div>
+                                        </div>
+
+                                        <!-- TRENDS -->
+                                        <div style="display: flex; flex-direction: column; gap: 10px; font-size: 13.5px; color: var(--text-primary);">
+                                            <div style="display: flex; align-items: center; gap: 10px;">
+                                                <div style="width: 24px; height: 24px; border-radius: 50%; background: rgba(0,0,0,0.04); display: flex; align-items: center; justify-content: center; font-size: 12px;">${trendIcon}</div>
+                                                <span>Variación semanal: <b>${trendText} hm³</b></span>
+                                            </div>
+                                            ${embalse.trend < 0 ? `
+                                            <div style="display: flex; align-items: center; gap: 10px; color: #b91c1c;">
+                                                <div style="width: 24px; height: 24px; border-radius: 50%; background: #fee2e2; display: flex; align-items: center; justify-content: center; font-size: 12px;">⏳</div>
+                                                <span>Agua estimada para <b>${Math.round(embalse.current / (Math.abs(embalse.trend) * 4.345))} meses</b></span>
+                                            </div>` : ''}
+                                        </div>
+
+                                        <!-- HISTORICAL -->
+                                        ${embalse.pastYear ? `
+                                        <div style="background: rgba(0,0,0,0.02); border: 1px solid var(--header-border); border-radius: 12px; padding: 12px; font-size: 13px;">
+                                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                                <span style="color: var(--text-secondary);">Hace un año</span>
+                                                <span style="font-weight: 600; color: var(--text-primary);">${embalse.pastYearPct}% <span style="color: var(--text-secondary); font-weight: 400; font-size: 12px;">(${embalse.pastYear} hm³)</span></span>
+                                            </div>
+                                            <div style="display: flex; justify-content: space-between;">
+                                                <span style="color: var(--text-secondary);">Media 10 años</span>
+                                                <span style="font-weight: 600; color: var(--text-primary);">${embalse.avg10YearPct}% <span style="color: var(--text-secondary); font-weight: 400; font-size: 12px;">(${embalse.avg10Year} hm³)</span></span>
+                                            </div>
+                                        </div>
+                                        ` : ''}
+
+                                        <!-- WEATHER -->
+                                        <div id="water-weather-info" style="display: flex; align-items: center; gap: 12px; font-size: 13.5px; color: var(--text-primary); border-top: 1px solid var(--header-border); padding-top: 14px;">
+                                            <span style="font-size: 20px;">🌤️</span> 
+                                            <span style="color: var(--text-secondary);">Cargando clima en el pantano...</span>
+                                        </div>
+                                        
+                                        <div style="margin-top: 4px; padding-top: 10px; border-top: 1px solid var(--header-border); font-size: 11px; color: var(--text-secondary); display: flex; align-items: center; gap: 6px;">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                            Fuente: Junta de Andalucía
+                                        </div>
+                                    </div>
+                                `;
+
+                                // Set destination for "Cómo ir"
+                                window.selectedDestination = { lat: embalse.lat, lon: embalse.lon, name: `Embalse de ${embalse.name}` };
+                                
+                                const pillActions = document.getElementById('map-pill-actions');
+                                if (pillActions) pillActions.style.display = 'flex';
+
+                                // Show pill
+                                pill.style.opacity = '1';
+                                pill.style.pointerEvents = 'auto';
+                                pill.style.transform = 'translateX(-50%) translateY(0)';
+
+                                // Center map
+                                map.setView([embalse.lat - 0.05, embalse.lon], 11);
+
+                                // Fetch weather
+                                const cityName = cityMap[embalse.name] || "Cádiz";
+                                fetch('/api/weather?city=' + encodeURIComponent(cityName))
+                                    .then(r => r.json())
+                                    .then(wData => {
+                                        const wContainer = document.getElementById('water-weather-info');
+                                        if (wContainer && wData && wData.current) {
+                                            const temp = wData.current.temp;
+                                            const descStr = wData.current.skyDesc || wData.current.sky;
+                                            wContainer.innerHTML = `<span style="font-size: 24px; margin-right: 4px;">🌤️</span> <div><div style="font-size: 12px; color: var(--text-secondary);">El tiempo ahora</div><div style="font-weight: 500;">${temp}ºC, ${descStr}</div></div>`;
+                                        }
+                                    }).catch(e => console.error(e));
+                            });
+
+                            window.waterLayers.push(marker);
+                        });
+                    })
+                    .catch(e => console.error("Error fetching water data:", e));
+            } else if (layerId === 'aire') {
+                window.airLayers = window.airLayers || [];
                 
-                if (banner) banner.style.display = 'flex';
+                fetch('/api/air-quality')
+                    .then(res => res.json())
+                    .then(data => {
+                        if (!Array.isArray(data)) return;
+                        
+                        data.forEach(station => {
+                            const marker = L.circleMarker([station.lat, station.lon], {
+                                radius: 14,
+                                fillColor: station.color,
+                                color: '#ffffff',
+                                weight: 2,
+                                opacity: 1,
+                                fillOpacity: 0.8
+                            }).addTo(map);
+
+                            const el = marker.getElement();
+                            if (el) {
+                                el.style.animation = `pulse-fire 3s infinite`;
+                            }
+                            
+                            marker.on('click', () => {
+                                window.mapActionDirections = () => {
+                                    window.open(`https://www.google.com/maps/dir/?api=1&destination=${station.lat},${station.lon}`, '_blank');
+                                };
+
+                                const title = document.getElementById('map-info-title');
+                                const desc = document.getElementById('map-info-desc');
+                                const label = document.getElementById('map-info-label');
+                                const pill = document.getElementById('map-info-pill');
+
+                                label.textContent = 'ESTACIÓN MEDIOAMBIENTAL';
+                                title.textContent = station.name;
+                                
+                                desc.innerHTML = `
+                                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 6px;">
+                                        <div style="font-size: 15px; font-weight: 600; color: ${station.color};">Calidad: ${station.status} (EAQI: ${station.aqi})</div>
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 12px; color: var(--text-secondary);">
+                                            <div style="background: var(--chat-bg); padding: 6px; border-radius: 6px; border: 1px solid var(--header-border);"><b>PM10:</b> ${station.pm10} μg/m³</div>
+                                            <div style="background: var(--chat-bg); padding: 6px; border-radius: 6px; border: 1px solid var(--header-border);"><b>PM2.5:</b> ${station.pm25} μg/m³</div>
+                                            <div style="background: var(--chat-bg); padding: 6px; border-radius: 6px; border: 1px solid var(--header-border);"><b>NO2:</b> ${station.no2} μg/m³</div>
+                                            <div style="background: var(--chat-bg); padding: 6px; border-radius: 6px; border: 1px solid var(--header-border);"><b>O3:</b> ${station.o3} μg/m³</div>
+                                        </div>
+                                        <div style="margin-top: 4px; padding-top: 8px; border-top: 1px solid var(--header-border); font-size: 11px; color: var(--text-secondary); text-align: right; display: flex; align-items: center; justify-content: flex-end; gap: 4px;">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                                            Fuente: Agencia Europea de Medio Ambiente / Open-Meteo
+                                        </div>
+                                    </div>
+                                `;
+
+                                document.getElementById('map-ui-container').style.opacity = '1';
+                                document.getElementById('map-ui-container').style.pointerEvents = 'auto';
+                                document.getElementById('map-ui-container').style.transform = 'translateX(-50%) translateY(0)';
+                                
+                                map.setView([station.lat - 0.05, station.lon], 11);
+                            });
+
+                            window.airLayers.push(marker);
+                        });
+                    })
+                    .catch(e => console.error("Error fetching air quality:", e));
             } else {
-                if (banner) banner.style.display = 'none';
             }
         };
     }
