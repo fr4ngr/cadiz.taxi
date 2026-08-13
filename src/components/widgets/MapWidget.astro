@@ -314,11 +314,7 @@
         };
 
         window.selectMapLayer = function(layerId) {
-            const currentEvent = typeof window !== 'undefined' ? window.event : null;
-            let target = null;
-            if (currentEvent && currentEvent.currentTarget) {
-                target = currentEvent.currentTarget;
-            }
+            const target = document.querySelector(`button[onclick*="${layerId}"]`);
 
             // Map logic
             const map = window.currentMap;
@@ -480,9 +476,13 @@
                                 container.style.pointerEvents = 'auto';
                                 container.style.transform = 'translate(-50%, 0)';
                             });
-
                             window.currentSismosMarkers.push(marker);
                         });
+
+                        if (window.currentSismosMarkers.length > 0) {
+                            const group = new L.featureGroup(window.currentSismosMarkers);
+                            map.fitBounds(group.getBounds(), { padding: [50, 50], maxZoom: 9 });
+                        }
                     })
                     .catch(err => console.error("Error loading sismos:", err));
             } else if (layerId === 'incendios') {
@@ -497,6 +497,26 @@
                         window.currentFireMarkers = window.currentFireMarkers || [];
                         window.currentFireMarkers.forEach(m => map.removeLayer(m));
                         window.currentFireMarkers = [];
+
+                        if (fires.length === 0) {
+                            const pill = document.getElementById('map-info-pill');
+                            const container = document.getElementById('map-ui-container');
+                            if (pill && container) {
+                                document.getElementById('map-info-label').innerText = 'INCENDIOS ACTIVOS';
+                                document.getElementById('map-info-label').style.color = '#ef4444';
+                                document.getElementById('map-info-title').innerText = 'Todo tranquilo 😌';
+                                document.getElementById('map-info-desc').innerHTML = 
+                                    '<div style="margin-top:8px; color:var(--text-secondary); line-height: 1.4;">No se han detectado anomalías térmicas en la Península Ibérica en las últimas horas.</div>' +
+                                    '<div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--header-border); font-size: 11px; color: var(--text-secondary); display: flex; align-items: center; gap: 6px;">' +
+                                        '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>' +
+                                        'Fuente: NASA FIRMS' +
+                                    '</div>';
+                                container.style.opacity = '1';
+                                container.style.pointerEvents = 'auto';
+                                container.style.transform = 'translate(-50%, 0)';
+                            }
+                            return;
+                        }
 
                         fires.forEach(fire => {
                             const isHighIntensity = fire.frp > 10;
