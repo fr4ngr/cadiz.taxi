@@ -314,66 +314,66 @@
         };
 
         window.selectMapLayer = function(layerId) {
-            // Update active state visually
-            document.querySelectorAll('.filter-pill').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.innerText.includes('Incendios')) {
-                    btn.style.background = 'transparent';
-                    btn.style.color = '#ef4444';
-                } else if (btn.innerText.includes('Embalses')) {
-                    btn.style.background = 'transparent';
-                    btn.style.color = '#3b82f6';
-                } else if (btn.innerText.includes('Seísmos')) {
-                    btn.style.background = 'transparent';
-                    btn.style.color = '#f97316';
-                }
-            });
             const currentEvent = typeof window !== 'undefined' ? window.event : null;
+            let target = null;
             if (currentEvent && currentEvent.currentTarget) {
-                const target = currentEvent.currentTarget;
-                target.classList.add('active');
+                target = currentEvent.currentTarget;
+            }
+
+            // Map logic
+            const map = window.currentMap;
+            const L = window.L;
+            if (!map || !L) { console.error('Mapa no inicializado'); return; }
+
+            // Handle Basemap Layers (Radio behavior)
+            if (layerId === 'popular' || layerId === 'red') {
+                document.querySelectorAll('.filter-pill').forEach(btn => {
+                    if (btn.innerText.includes('Popular') || btn.innerText.includes('Red')) {
+                        btn.classList.remove('active');
+                    }
+                });
+                if (target) target.classList.add('active');
+                return;
+            }
+
+            // Toggle Behavior for Data Layers
+            const isCurrentlyActive = target && target.classList.contains('active');
+
+            if (isCurrentlyActive) {
+                // TOGGLE OFF
+                target.classList.remove('active');
+                target.style.background = 'transparent';
+                
                 if (layerId === 'incendios') {
-                    target.style.background = '#ef4444';
-                    target.style.color = 'white';
+                    target.style.color = '#ef4444';
+                    if (window.effisLayers) { window.effisLayers.forEach(l => map.removeLayer(l)); window.effisLayers = []; }
+                    if (window.currentFireMarkers) { window.currentFireMarkers.forEach(l => map.removeLayer(l)); window.currentFireMarkers = []; }
                 } else if (layerId === 'embalses') {
-                    target.style.background = '#3b82f6';
-                    target.style.color = 'white';
+                    target.style.color = '#3b82f6';
+                    if (window.waterLayers) { window.waterLayers.forEach(l => map.removeLayer(l)); window.waterLayers = []; }
                 } else if (layerId === 'sismos') {
-                    target.style.background = '#f97316';
+                    target.style.color = '#f97316';
+                    if (window.currentSismosMarkers) { window.currentSismosMarkers.forEach(l => map.removeLayer(l)); window.currentSismosMarkers = []; }
+                } else if (layerId === 'aire') {
+                    target.style.color = '#10b981';
+                    if (window.airLayers) { window.airLayers.forEach(l => map.removeLayer(l)); window.airLayers = []; }
+                }
+                return; // Stop here, we just toggled it off.
+            } else {
+                // TOGGLE ON
+                if (target) {
+                    target.classList.add('active');
                     target.style.color = 'white';
+                    if (layerId === 'incendios') target.style.background = '#ef4444';
+                    if (layerId === 'embalses') target.style.background = '#3b82f6';
+                    if (layerId === 'sismos') target.style.background = '#f97316';
+                    if (layerId === 'aire') target.style.background = '#10b981';
                 }
             }
-            
+
             // Close menu
             const filtersPills = document.getElementById('map-filters-pills');
             if (filtersPills) filtersPills.classList.remove('open');
-            
-            // Logica del Mapa
-            const map = window.currentMap;
-            const L = window.L;
-            if (!map || !L) { console.error('Mapa no inicializado:', {map: !!window.currentMap, L: !!window.L}); return; }
-
-            // Limpiar capas previas
-            if (window.effisLayers) {
-                window.effisLayers.forEach(layer => map.removeLayer(layer));
-                window.effisLayers = [];
-            }
-            if (window.waterLayers) {
-                window.waterLayers.forEach(layer => map.removeLayer(layer));
-                window.waterLayers = [];
-            }
-            if (window.currentFireMarkers) {
-                window.currentFireMarkers.forEach(layer => map.removeLayer(layer));
-                window.currentFireMarkers = [];
-            }
-            if (window.currentSismosMarkers) {
-                window.currentSismosMarkers.forEach(layer => map.removeLayer(layer));
-                window.currentSismosMarkers = [];
-            }
-            if (window.airLayers) {
-                window.airLayers.forEach(layer => map.removeLayer(layer));
-                window.airLayers = [];
-            }
             
             
             if (layerId === 'sismos') {
