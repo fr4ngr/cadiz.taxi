@@ -440,10 +440,7 @@
                     let html = `
                         ${cheapestBadge}
                         <div style="font-size:12px;color:var(--text-secondary);margin-bottom:8px;">${gas.direccion} (${gas.localidad})</div>
-                        <div style="font-size:12px;color:var(--text-secondary);margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
-                            <span>🕒 ${gas.horario}</span>
-                            ${gas.fecha ? `<span style="font-size:10px;opacity:0.7;">⏱️ ${gas.fecha}</span>` : ''}
-                        </div>
+                        <div style="font-size:12px;color:var(--text-secondary);margin-bottom:12px;">🕒 ${gas.horario}</div>
                         
                         <div style="display:flex; flex-wrap:wrap; gap:8px;">
                     `;
@@ -467,6 +464,32 @@
                     });
                     
                     html += `</div>`;
+
+                    // Add visual progress bar for price level
+                    const levelText = gas.priceLevel === 1 ? 'BARATA' : (gas.priceLevel === 2 ? 'PROMEDIO' : 'CARA');
+                    const levelColor = gas.priceLevel === 1 ? '#22c55e' : (gas.priceLevel === 2 ? '#eab308' : '#dc2626');
+                    
+                    html += `
+                        <div style="margin-top: 16px; margin-bottom: 8px; padding: 12px; background: var(--chat-bg); border-radius: 8px; border: 1px solid var(--border-color);">
+                            <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+                                <span>Comparativa en ${gas.comarca}</span>
+                                <span style="font-weight: 800; font-size: 12px; color: ${levelColor}">${levelText}</span>
+                            </div>
+                            <div style="display: flex; height: 8px; border-radius: 4px; overflow: hidden; gap: 2px;">
+                                <div style="flex: 1; background: #22c55e; opacity: ${gas.priceLevel >= 1 ? '1' : '0.15'};"></div>
+                                <div style="flex: 1; background: #eab308; opacity: ${gas.priceLevel >= 2 ? '1' : '0.15'};"></div>
+                                <div style="flex: 1; background: #dc2626; opacity: ${gas.priceLevel >= 3 ? '1' : '0.15'};"></div>
+                            </div>
+                        </div>
+                    `;
+
+                    // Add data source footer
+                    html += `
+                        <div style="font-size:10px;color:var(--text-secondary);margin-top:12px;display:flex;justify-content:space-between;border-top:1px solid var(--border-color);padding-top:8px;">
+                            <span>Fuente: Geoportal MITECO</span>
+                            ${gas.fecha ? `<span>Actualizado: ${gas.fecha}</span>` : ''}
+                        </div>
+                    `;
                     
                     return {
                         label: 'Gasolinera',
