@@ -55,6 +55,24 @@
         </div>
     </div>
 
+    <!-- Overlay de carga del mapa -->
+    <div id="map-loading-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;">
+        <div style="background: var(--chat-bg); border: 1px solid var(--header-border); padding: 20px 24px; border-radius: 24px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); display: flex; flex-direction: column; align-items: center; gap: 16px; max-width: 80%; text-align: center;">
+            <div id="map-loading-spinner" style="width: 32px; height: 32px; border: 3px solid var(--border-color); border-top-color: var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+            <div id="map-error-icon" style="display: none; color: #ef4444;">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+                <span id="map-loading-title" style="font-weight: 600; color: var(--text-primary); font-size: 15px;">Obteniendo datos...</span>
+                <span id="map-loading-source" style="font-size: 13px; color: var(--text-secondary);">Fuente: -</span>
+            </div>
+            <div id="map-loading-actions" style="display: none; gap: 12px; margin-top: 4px; width: 100%;">
+                <button onclick="window.hideMapLoading()" style="flex: 1; padding: 8px; border-radius: 12px; border: 1px solid var(--border-color); background: transparent; color: var(--text-secondary); font-weight: 500; cursor: pointer;">Cancelar</button>
+                <button id="map-loading-retry-btn" style="flex: 1; padding: 8px; border-radius: 12px; border: none; background: var(--primary-color); color: white; font-weight: 500; cursor: pointer;">Reintentar</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Filtros Container (Top) -->
     <div id="map-filters-pills" style="position: absolute; top: 84px; left: 50%; z-index: 1001; width: calc(100% - 32px); display: flex; justify-content: center; gap: 8px; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); flex-wrap: wrap;">
         <button class="filter-pill active" onclick="window.selectMapLayer('popular')">
@@ -308,6 +326,48 @@
             });
         }
 
+        window.showMapLoading = function(sourceName) {
+            const overlay = document.getElementById('map-loading-overlay');
+            if (!overlay) return;
+            
+            document.getElementById('map-loading-spinner').style.display = 'block';
+            document.getElementById('map-error-icon').style.display = 'none';
+            document.getElementById('map-loading-title').innerText = 'Obteniendo datos...';
+            document.getElementById('map-loading-source').innerText = 'Fuente: ' + (sourceName || 'Desconocida');
+            document.getElementById('map-loading-actions').style.display = 'none';
+            
+            overlay.style.opacity = '1';
+            overlay.style.pointerEvents = 'auto';
+        };
+
+        window.hideMapLoading = function() {
+            const overlay = document.getElementById('map-loading-overlay');
+            if (!overlay) return;
+            
+            overlay.style.opacity = '0';
+            overlay.style.pointerEvents = 'none';
+        };
+
+        window.showMapError = function(retryCallback) {
+            const overlay = document.getElementById('map-loading-overlay');
+            if (!overlay) return;
+            
+            document.getElementById('map-loading-spinner').style.display = 'none';
+            document.getElementById('map-error-icon').style.display = 'block';
+            document.getElementById('map-loading-title').innerText = 'Error al obtener datos';
+            document.getElementById('map-loading-actions').style.display = 'flex';
+            
+            const retryBtn = document.getElementById('map-loading-retry-btn');
+            if (retryBtn) {
+                // Remove previous listeners by cloning
+                const newBtn = retryBtn.cloneNode(true);
+                retryBtn.parentNode.replaceChild(newBtn, retryBtn);
+                newBtn.addEventListener('click', () => {
+                    if (retryCallback) retryCallback();
+                });
+            }
+        };
+
         window.toggleRadialMenu = function(menuId) {
             const wrapper = document.getElementById('radial-menu-' + menuId);
             const filtersPills = document.getElementById('map-filters-pills');
@@ -333,8 +393,10 @@
             // SISMOS
             // ---------------------------------------------------------
             'sismos': {
+                name: 'Sismos',
                 type: 'data',
                 color: '#f97316',
+                source: 'Instituto Geográfico Nacional',
                 _markers: [],
                 _isActive: false,
                 autoZoom: true,
@@ -410,6 +472,7 @@
             'dust_live': {
                 type: 'wms',
                 color: '#d946ef',
+                source: 'EUMETSAT',
                 _isActive: false,
                 _wmsLayer: null,
                 flyTo: [32.0, -2.0],
@@ -457,8 +520,10 @@
             // INCENDIOS
             // ---------------------------------------------------------
             'incendios': {
+                name: 'Incendios',
                 type: 'data',
                 color: '#ef4444',
+                source: 'NASA FIRMS',
                 _markers: [],
                 _isActive: false,
                 autoZoom: true,
@@ -537,8 +602,10 @@
             // EMBALSES
             // ---------------------------------------------------------
             'embalses': {
+                name: 'Embalses',
                 type: 'data',
                 color: '#3b82f6',
+                source: 'MITECO (Min. para la Transición Ecológica)',
                 _markers: [],
                 _isActive: false,
                 autoZoom: false,
@@ -639,6 +706,7 @@
             'polen': {
                 type: 'data',
                 color: '#8b5cf6',
+                source: 'Red de Aerobiología de Andalucía',
                 _markers: [],
                 _isActive: false,
                 autoZoom: false,
@@ -752,6 +820,7 @@
             'aire': {
                 type: 'data',
                 color: '#10b981',
+                source: 'AEMA y OpenAQ',
                 _markers: [],
                 _isActive: false,
                 autoZoom: false,
@@ -930,28 +999,50 @@
                     targetBtn.style.color = 'white';
                 }
 
+                window.showMapLoading(filterObj.source);
+
                 if (filterObj.type === 'wms') {
                     if (filterObj.flyTo && filterObj.flyToZoom) {
                         map.flyTo(filterObj.flyTo, filterObj.flyToZoom, { duration: 1.5 });
                     }
+                    
+                    const setupWmsLayer = (layer) => {
+                        layer.on('load', () => window.hideMapLoading());
+                        layer.on('tileerror', () => {
+                            window.showMapError(() => window.selectMapLayer(layerId));
+                        });
+                        // Fallback timeout just in case events don't fire nicely
+                        setTimeout(() => window.hideMapLoading(), 4000); 
+                    };
+
                     if (filterObj.url) {
                         filterObj._wmsLayer = window.L.tileLayer.wms(filterObj.url, filterObj.options);
+                        setupWmsLayer(filterObj._wmsLayer);
                         filterObj._wmsLayer.addTo(map);
                     } else if (filterObj.fetchWmsLayer) {
-                        // Muestra estado de carga si quieres
                         filterObj.fetchWmsLayer(map).then(layer => {
                             if (filterObj._isActive && layer) {
                                 filterObj._wmsLayer = layer;
+                                setupWmsLayer(layer);
                             } else if (layer) {
                                 map.removeLayer(layer);
+                                window.hideMapLoading();
+                            } else {
+                                window.showMapError(() => window.selectMapLayer(layerId));
                             }
+                        }).catch(() => {
+                            window.showMapError(() => window.selectMapLayer(layerId));
                         });
                     }
                     return;
                 }
 
                 try {
-                    const data = await filterObj.fetchData();
+                    const fetchPromise = filterObj.fetchData();
+                    const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 10000));
+                    const data = await Promise.race([fetchPromise, timeoutPromise]);
+                    
+                    window.hideMapLoading();
 
                     if (!data || data.length === 0) {
                         if (filterObj.emptyState) {
@@ -1014,6 +1105,7 @@
                         targetBtn.style.background = 'transparent';
                         targetBtn.style.color = filterObj.color;
                     }
+                    window.showMapError(() => window.selectMapLayer(layerId));
                 }
             }
         };
