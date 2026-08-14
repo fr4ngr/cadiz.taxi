@@ -758,15 +758,7 @@
                                 ${Math.floor((Date.now() - station.timestamp) / 60000) > 1440 ? `<div style="background: var(--chat-bg); border-left: 4px solid #ef4444; padding: 10px; border-radius: 4px; display: flex; gap: 8px; align-items: flex-start; border-top: 1px solid var(--header-border); border-right: 1px solid var(--header-border); border-bottom: 1px solid var(--header-border);">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" style="flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
                                     <div style="font-size: 11px; color: var(--text-secondary); line-height: 1.4;">
-                                        <strong style="color: var(--text-primary);">Estación inactiva:</strong> No recibimos datos desde hace ${Math.floor(Math.floor((Date.now() - station.timestamp) / 60000)/1440)} días. El mantenimiento corresponde a la Junta de Andalucía (Red de Vigilancia y Control de la Calidad del Aire).
-                                        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--header-border); display: flex; align-items: center; gap: 10px;">
-                                            <img src="https://ui-avatars.com/api/?name=Adolfina+Martinez&background=ef4444&color=fff&rounded=true&size=64" width="28" height="28" style="border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" alt="Adolfina Martínez Guirado" />
-                                            <div style="display: flex; flex-direction: column;">
-                                                <span style="font-size: 9px; font-weight: 800; color: #ef4444; text-transform: uppercase; letter-spacing: 0.5px;">Responsable Institucional</span>
-                                                <a href="https://juntadeandalucia.es/organismos/sostenibilidadymedioambiente.html" target="_blank" style="font-size: 12px; font-weight: 700; color: var(--text-primary); line-height: 1.2; text-decoration: underline; text-decoration-color: #ef4444;">Adolfina Martínez Guirado</a>
-                                                <span style="font-size: 10px; color: var(--text-secondary);">Consejera de Sostenibilidad (Junta de Andalucía)</span>
-                                            </div>
-                                        </div>
+                                        <strong style="color: var(--text-primary);">Estación inactiva:</strong> No envía datos desde hace ${Math.floor(Math.floor((Date.now() - station.timestamp) / 60000)/1440)} días.
                                     </div>
                                 </div>` : ''}
                                 <div style="display: flex; align-items: flex-start; justify-content: space-between; background: linear-gradient(to right, transparent, ${station.color}15); padding: 12px; border-radius: 8px; border-left: 4px solid ${station.color};">
@@ -791,7 +783,7 @@
                                 </div>
 
                                 <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: -4px; margin-top: 4px;">Principales Contaminantes</div>
-                                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                                     ${(() => {
                                         const renderBox = (name, symbol, val, limit) => {
                                             const hasData = val !== null && val !== undefined;
