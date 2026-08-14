@@ -1150,6 +1150,14 @@
                     
                     window.hideMapLoading();
 
+                    if (!filterObj._isActive) return;
+
+                    if (filterObj._markers && filterObj._markers.length > 0) {
+                        filterObj._markers.forEach(m => map.removeLayer(m));
+                    }
+                    filterObj._markers = [];
+
+
                     if (!data || data.length === 0) {
                         if (filterObj.emptyState) {
                             const pill = document.getElementById('map-info-pill');
@@ -1171,7 +1179,7 @@
                         return;
                     }
 
-                    filterObj._markers = [];
+                    // Markers already cleared safely earlier
                     data.forEach(item => {
                         const marker = filterObj.renderMarker(item, map);
                         
