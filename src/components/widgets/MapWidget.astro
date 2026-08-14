@@ -466,14 +466,13 @@
                     html += `</div>`;
 
                     // Add visual progress bar for price level
-                    const levelText = gas.priceLevel === 1 ? 'BARATA' : (gas.priceLevel === 2 ? 'PROMEDIO' : 'CARA');
+                    const levelText = gas.priceLevel === 1 ? 'ENTRE LAS MÁS BARATAS' : (gas.priceLevel === 2 ? `CON PRECIOS EN LA MEDIA DE ${gas.comarca.toUpperCase()}` : 'ENTRE LAS MÁS CARAS');
                     const levelColor = gas.priceLevel === 1 ? '#22c55e' : (gas.priceLevel === 2 ? '#eab308' : '#dc2626');
                     
                     html += `
                         <div style="margin-top: 16px; margin-bottom: 8px; padding: 12px; background: var(--chat-bg); border-radius: 8px; border: 1px solid var(--border-color);">
-                            <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
-                                <span>Comparativa en ${gas.comarca}</span>
-                                <span style="font-weight: 800; font-size: 12px; color: ${levelColor}">${levelText}</span>
+                            <div style="text-align: center; margin-bottom: 8px;">
+                                <div style="font-weight: 800; font-size: 11px; color: ${levelColor};">${levelText}</div>
                             </div>
                             <div style="display: flex; height: 8px; border-radius: 4px; overflow: hidden; gap: 2px;">
                                 <div style="flex: 1; background: #22c55e; opacity: ${gas.priceLevel >= 1 ? '1' : '0.15'};"></div>
@@ -485,9 +484,14 @@
 
                     // Add data source footer
                     html += `
-                        <div style="font-size:10px;color:var(--text-secondary);margin-top:12px;display:flex;justify-content:space-between;border-top:1px solid var(--border-color);padding-top:8px;">
-                            <span>Fuente: Geoportal MITECO</span>
-                            ${gas.fecha ? `<span>Actualizado: ${gas.fecha}</span>` : ''}
+                        <div style="font-size:10px;color:var(--text-secondary);margin-top:12px;display:flex;flex-direction:column;gap:4px;border-top:1px solid var(--border-color);padding-top:8px;">
+                            <div style="display:flex;align-items:center;gap:4px;">
+                                ℹ️ <span>Fuente: Geoportal MITECO</span>
+                            </div>
+                            ${gas.fecha ? `
+                            <div style="display:flex;align-items:center;gap:4px;opacity:0.8;">
+                                🕒 <span>Actualizado: ${gas.fecha}</span>
+                            </div>` : ''}
                         </div>
                     `;
                     
