@@ -456,7 +456,10 @@
                     let html = `
                         ${cheapestBadge}
                         <div style="font-size:12px;color:var(--text-secondary);margin-bottom:8px;">${gas.direccion} (${gas.localidad})</div>
-                        <div style="font-size:12px;color:var(--text-secondary);margin-bottom:12px;">🕒 ${gas.horario}</div>
+                        <div style="font-size:12px;color:var(--text-secondary);margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
+                            <span>🕒 ${gas.horario}</span>
+                            ${gas.fecha ? `<span style="font-size:10px;opacity:0.7;">⏱️ ${gas.fecha}</span>` : ''}
+                        </div>
                         
                         <div style="display:flex; flex-wrap:wrap; gap:8px;">
                     `;

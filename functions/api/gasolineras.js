@@ -56,6 +56,7 @@ export async function onRequest(context) {
               municipio: g['Municipio'],
               comarca: getComarca(g['Municipio']),
               horario: g['Horario'],
+              fecha: data.Fecha,
               // All possible prices
               fuels: {
                   'Gasolina 95': p95,
