@@ -74,14 +74,13 @@ export async function onRequest(context) {
       }).filter(s => !isNaN(s.lat) && !isNaN(s.lon));
 
       // 2. Statistics Calculation
-      let totalRefPrice = 0;
-      let countRefPrice = 0;
+      const pricesByComarca = {};
       const minPriceByComarca = {};
 
       stations.forEach(s => {
           if (s.refPrice) {
-              totalRefPrice += s.refPrice;
-              countRefPrice++;
+              if (!pricesByComarca[s.comarca]) pricesByComarca[s.comarca] = [];
+              pricesByComarca[s.comarca].push(s.refPrice);
               
               if (!minPriceByComarca[s.comarca] || s.refPrice < minPriceByComarca[s.comarca]) {
                   minPriceByComarca[s.comarca] = s.refPrice;
@@ -89,11 +88,20 @@ export async function onRequest(context) {
           }
       });
 
-      const avgProvincial = countRefPrice > 0 ? totalRefPrice / countRefPrice : 0;
+      const percentilesByComarca = {};
+      for (const comarca in pricesByComarca) {
+          const sorted = pricesByComarca[comarca].sort((a, b) => a - b);
+          if (sorted.length > 0) {
+              // Calculamos el tercil inferior (33%) y el tercil superior (66%)
+              const p33 = sorted[Math.floor(sorted.length * 0.33)];
+              const p66 = sorted[Math.floor(sorted.length * 0.66)];
+              percentilesByComarca[comarca] = { p33, p66 };
+          }
+      }
 
       // 3. Assign price levels
       stations.forEach(s => {
-          if (!s.refPrice) {
+          if (!s.refPrice || !percentilesByComarca[s.comarca]) {
               s.priceLevel = 2; // Default to orange if no prices available
               s.isCheapest = false;
               return;
@@ -101,18 +109,15 @@ export async function onRequest(context) {
 
           s.isCheapest = s.refPrice === minPriceByComarca[s.comarca];
 
-          if (s.isCheapest) {
-              s.priceLevel = 1; // Green
+          const p33 = percentilesByComarca[s.comarca].p33;
+          const p66 = percentilesByComarca[s.comarca].p66;
+
+          if (s.refPrice <= p33) {
+              s.priceLevel = 1; // Green (Baratas, 33% inferior)
+          } else if (s.refPrice <= p66) {
+              s.priceLevel = 2; // Orange (Medias, 33% central)
           } else {
-              const diffPerc = (s.refPrice - avgProvincial) / avgProvincial;
-              
-              if (diffPerc > 0.10) {
-                  s.priceLevel = 4; // Purple (Very Expensive, > +10%)
-              } else if (diffPerc > 0.05) {
-                  s.priceLevel = 3; // Red (Expensive, > +5%)
-              } else {
-                  s.priceLevel = 2; // Orange/Yellow (Average, within -∞ to +5%)
-              }
+              s.priceLevel = 3; // Red (Caras, 33% superior)
           }
       });
 
