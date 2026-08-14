@@ -1,6 +1,6 @@
 export async function onRequest(context) {
   const { env } = context;
-  const cacheKey = "gasolineras_cadiz_comarcas_v2";
+  const cacheKey = "gasolineras_cadiz_comarcas_v3";
   
   try {
     const row = await env.DB.prepare(`SELECT value, updated_at FROM system_cache WHERE key = ?`).bind(cacheKey).first();
