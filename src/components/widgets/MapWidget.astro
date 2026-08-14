@@ -479,10 +479,13 @@
                             <div style="text-align: center; margin-bottom: 8px;">
                                 <div style="font-weight: 800; font-size: 11px; color: ${levelColor};">${levelText}</div>
                             </div>
-                            <div style="display: flex; height: 8px; border-radius: 4px; overflow: hidden; gap: 2px;">
-                                <div style="flex: 1; background: #22c55e; opacity: ${gas.priceLevel >= 1 ? '1' : '0.15'};"></div>
-                                <div style="flex: 1; background: #eab308; opacity: ${gas.priceLevel >= 2 ? '1' : '0.15'};"></div>
-                                <div style="flex: 1; background: #dc2626; opacity: ${gas.priceLevel >= 3 ? '1' : '0.15'};"></div>
+                            <div style="position: relative; padding-top: 14px;">
+                                <div style="display: flex; height: 8px; border-radius: 4px; overflow: hidden; gap: 2px;">
+                                    <div style="flex: 1; background: #22c55e; opacity: ${gas.priceLevel >= 1 ? '1' : '0.15'};"></div>
+                                    <div style="flex: 1; background: #eab308; opacity: ${gas.priceLevel >= 2 ? '1' : '0.15'};"></div>
+                                    <div style="flex: 1; background: #dc2626; opacity: ${gas.priceLevel >= 3 ? '1' : '0.15'};"></div>
+                                </div>
+                                <div style="position: absolute; top: 3px; left: ${gas.pricePosition !== undefined ? gas.pricePosition : 50}%; transform: translateX(-50%); color: var(--text-primary); font-size: 10px; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));">▼</div>
                             </div>
                         </div>
                     `;

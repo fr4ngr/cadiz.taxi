@@ -1,6 +1,6 @@
 export async function onRequest(context) {
   const { env } = context;
-  const cacheKey = "gasolineras_cadiz_comarcas_v3";
+  const cacheKey = "gasolineras_cadiz_comarcas_v4";
   
   try {
     const row = await env.DB.prepare(`SELECT value, updated_at FROM system_cache WHERE key = ?`).bind(cacheKey).first();
@@ -95,7 +95,9 @@ export async function onRequest(context) {
               // Calculamos el tercil inferior (33%) y el tercil superior (66%)
               const p33 = sorted[Math.floor(sorted.length * 0.33)];
               const p66 = sorted[Math.floor(sorted.length * 0.66)];
-              percentilesByComarca[comarca] = { p33, p66 };
+              const pMin = sorted[0];
+              const pMax = sorted[sorted.length - 1];
+              percentilesByComarca[comarca] = { p33, p66, pMin, pMax };
           }
       }
 
@@ -103,21 +105,27 @@ export async function onRequest(context) {
       stations.forEach(s => {
           if (!s.refPrice || !percentilesByComarca[s.comarca]) {
               s.priceLevel = 2; // Default to orange if no prices available
+              s.pricePosition = 50;
               s.isCheapest = false;
               return;
           }
 
           s.isCheapest = s.refPrice === minPriceByComarca[s.comarca];
 
-          const p33 = percentilesByComarca[s.comarca].p33;
-          const p66 = percentilesByComarca[s.comarca].p66;
+          const { p33, p66, pMin, pMax } = percentilesByComarca[s.comarca];
 
           if (s.refPrice <= p33) {
               s.priceLevel = 1; // Green (Baratas, 33% inferior)
           } else if (s.refPrice <= p66) {
               s.priceLevel = 2; // Orange (Medias, 33% central)
           } else {
-              s.priceLevel = 3; // Red (Caras, 33% superior)
+              s.priceLevel = 3; // Red
+          }
+
+          if (pMax > pMin) {
+              s.pricePosition = Math.max(0, Math.min(100, ((s.refPrice - pMin) / (pMax - pMin)) * 100));
+          } else {
+              s.pricePosition = 50;
           }
       });
 
