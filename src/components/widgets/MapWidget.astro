@@ -731,7 +731,8 @@
                     window.mapActionDirections = () => {
                         window.open(`https://www.google.com/maps/dir/?api=1&destination=${station.lat},${station.lon}`, '_blank');
                     };
-                    const eaqiRange = station.aqi <= 20 ? '0-20' : (station.aqi <= 40 ? '21-40' : (station.aqi <= 60 ? '41-60' : (station.aqi <= 100 ? '61-100' : '>100')));
+                    const isInactive = station.timestamp ? Math.floor((Date.now() - station.timestamp) / 60000) > 1440 : true;
+                    const eaqiRange = isInactive || station.aqi === 'N/D' ? 'N/D' : (station.aqi <= 20 ? '0-20' : (station.aqi <= 40 ? '21-40' : (station.aqi <= 60 ? '41-60' : (station.aqi <= 100 ? '61-100' : '>100'))));
                     let timeStr = 'recientemente';
                     if (station.timestamp) {
                         const diffMins = Math.floor((Date.now() - station.timestamp) / 60000);
@@ -761,14 +762,14 @@
                                         <strong style="color: var(--text-primary);">Estación inactiva:</strong> No envía datos desde hace ${Math.floor(Math.floor((Date.now() - station.timestamp) / 60000)/1440)} días.
                                     </div>
                                 </div>` : ''}
-                                <div style="display: flex; align-items: flex-start; justify-content: space-between; background: linear-gradient(to right, transparent, ${station.color}15); padding: 12px; border-radius: 8px; border-left: 4px solid ${station.color};">
+                                <div style="display: flex; align-items: flex-start; justify-content: space-between; background: linear-gradient(to right, transparent, ${isInactive ? '#94a3b8' : station.color}15); padding: 12px; border-radius: 8px; border-left: 4px solid ${isInactive ? '#94a3b8' : station.color};">
                                     <div style="width: 100%;">
                                         <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px;">CALIDAD DEL AIRE</div>
                                         
                                         <div style="display: flex; align-items: flex-end; justify-content: space-between;">
-                                            <span style="font-size: 32px; font-weight: 800; color: ${station.color}; letter-spacing: -1px; line-height: 1;">${station.aqi}</span>
+                                            <span style="font-size: 32px; font-weight: 800; color: ${isInactive ? 'var(--text-secondary)' : station.color}; letter-spacing: -1px; line-height: 1;">${isInactive ? 'N/D' : station.aqi}</span>
                                             <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">
-                                                <span style="font-size: 18px; font-weight: 700; color: var(--text-primary); line-height: 1;">${station.status}</span>
+                                                <span style="font-size: 18px; font-weight: 700; color: var(--text-primary); line-height: 1;">${isInactive ? 'Desconocido' : station.status}</span>
                                                 <span style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">EAQI (${eaqiRange})</span>
                                                 <span style="font-size: 9px; color: var(--text-secondary); font-style: italic; margin-top: -2px;">Índice Europeo de Calidad del Aire</span>
                                             </div>
@@ -776,7 +777,7 @@
                                         
                                         <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 10px;">
                                             <div style="width: 100%; height: 6px; background: var(--chat-bg); border-radius: 3px; overflow: hidden; border: 1px solid var(--header-border);">
-                                                <div style="width: ${station.aqi === 'N/D' ? 0 : Math.min((station.aqi / 110) * 100, 100)}%; height: 100%; background: ${station.color}; border-radius: 3px;"></div>
+                                                <div style="width: ${isInactive || station.aqi === 'N/D' ? 0 : Math.min((station.aqi / 110) * 100, 100)}%; height: 100%; background: ${station.color}; border-radius: 3px;"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -786,7 +787,7 @@
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                                     ${(() => {
                                         const renderBox = (name, symbol, val, limit) => {
-                                            const hasData = val !== null && val !== undefined;
+                                            const hasData = !isInactive && val !== null && val !== undefined;
                                             const displayVal = hasData ? val : 'N/D';
                                             const unitHtml = hasData ? ' <span style="font-size: 10px; font-weight: 400; color: var(--text-secondary);">μg/m³</span>' : '';
                                             const valColor = hasData ? 'var(--text-primary)' : 'var(--text-secondary)';
