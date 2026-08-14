@@ -502,18 +502,20 @@
                         </div>
                     `;
 
-                    // Add savings mini-card if savings > 1.5 euros
-                    if (gas.savings && gas.savings > 1.5) {
-                        html += `
-                            <div style="margin-bottom: 8px; padding: 10px; background: color-mix(in srgb, #22c55e 15%, transparent); border-radius: 8px; border: 1px solid color-mix(in srgb, #22c55e 30%, transparent); display: flex; gap: 10px; align-items: flex-start;">
-                                <div style="font-size: 18px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">💰</div>
-                                <div>
-                                    <div style="font-size: 12px; font-weight: 700; color: #15803d; margin-bottom: 2px;">Te ahorras ${gas.savings.toFixed(2).replace('.', ',')} € al llenar el depósito</div>
-                                    <div style="font-size: 10px; color: #166534; opacity: 0.8; line-height: 1.2;">Comparado con las más caras de ${gas.comarca}</div>
+                    let savingsHtml = '';
+                    if (gas.savings && gas.savings > 1.50 && gas.priceLevel !== 3) {
+                        const savingsStr = gas.savings.toFixed(2).replace('.', ',');
+                        savingsHtml = `
+                            <div style="margin-top: 12px; background: #dcfce7; border: 1px solid #bbf7d0; border-radius: 8px; padding: 10px 12px; display: flex; align-items: center; gap: 10px;">
+                                <div style="font-size: 20px;">💰</div>
+                                <div style="display: flex; flex-direction: column;">
+                                    <div style="color: #166534; font-weight: bold; font-size: 13px;">Te ahorras ${savingsStr} € al llenar el depósito</div>
+                                    <div style="color: #166534; font-size: 11px; opacity: 0.8;">Comparado con las más caras de ${gas.comarca}</div>
                                 </div>
                             </div>
                         `;
                     }
+                    html += savingsHtml;
 
                     // Add data source footer
                     html += `
