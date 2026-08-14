@@ -438,29 +438,35 @@
                         })
                     }).addTo(map);
 
-                    marker.on('click', () => {
-                        let html = `
-                            <h3 style="margin:0 0 4px 0;font-size:16px;color:var(--text-primary);">${gas.rotulo}</h3>
-                            <div style="font-size:12px;color:var(--text-secondary);margin-bottom:8px;">${gas.direccion} (${gas.localidad})</div>
-                            <div style="font-size:12px;color:var(--text-secondary);margin-bottom:12px;">🕒 ${gas.horario}</div>
-                            <div style="display:flex;gap:8px;">
-                        `;
-                        if (gas.precio95) {
-                            html += `<div style="flex:1;background:var(--chat-bg);border:1px solid var(--border-color);border-radius:8px;padding:8px;text-align:center;">
-                                <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;font-weight:600;">Gasolina 95</div>
-                                <div style="font-size:15px;color:var(--text-primary);font-weight:700;">${gas.precio95}€</div>
-                            </div>`;
-                        }
-                        if (gas.precioDiesel) {
-                            html += `<div style="flex:1;background:var(--chat-bg);border:1px solid var(--border-color);border-radius:8px;padding:8px;text-align:center;">
-                                <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;font-weight:600;">Diésel A</div>
-                                <div style="font-size:15px;color:var(--text-primary);font-weight:700;">${gas.precioDiesel}€</div>
-                            </div>`;
-                        }
-                        html += `</div>`;
-                        window.showMapInfoCard(html, 'gasolineras');
-                    });
                     return marker;
+                },
+                onMarkerClick: (gas) => {
+                    let html = `
+                        <div style="font-size:12px;color:var(--text-secondary);margin-bottom:8px;">${gas.direccion} (${gas.localidad})</div>
+                        <div style="font-size:12px;color:var(--text-secondary);margin-bottom:12px;">🕒 ${gas.horario}</div>
+                        <div style="display:flex;gap:8px;">
+                    `;
+                    if (gas.precio95) {
+                        html += `<div style="flex:1;background:var(--chat-bg);border:1px solid var(--border-color);border-radius:8px;padding:8px;text-align:center;">
+                            <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;font-weight:600;">Gasolina 95</div>
+                            <div style="font-size:15px;color:var(--text-primary);font-weight:700;">${gas.precio95}€</div>
+                        </div>`;
+                    }
+                    if (gas.precioDiesel) {
+                        html += `<div style="flex:1;background:var(--chat-bg);border:1px solid var(--border-color);border-radius:8px;padding:8px;text-align:center;">
+                            <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;font-weight:600;">Diésel A</div>
+                            <div style="font-size:15px;color:var(--text-primary);font-weight:700;">${gas.precioDiesel}€</div>
+                        </div>`;
+                    }
+                    html += `</div>`;
+                    
+                    return {
+                        label: 'Gasolinera',
+                        title: gas.rotulo,
+                        desc: html,
+                        showActions: true,
+                        recenter: [gas.lat, gas.lon]
+                    };
                 }
             },
             // ---------------------------------------------------------
