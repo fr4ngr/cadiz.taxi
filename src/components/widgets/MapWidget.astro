@@ -298,6 +298,7 @@
 </style>
 
 <script>
+    import 'leaflet.markercluster';
     if (typeof window !== 'undefined') {
         const btnClose = document.getElementById('btn-close-map-pill');
         window.closeMapInfoCard = function() {
@@ -1191,11 +1192,13 @@
                     }
 
                     // Markers already cleared safely earlier
-                    if (filterObj.useClustering) {
+                    if (filterObj.useClustering && window.L && typeof window.L.markerClusterGroup === 'function') {
                         filterObj._clusterGroup = window.L.markerClusterGroup({
                             showCoverageOnHover: false,
                             maxClusterRadius: 40
                         });
+                    } else if (filterObj.useClustering) {
+                        console.warn("MarkerClusterGroup no está disponible, usando renderizado normal.");
                     }
 
                     data.forEach(item => {
@@ -1224,12 +1227,14 @@
                         });
 
                         filterObj._markers.push(marker);
-                        if (filterObj.useClustering) {
+                        if (filterObj._clusterGroup) {
                             filterObj._clusterGroup.addLayer(marker);
+                        } else {
+                            marker.addTo(map);
                         }
                     });
 
-                    if (filterObj.useClustering) {
+                    if (filterObj._clusterGroup) {
                         map.addLayer(filterObj._clusterGroup);
                     }
 
