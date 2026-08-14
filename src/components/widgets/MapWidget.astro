@@ -412,6 +412,8 @@
                 color: '#d946ef',
                 _isActive: false,
                 _wmsLayer: null,
+                flyTo: [32.0, -2.0],
+                flyToZoom: 5,
                 url: 'https://view.eumetsat.int/geoserver/ows?',
                 options: {
                     layers: 'msg_fes:rgb_dust',
@@ -929,6 +931,9 @@
                 }
 
                 if (filterObj.type === 'wms') {
+                    if (filterObj.flyTo && filterObj.flyToZoom) {
+                        map.flyTo(filterObj.flyTo, filterObj.flyToZoom, { duration: 1.5 });
+                    }
                     if (filterObj.url) {
                         filterObj._wmsLayer = window.L.tileLayer.wms(filterObj.url, filterObj.options);
                         filterObj._wmsLayer.addTo(map);
