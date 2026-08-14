@@ -1,6 +1,6 @@
 export async function onRequest(context) {
   const { env } = context;
-  const cacheKey = "gasolineras_cadiz_comarcas_v4";
+  const cacheKey = "gasolineras_cadiz_comarcas_v5";
   
   try {
     const row = await env.DB.prepare(`SELECT value, updated_at FROM system_cache WHERE key = ?`).bind(cacheKey).first();
@@ -127,6 +127,9 @@ export async function onRequest(context) {
           } else {
               s.pricePosition = 50;
           }
+          
+          // Calcular ahorro respecto a la gasolinera más cara (Depósito de 50 litros)
+          s.savings = (pMax - s.refPrice) * 50;
       });
 
       const finalJson = JSON.stringify(stations);

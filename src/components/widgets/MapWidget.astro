@@ -5,6 +5,21 @@
 <!-- TAB MAPA -->
 <div id="tab-mapa" style="display: none; flex: 1; flex-direction: column; width: 100%; min-height: 0; position: relative; background: var(--bg-color);">
 
+    <!-- Filtros GPS Gasolineras (Ocultos por defecto) -->
+    <div id="gasolineras-gps-filters" style="display: none; position: absolute; top: 76px; left: 16px; z-index: 1000; flex-direction: column; gap: 8px; pointer-events: none; max-width: calc(100% - 32px);">
+        <div style="display: flex; gap: 8px; pointer-events: auto; flex-wrap: wrap;">
+            <button onclick="window.filterGasolineras('cercanas')" style="background: color-mix(in srgb, var(--header-bg) 85%, transparent); backdrop-filter: blur(12px); border: 1px solid var(--header-border); padding: 8px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; color: var(--text-primary); cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 6px;">
+                📍 Cercanas
+            </button>
+            <button onclick="window.filterGasolineras('baratas_cercanas')" style="background: color-mix(in srgb, var(--header-bg) 85%, transparent); backdrop-filter: blur(12px); border: 1px solid #22c55e; padding: 8px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; color: #16a34a; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 6px;">
+                💰 Baratas y Cercanas
+            </button>
+        </div>
+        <button id="btn-simulate-gps" onclick="window.toggleGpsSimulator()" style="pointer-events: auto; background: var(--chat-bg); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; gap: 4px; width: fit-content; opacity: 0.9; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
+            🛰️ Simular GPS
+        </button>
+    </div>
+
     <!-- Contenedor UI de la InfoPill -->
     <div id="map-ui-container" style="position: absolute; top: 86px; left: 50%; z-index: 1001; transform: translateX(-50%); width: calc(100% - 32px); max-width: 448px; display: flex; flex-direction: column; gap: 8px; transition: opacity 0.3s, transform 0.3s; opacity: 0; pointer-events: none;">
         <!-- Píldora informativa de parada -->
@@ -486,6 +501,19 @@
                             </div>
                         </div>
                     `;
+
+                    // Add savings mini-card if savings > 1.5 euros
+                    if (gas.savings && gas.savings > 1.5) {
+                        html += `
+                            <div style="margin-bottom: 8px; padding: 10px; background: color-mix(in srgb, #22c55e 15%, transparent); border-radius: 8px; border: 1px solid color-mix(in srgb, #22c55e 30%, transparent); display: flex; gap: 10px; align-items: flex-start;">
+                                <div style="font-size: 18px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">💰</div>
+                                <div>
+                                    <div style="font-size: 12px; font-weight: 700; color: #15803d; margin-bottom: 2px;">Te ahorras ${gas.savings.toFixed(2).replace('.', ',')} € al llenar el depósito</div>
+                                    <div style="font-size: 10px; color: #166534; opacity: 0.8; line-height: 1.2;">Comparado con las más caras de ${gas.comarca}</div>
+                                </div>
+                            </div>
+                        `;
+                    }
 
                     // Add data source footer
                     html += `
@@ -1078,6 +1106,15 @@
             const map = window.currentMap;
             if (!map || !window.L) return;
 
+            const gpsFilters = document.getElementById('gasolineras-gps-filters');
+            if (gpsFilters) {
+                gpsFilters.style.display = layerId === 'gasolineras' ? 'flex' : 'none';
+                if (layerId !== 'gasolineras') {
+                    window.lastGasFilter = null; // Reset filter on layer change
+                    // Podríamos desactivar el GPS simulado aquí, pero mejor dejarlo persistente para test.
+                }
+            }
+
             const targetBtn = document.querySelector(`button[onclick*="${layerId}"]`);
 
             if (layerId === 'popular' || layerId === 'red') {
@@ -1177,6 +1214,8 @@
                     window.hideMapLoading();
 
                     if (!filterObj._isActive) return;
+                    
+                    filterObj._allData = data; // Cache for local filtering
 
                     if (filterObj._clusterGroup) {
                         map.removeLayer(filterObj._clusterGroup);
@@ -1273,6 +1312,175 @@
                         targetBtn.style.color = filterObj.color;
                     }
                     window.showMapError(() => window.selectMapLayer(layerId));
+                }
+            }
+        };
+
+        // --- GPS y Ahorro Gasolineras ---
+        function getDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        window.simulatedGPS = null;
+        window.simulatedMarker = null;
+
+        window.toggleGpsSimulator = function() {
+            if (!window.currentMap || !window.L) return;
+            const map = window.currentMap;
+            
+            const btn = document.getElementById('btn-simulate-gps');
+
+            if (window.simulatedGPS) {
+                window.simulatedGPS = null;
+                if (window.simulatedMarker) {
+                    map.removeLayer(window.simulatedMarker);
+                    window.simulatedMarker = null;
+                }
+                if (btn) {
+                    btn.style.background = 'var(--chat-bg)';
+                    btn.style.color = 'var(--text-secondary)';
+                }
+                return;
+            }
+
+            // Activar en el centro de Jerez por defecto
+            window.simulatedGPS = { lat: 36.685, lng: -6.126 };
+            if (btn) {
+                btn.style.background = 'var(--primary-color)';
+                btn.style.color = 'white';
+            }
+
+            window.simulatedMarker = window.L.marker([window.simulatedGPS.lat, window.simulatedGPS.lng], {
+                draggable: true,
+                icon: window.L.divIcon({
+                    html: '<div style="background:#3b82f6;width:16px;height:16px;border-radius:50%;border:3px solid white;box-shadow:0 2px 5px rgba(0,0,0,0.3);"></div>',
+                    className: '',
+                    iconSize: [22, 22],
+                    iconAnchor: [11, 11]
+                })
+            }).addTo(map);
+
+            window.simulatedMarker.bindTooltip("Mueve este punto para simular tu GPS", {permanent: true, direction: "top", offset: [0, -10]}).openTooltip();
+
+            window.simulatedMarker.on('dragend', function(e) {
+                const pos = e.target.getLatLng();
+                window.simulatedGPS = { lat: pos.lat, lng: pos.lng };
+                if (window.lastGasFilter) {
+                    window.filterGasolineras(window.lastGasFilter);
+                }
+            });
+
+            map.setView([window.simulatedGPS.lat, window.simulatedGPS.lng], 12);
+            
+            if (window.lastGasFilter) {
+                window.filterGasolineras(window.lastGasFilter);
+            }
+        };
+
+        window.lastGasFilter = null;
+
+        window.filterGasolineras = function(mode) {
+            window.lastGasFilter = mode;
+            const filterObj = mapConfig.layers['gasolineras'];
+            if (!filterObj || !filterObj._allData || !window.currentMap || !window.L) return;
+
+            const map = window.currentMap;
+
+            const executeFilter = (lat, lng) => {
+                let filtered = [...filterObj._allData];
+                
+                filtered.forEach(s => {
+                    s.distKm = getDistance(lat, lng, parseFloat(s.Latitud.replace(',','.')), parseFloat(s.Longitud.replace(',','.')));
+                });
+
+                if (mode === 'cercanas') {
+                    filtered = filtered.sort((a, b) => a.distKm - b.distKm).slice(0, 3);
+                } else if (mode === 'baratas_cercanas') {
+                    filtered = filtered.filter(s => s.priceLevel === 1 && s.distKm <= 5);
+                    filtered = filtered.sort((a, b) => a.distKm - b.distKm);
+                }
+
+                // Limpiar marcadores actuales
+                if (filterObj._clusterGroup) {
+                    filterObj._clusterGroup.clearLayers();
+                } else {
+                    filterObj._markers.forEach(m => {
+                        if (map.hasLayer(m)) map.removeLayer(m);
+                    });
+                }
+                filterObj._markers = [];
+
+                if (filtered.length === 0) {
+                    alert("No se encontraron gasolineras que cumplan este criterio en esta zona.");
+                    return;
+                }
+
+                const boundsArr = [];
+
+                filtered.forEach(item => {
+                    const marker = filterObj.renderMarker(item, map);
+                    
+                    marker.on('click', () => {
+                        const popupData = filterObj.onMarkerClick(item);
+                        const container = document.getElementById('map-ui-container');
+                        if (!container) return;
+                        document.getElementById('map-info-label').innerText = popupData.label;
+                        document.getElementById('map-info-label').style.color = popupData.labelColor || filterObj.color;
+                        document.getElementById('map-info-title').innerText = popupData.title;
+                        document.getElementById('map-info-desc').innerHTML = popupData.desc;
+                        const actionsDiv = document.getElementById('map-pill-actions');
+                        if (actionsDiv) actionsDiv.style.display = popupData.showActions !== false ? 'flex' : 'none';
+                        if (popupData.recenter) map.setView(popupData.recenter, 14);
+                        container.style.opacity = '1';
+                        container.style.pointerEvents = 'auto';
+                        container.style.transform = 'translate(-50%, 0)';
+                    });
+
+                    filterObj._markers.push(marker);
+                    
+                    if (filterObj._clusterGroup) {
+                        filterObj._clusterGroup.addLayer(marker);
+                    } else {
+                        marker.addTo(map);
+                    }
+                    
+                    const latNum = parseFloat(item.Latitud.replace(',','.'));
+                    const lngNum = parseFloat(item.Longitud.replace(',','.'));
+                    boundsArr.push([latNum, lngNum]);
+                });
+
+                if (boundsArr.length > 0) {
+                    map.fitBounds(boundsArr, { padding: [50, 50], maxZoom: 14 });
+                }
+            };
+
+            if (window.simulatedGPS) {
+                executeFilter(window.simulatedGPS.lat, window.simulatedGPS.lng);
+            } else {
+                if (navigator.geolocation) {
+                    // Feedback visual mientras busca GPS
+                    const oldText = document.getElementById('map-info-label').innerText;
+                    document.getElementById('map-info-label').innerText = "Buscando GPS...";
+                    
+                    navigator.geolocation.getCurrentPosition(
+                        (pos) => {
+                            document.getElementById('map-info-label').innerText = oldText;
+                            executeFilter(pos.coords.latitude, pos.coords.longitude);
+                        },
+                        (err) => {
+                            document.getElementById('map-info-label').innerText = oldText;
+                            alert("No se pudo obtener la ubicación GPS o denegaste el permiso.");
+                        }
+                    );
+                } else {
+                    alert("Tu navegador no soporta Geolocalización.");
                 }
             }
         };
