@@ -1,0 +1,77 @@
+const fs = require('fs');
+let code = fs.readFileSync('src/components/widgets/MapWidget.astro', 'utf8');
+
+const startRegex = /return \{\s*label: 'CALIDAD DEL AIRE'[\s\S]*?<\/div>\n\s*<\/div>`\s*};\s*}/;
+
+const newReturnObj = `return {
+                        label: 'ESTACIÓN METEOROLÓGICA',
+                        labelColor: station.color,
+                        title: \`Estación \${station.name}\`,
+                        recenter: [station.lat - 0.05, station.lon],
+                        showActions: false,
+                        desc: \`
+                            <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 6px; font-family: 'Inter', system-ui, sans-serif;">
+                                <div style="display: flex; align-items: center; justify-content: space-between; background: linear-gradient(to right, transparent, \${station.color}15); padding: 8px 12px; border-radius: 8px; border-left: 4px solid \${station.color};">
+                                    <div>
+                                        <div style="font-size: 18px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.5px;">\${station.status}</div>
+                                        <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 4px;">
+                                            <div style="display: flex; justify-content: space-between; font-size: 10px; font-weight: 600; color: var(--text-secondary); letter-spacing: 0.5px;"><span>ÍNDICE EAQI</span><span>\${station.aqi}/110</span></div>
+                                            <div style="width: 140px; height: 6px; background: var(--chat-bg); border-radius: 3px; overflow: hidden; border: 1px solid var(--header-border);">
+                                                <div style="width: \${Math.min((station.aqi / 110) * 100, 100)}%; height: 100%; background: \${station.color};"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="width: 24px; height: 24px; border-radius: 50%; background-color: \${station.color}; box-shadow: 0 0 10px \${station.color}80; border: 2px solid var(--bg-color);"></div>
+                                </div>
+                                
+                                <div style="background: var(--chat-bg); padding: 10px; border-radius: 8px; border: 1px solid var(--header-border); font-size: 11px; color: var(--text-secondary); line-height: 1.5;">
+                                    <span style="font-weight: 600; color: var(--text-primary);">¿Qué es el EAQI?</span> Es el Índice Europeo de Calidad del Aire. Mide cómo de limpio está el aire. 
+                                    Escala: <span style="color: #10b981; font-weight: 600;">Buena (0-20)</span>, <span style="color: #eab308; font-weight: 600;">Regular (20-40)</span>, <span style="color: #f97316; font-weight: 600;">Moderada (40-60)</span>, <span style="color: #ef4444; font-weight: 600;">Mala (60-100)</span> y <span style="color: #8b5cf6; font-weight: 600;">Muy Mala (>100)</span>.
+                                </div>
+
+                                <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: -4px; margin-top: 4px;">Agentes Contaminantes (Tiempo Real)</div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                    <div style="background: var(--chat-bg); padding: 8px; border-radius: 8px; border: 1px solid var(--header-border); display: flex; flex-direction: column; gap: 2px;">
+                                        <div style="font-size: 11px; color: var(--text-secondary);">Polvo Fino <span style="font-weight:700;">(PM2.5)</span></div>
+                                        <div style="font-size: 14px; font-weight: 600; color: var(--text-primary);">\${station.pm25} <span style="font-size: 10px; font-weight: 400; color: var(--text-secondary);">μg/m³</span></div>
+                                        <div style="font-size: 9.5px; color: var(--text-secondary); margin-top: 2px; padding-top: 4px; border-top: 1px dashed var(--header-border);">Límite OMS: <span style="font-weight:600; color:\${station.pm25 > 15 ? '#ef4444' : 'var(--text-secondary)'};">15 μg/m³</span></div>
+                                    </div>
+                                    <div style="background: var(--chat-bg); padding: 8px; border-radius: 8px; border: 1px solid var(--header-border); display: flex; flex-direction: column; gap: 2px;">
+                                        <div style="font-size: 11px; color: var(--text-secondary);">Polvo <span style="font-weight:700;">(PM10)</span></div>
+                                        <div style="font-size: 14px; font-weight: 600; color: var(--text-primary);">\${station.pm10} <span style="font-size: 10px; font-weight: 400; color: var(--text-secondary);">μg/m³</span></div>
+                                        <div style="font-size: 9.5px; color: var(--text-secondary); margin-top: 2px; padding-top: 4px; border-top: 1px dashed var(--header-border);">Límite OMS: <span style="font-weight:600; color:\${station.pm10 > 45 ? '#ef4444' : 'var(--text-secondary)'};">45 μg/m³</span></div>
+                                    </div>
+                                    <div style="background: var(--chat-bg); padding: 8px; border-radius: 8px; border: 1px solid var(--header-border); display: flex; flex-direction: column; gap: 2px;">
+                                        <div style="font-size: 11px; color: var(--text-secondary);">Tráfico <span style="font-weight:700;">(NO2)</span></div>
+                                        <div style="font-size: 14px; font-weight: 600; color: var(--text-primary);">\${station.no2} <span style="font-size: 10px; font-weight: 400; color: var(--text-secondary);">μg/m³</span></div>
+                                        <div style="font-size: 9.5px; color: var(--text-secondary); margin-top: 2px; padding-top: 4px; border-top: 1px dashed var(--header-border);">Límite OMS: <span style="font-weight:600; color:\${station.no2 > 25 ? '#ef4444' : 'var(--text-secondary)'};">25 μg/m³</span></div>
+                                    </div>
+                                    <div style="background: var(--chat-bg); padding: 8px; border-radius: 8px; border: 1px solid var(--header-border); display: flex; flex-direction: column; gap: 2px;">
+                                        <div style="font-size: 11px; color: var(--text-secondary);">Ozono <span style="font-weight:700;">(O3)</span></div>
+                                        <div style="font-size: 14px; font-weight: 600; color: var(--text-primary);">\${station.o3} <span style="font-size: 10px; font-weight: 400; color: var(--text-secondary);">μg/m³</span></div>
+                                        <div style="font-size: 9.5px; color: var(--text-secondary); margin-top: 2px; padding-top: 4px; border-top: 1px dashed var(--header-border);">Límite OMS: <span style="font-weight:600; color:\${station.o3 > 100 ? '#ef4444' : 'var(--text-secondary)'};">100 μg/m³</span></div>
+                                    </div>
+                                </div>
+                                
+                                <div style="background: rgba(0,0,0,0.02); border-radius: 10px; padding: 10px; font-size: 11px; color: var(--text-secondary); line-height: 1.4; border: 1px solid rgba(0,0,0,0.05); margin-top: 4px;">
+                                    <strong>Límites OMS:</strong> Recomendaciones de la Organización Mundial de la Salud (2021) para periodos de 24 horas.
+                                </div>
+
+                                <div style="margin-top: 4px; padding-top: 10px; border-top: 1px solid var(--header-border); font-size: 11px; color: var(--text-secondary); display: flex; align-items: center; justify-content: space-between;">
+                                    <div style="display: flex; align-items: center; gap: 6px;">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                        Fuente: AEMA / OpenAQ
+                                    </div>
+                                    <div style="font-style: italic; font-size: 10px;">Actualizado cada hora</div>
+                                </div>
+                            </div>\`
+                    };
+                }`;
+
+if(startRegex.test(code)) {
+    const newCode = code.replace(startRegex, newReturnObj);
+    fs.writeFileSync('src/components/widgets/MapWidget.astro', newCode, 'utf8');
+    console.log('Successfully replaced HTML structure for Aire popup!');
+} else {
+    console.log('Regex did not match.');
+}

@@ -81,9 +81,17 @@
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"></path></svg>
             Calidad Aire
         </button>
-            <button class="filter-pill" onclick="window.selectMapLayer('polen')" style="border-color: #8b5cf6; color: #8b5cf6;">
+        <button class="filter-pill" onclick="window.selectMapLayer('polen')" style="border-color: #8b5cf6; color: #8b5cf6;">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
             Polen / Alergias
+        </button>
+        <button class="filter-pill" onclick="window.selectMapLayer('dust_live')" style="border-color: #d946ef; color: #d946ef;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h3"/><path d="M19 12h3"/><path d="M12 2v3"/><path d="M12 19v3"/><path d="M4.93 4.93l2.12 2.12"/><path d="M16.95 16.95l2.12 2.12"/><path d="M4.93 19.07l2.12-2.12"/><path d="M16.95 7.05l2.12-2.12"/><circle cx="12" cy="12" r="4"/></svg>
+            Calima (En vivo)
+        </button>
+        <button class="filter-pill" onclick="window.selectMapLayer('dust_forecast')" style="border-color: #f59e0b; color: #f59e0b;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0z"></path><polyline points="12 6 12 12 16 14"></polyline></svg>
+            Calima (Previsión)
         </button>
     </div>
 
@@ -391,6 +399,53 @@
                                 '</div>' +
                               '</div>'
                     };
+                }
+            },
+
+            // ---------------------------------------------------------
+            // POLVO SAHARIANO (WMS)
+            // ---------------------------------------------------------
+            'dust_live': {
+                type: 'wms',
+                color: '#d946ef',
+                _isActive: false,
+                _wmsLayer: null,
+                url: 'https://view.eumetsat.int/geoserver/ows?',
+                options: {
+                    layers: 'msg_fes:rgb_dust',
+                    format: 'image/png',
+                    transparent: true,
+                    opacity: 0.65,
+                    zIndex: 400
+                }
+            },
+            'dust_forecast': {
+                type: 'wms',
+                color: '#f59e0b',
+                _isActive: false,
+                _wmsLayer: null,
+                fetchWmsLayer: async (map) => {
+                    // Llama al backend para obtener la URL del modelo de hoy (ej. AEMET o CAMS)
+                    try {
+                        const res = await fetch('/api/dust-forecast');
+                        const data = await res.json();
+                        if (data.url && data.layers) {
+                            const layer = window.L.tileLayer.wms(data.url, {
+                                layers: data.layers,
+                                format: 'image/png',
+                                transparent: true,
+                                opacity: 0.55,
+                                zIndex: 400,
+                                styles: data.styles || ''
+                            });
+                            layer.addTo(map);
+                            return layer;
+                        }
+                    } catch (e) {
+                        console.error('Error fetching dust forecast WMS:', e);
+                        // Fallback opcional a un WMS estático
+                    }
+                    return null;
                 }
             },
 
@@ -859,12 +914,33 @@
                     filterObj._markers.forEach(m => map.removeLayer(m));
                     filterObj._markers = [];
                 }
+                if (filterObj._wmsLayer) {
+                    map.removeLayer(filterObj._wmsLayer);
+                    filterObj._wmsLayer = null;
+                }
             } else {
                 filterObj._isActive = true;
                 if (targetBtn) {
                     targetBtn.classList.add('active');
                     targetBtn.style.background = filterObj.color;
                     targetBtn.style.color = 'white';
+                }
+
+                if (filterObj.type === 'wms') {
+                    if (filterObj.url) {
+                        filterObj._wmsLayer = window.L.tileLayer.wms(filterObj.url, filterObj.options);
+                        filterObj._wmsLayer.addTo(map);
+                    } else if (filterObj.fetchWmsLayer) {
+                        // Muestra estado de carga si quieres
+                        filterObj.fetchWmsLayer(map).then(layer => {
+                            if (filterObj._isActive && layer) {
+                                filterObj._wmsLayer = layer;
+                            } else if (layer) {
+                                map.removeLayer(layer);
+                            }
+                        });
+                    }
+                    return;
                 }
 
                 try {

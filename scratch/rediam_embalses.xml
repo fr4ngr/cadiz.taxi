@@ -1,0 +1,5 @@
+<HTML>
+<HEAD><TITLE>MapServer Message</TITLE></HEAD>
+<BODY BGCOLOR="#FFFFFF">
+msLoadMap(): Unable to access file. (/var/www/html/mapserver/maps/map/REDIAM_Inventario_Presas_Embalses.map)
+</BODY></HTML>
