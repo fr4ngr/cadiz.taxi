@@ -100,6 +100,10 @@
 
         <!-- Filtros Radial Menu (Capas) -->
         <div class="radial-menu-wrapper" id="radial-menu-filters">
+            <button class="radial-pill-item" style="--ty: -505px;" onclick="window.selectMapLayer('gasolineras')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="15" y2="22"></line><line x1="4" y1="9" x2="14" y2="9"></line><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"></path><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"></path></svg>
+                Gasolineras
+            </button>
             <button class="radial-pill-item" style="--ty: -450px;" onclick="window.selectMapLayer('dust_live')">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h3"/><path d="M19 12h3"/><path d="M12 2v3"/><path d="M12 19v3"/><path d="M4.93 4.93l2.12 2.12"/><path d="M16.95 16.95l2.12 2.12"/><path d="M4.93 19.07l2.12-2.12"/><path d="M16.95 7.05l2.12-2.12"/><circle cx="12" cy="12" r="4"/></svg>
                 Calima (V)
@@ -406,6 +410,59 @@
 
         
         window.MapFilterRegistry = {
+            // ---------------------------------------------------------
+            // GASOLINERAS
+            // ---------------------------------------------------------
+            'gasolineras': {
+                name: 'Gasolineras',
+                type: 'data',
+                color: '#eab308',
+                source: 'Geoportal MITECO',
+                _markers: [],
+                _isActive: false,
+                contextBounds: [[35.9, -6.7], [37.2, -5.0]],
+                fetchData: async () => {
+                    const res = await fetch('/api/gasolineras');
+                    return await res.json();
+                },
+                renderMarker: (gas, map) => {
+                    const iconHtml = `<div style="background-color: #eab308; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.3); border: 2px solid white; color: white;">
+                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="15" y2="22"></line><line x1="4" y1="9" x2="14" y2="9"></line><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"></path><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"></path></svg>
+                       </div>`;
+                    const marker = window.L.marker([gas.lat, gas.lon], {
+                        icon: window.L.divIcon({
+                            html: iconHtml,
+                            className: '',
+                            iconSize: [24, 24],
+                            iconAnchor: [12, 12]
+                        })
+                    }).addTo(map);
+
+                    marker.on('click', () => {
+                        let html = `
+                            <h3 style="margin:0 0 4px 0;font-size:16px;color:var(--text-primary);">${gas.rotulo}</h3>
+                            <div style="font-size:12px;color:var(--text-secondary);margin-bottom:8px;">${gas.direccion} (${gas.localidad})</div>
+                            <div style="font-size:12px;color:var(--text-secondary);margin-bottom:12px;">🕒 ${gas.horario}</div>
+                            <div style="display:flex;gap:8px;">
+                        `;
+                        if (gas.precio95) {
+                            html += `<div style="flex:1;background:var(--chat-bg);border:1px solid var(--border-color);border-radius:8px;padding:8px;text-align:center;">
+                                <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;font-weight:600;">Gasolina 95</div>
+                                <div style="font-size:15px;color:var(--text-primary);font-weight:700;">${gas.precio95}€</div>
+                            </div>`;
+                        }
+                        if (gas.precioDiesel) {
+                            html += `<div style="flex:1;background:var(--chat-bg);border:1px solid var(--border-color);border-radius:8px;padding:8px;text-align:center;">
+                                <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;font-weight:600;">Diésel A</div>
+                                <div style="font-size:15px;color:var(--text-primary);font-weight:700;">${gas.precioDiesel}€</div>
+                            </div>`;
+                        }
+                        html += `</div>`;
+                        window.showMapInfoCard(html, 'gasolineras');
+                    });
+                    return marker;
+                }
+            },
             // ---------------------------------------------------------
             // SISMOS
             // ---------------------------------------------------------
