@@ -84,24 +84,32 @@ export async function onRequest(context) {
                     if (stationTimestamp === 0) stationTimestamp = Date.now();
 
                     // Calculate EAQI (European Air Quality Index) simplification
-                    const no2 = readings.no2 || 0;
-                    const o3 = readings.o3 || 0;
-                    const pm10 = readings.pm10 || 0;
-                    const pm25 = readings.pm25 || 0;
-
-                    let aqi = 10; // default good
-                    if (no2 > 40 || o3 > 50 || pm10 > 20 || pm25 > 10) aqi = 30; // Fair
-                    if (no2 > 90 || o3 > 100 || pm10 > 40 || pm25 > 20) aqi = 60; // Moderate
-                    if (no2 > 120 || o3 > 130 || pm10 > 50 || pm25 > 25) aqi = 80; // Poor
-                    if (no2 > 230 || o3 > 240 || pm10 > 100 || pm25 > 50) aqi = 110; // Very Poor
-
-                    let status = "Buena";
-                    let color = "#10b981"; // Green
+                    const hasAnyData = readings.no2 !== null || readings.o3 !== null || readings.pm10 !== null || readings.pm25 !== null;
                     
-                    if (aqi > 20) { status = "Regular"; color = "#eab308"; } // Yellow
-                    if (aqi > 40) { status = "Moderada"; color = "#f97316"; } // Orange
-                    if (aqi > 60) { status = "Mala"; color = "#ef4444"; } // Red
-                    if (aqi > 100) { status = "Muy Mala"; color = "#8b5cf6"; } // Purple
+                    let aqi = 'N/D';
+                    let status = "Sin Datos";
+                    let color = "#94a3b8"; // Gray
+
+                    if (hasAnyData) {
+                        const no2 = readings.no2 || 0;
+                        const o3 = readings.o3 || 0;
+                        const pm10 = readings.pm10 || 0;
+                        const pm25 = readings.pm25 || 0;
+
+                        aqi = 10; // default good
+                        if (no2 > 40 || o3 > 50 || pm10 > 20 || pm25 > 10) aqi = 30; // Fair
+                        if (no2 > 90 || o3 > 100 || pm10 > 40 || pm25 > 20) aqi = 60; // Moderate
+                        if (no2 > 120 || o3 > 130 || pm10 > 50 || pm25 > 25) aqi = 80; // Poor
+                        if (no2 > 230 || o3 > 240 || pm10 > 100 || pm25 > 50) aqi = 110; // Very Poor
+
+                        status = "Buena";
+                        color = "#10b981"; // Green
+                        
+                        if (aqi > 20) { status = "Regular"; color = "#eab308"; } // Yellow
+                        if (aqi > 40) { status = "Moderada"; color = "#f97316"; } // Orange
+                        if (aqi > 60) { status = "Mala"; color = "#ef4444"; } // Red
+                        if (aqi > 100) { status = "Muy Mala"; color = "#8b5cf6"; } // Purple
+                    }
 
                     finalData.push({
                         name: loc.name,
