@@ -301,6 +301,12 @@ import { renderCardDOM } from '../components/cards/CardRenderer';
                 map.dragging.enable();
                 map.tap.enable();
             }
+
+            map.on('click', () => {
+                if ((window as any).closeMapInfoCard) {
+                    (window as any).closeMapInfoCard();
+                }
+            });
             
             if (window.renderMapMarkers) window.renderMapMarkers();
         }, 100);

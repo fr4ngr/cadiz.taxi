@@ -297,26 +297,21 @@
 <script>
     if (typeof window !== 'undefined') {
         const btnClose = document.getElementById('btn-close-map-pill');
-        if (btnClose) {
-            btnClose.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                const pill = document.getElementById('map-ui-container');
+        window.closeMapInfoCard = function() {
+            const pill = document.getElementById('map-ui-container');
+            if (pill && pill.style.opacity === '1') {
                 const routeStats = document.getElementById('map-floating-route-stats');
                 const instruction = document.getElementById('route-instruction');
                 const actions = document.getElementById('map-pill-actions');
                 
-                if (pill) {
-                    pill.style.opacity = '0';
-                    pill.style.pointerEvents = 'none';
-                    pill.style.transform = 'translateX(-50%) translateY(20px)';
-                }
+                pill.style.opacity = '0';
+                pill.style.pointerEvents = 'none';
+                pill.style.transform = 'translateX(-50%) translateY(20px)';
+                
                 if (routeStats) routeStats.style.display = 'none';
                 if (instruction) instruction.style.display = 'none';
                 if (actions) actions.style.display = 'flex';
                 
-                // Si hay ruta dibujada, limpiarla (opcional, pero buena UX)
                 if (window.currentRouteControl && window.map) {
                     try {
                         window.map.removeControl(window.currentRouteControl);
@@ -324,7 +319,6 @@
                     } catch(err) {}
                 }
 
-                // Restaurar la vista por defecto del filtro activo
                 if (window.map && window.MapFilterRegistry) {
                     for (const key in window.MapFilterRegistry) {
                         const filter = window.MapFilterRegistry[key];
@@ -338,6 +332,14 @@
                         }
                     }
                 }
+            }
+        };
+
+        if (btnClose) {
+            btnClose.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                window.closeMapInfoCard();
             });
         }
 
@@ -395,6 +397,7 @@
         };
 
         window.toggleFilters = function() {
+            if (window.closeMapInfoCard) window.closeMapInfoCard();
             const filtersPills = document.getElementById('map-filters-pills');
             const addMenu = document.getElementById('radial-menu-add');
             
