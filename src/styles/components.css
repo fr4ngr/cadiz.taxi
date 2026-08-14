@@ -233,3 +233,10 @@
 .mt-sm { margin-top: 8px; }
 .mt-md { margin-top: 16px; }
 .mb-sm { margin-bottom: 8px; }
+
+/* Map Popup Standardization */
+.leaflet-popup-content, #map-info-desc { max-height: 280px !important; overflow-y: auto !important; overflow-x: hidden !important; padding-right: 4px; }
+.leaflet-popup-content, #map-info-desc::-webkit-scrollbar { width: 4px; }
+.leaflet-popup-content, #map-info-desc::-webkit-scrollbar-track { background: transparent; }
+.leaflet-popup-content, #map-info-desc::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+.leaflet-popup-content, #map-info-desc::-webkit-scrollbar-thumb:hover { background: #94a3b8; }

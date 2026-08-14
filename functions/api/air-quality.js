@@ -111,15 +111,19 @@ export async function onRequest(context) {
                         if (aqi > 100) { status = "Muy Mala"; color = "#8b5cf6"; } // Purple
                     }
 
+                    const supportedSensors = loc.sensors.map(s => s.parameter.name);
+
                     finalData.push({
                         name: loc.name,
                         city: loc.locality,
                         lat: loc.coordinates.latitude,
                         lon: loc.coordinates.longitude,
-                        pm10: readings.pm10 !== null ? readings.pm10.toFixed(1) : null,
-                        pm25: readings.pm25 !== null ? readings.pm25.toFixed(1) : null,
-                        no2: readings.no2 !== null ? readings.no2.toFixed(1) : null,
-                        o3: readings.o3 !== null ? readings.o3.toFixed(1) : null,
+                        pm10: supportedSensors.includes('pm10') ? (readings.pm10 !== null ? readings.pm10.toFixed(1) : null) : undefined,
+                        pm25: supportedSensors.includes('pm25') ? (readings.pm25 !== null ? readings.pm25.toFixed(1) : null) : undefined,
+                        no2: supportedSensors.includes('no2') ? (readings.no2 !== null ? readings.no2.toFixed(1) : null) : undefined,
+                        o3: supportedSensors.includes('o3') ? (readings.o3 !== null ? readings.o3.toFixed(1) : null) : undefined,
+                        so2: supportedSensors.includes('so2') ? (readings.so2 !== null ? readings.so2.toFixed(1) : null) : undefined,
+                        co: supportedSensors.includes('co') ? (readings.co !== null ? readings.co.toFixed(1) : null) : undefined,
                         aqi: aqi,
                         status: status,
                         color: color,
@@ -135,6 +139,46 @@ export async function onRequest(context) {
                 await new Promise(resolve => setTimeout(resolve, 250));
             }
         }
+
+                // DB History Integration
+        const todayStr = new Date().toISOString().split('T')[0];
+        try {
+            const { results: history } = await env.DB.prepare('SELECT * FROM air_quality_history WHERE date >= date(\'now\', \'-7 days\')').all();
+            
+            // Group by station
+            const historyByStation = {};
+            history.forEach(row => {
+                if (!historyByStation[row.station_name]) historyByStation[row.station_name] = [];
+                historyByStation[row.station_name].push(row);
+            });
+
+            const yesterdayStr = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+            let needsInsertToday = false;
+
+            finalData.forEach(station => {
+                const h = historyByStation[station.name] || [];
+                const yesterdayRow = h.find(r => r.date === yesterdayStr);
+                
+                if (yesterdayRow && yesterdayRow.aqi) {
+                    station.trend_yesterday_aqi = Math.round(((station.aqi - yesterdayRow.aqi) / yesterdayRow.aqi) * 100);
+                }
+                
+                const last7d = h.filter(r => r.date !== todayStr);
+                if (last7d.length > 0) {
+                    const sumAqi = last7d.reduce((sum, r) => sum + (r.aqi || 0), 0);
+                    const avg7d = sumAqi / last7d.length;
+                    station.trend_7d_aqi = Math.round(((station.aqi - avg7d) / avg7d) * 100);
+                }
+                
+                if (!h.find(r => r.date === todayStr)) needsInsertToday = true;
+            });
+
+            if (needsInsertToday && finalData.length > 0) {
+                const stmt = env.DB.prepare('INSERT OR IGNORE INTO air_quality_history (date, station_name, pm10, pm25, no2, o3, so2, co, aqi) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
+                const batch = finalData.map(s => stmt.bind(todayStr, s.name, s.pm10, s.pm25, s.no2, s.o3, s.so2, s.co, s.aqi));
+                context.waitUntil(env.DB.batch(batch));
+            }
+        } catch(e) { console.error('DB Error', e); }
 
         const finalResponse = new Response(JSON.stringify(finalData), {
             headers: {
