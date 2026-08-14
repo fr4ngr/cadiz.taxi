@@ -22,6 +22,7 @@
             align-items: center;
             gap: 6px;
             transition: all 0.2s ease;
+            pointer-events: auto !important; /* Forzar interactividad */
         }
         .map-chip:hover {
             transform: translateY(-1px);
@@ -38,7 +39,7 @@
             color: #14532d;
         }
     </style>
-    <div id="gasolineras-gps-filters" style="display: none; position: absolute; top: 76px; left: 16px; z-index: 1000; flex-direction: column; gap: 8px; pointer-events: none; max-width: calc(100% - 32px);">
+    <div id="gasolineras-gps-filters" style="display: none; position: absolute; top: 76px; left: 16px; z-index: 9999; flex-direction: column; gap: 8px; pointer-events: none; max-width: calc(100% - 32px);">
         <div style="display: flex; gap: 8px; pointer-events: auto; flex-wrap: wrap;">
             <button id="chip-cercanas" class="map-chip" onclick="window.filterGasolineras('cercanas')">
                 📍 Cercanas
@@ -47,7 +48,7 @@
                 💰 Cercanas y Baratas
             </button>
         </div>
-        <button id="btn-simulate-gps" onclick="window.toggleGpsSimulator()" style="pointer-events: auto; background: var(--chat-bg); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; gap: 4px; width: fit-content; opacity: 0.9; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
+        <button id="btn-simulate-gps" onclick="window.toggleGpsSimulator()" style="pointer-events: auto !important; background: var(--chat-bg); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; gap: 4px; width: fit-content; opacity: 0.9; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
             🛰️ Simular GPS
         </button>
     </div>
@@ -1140,15 +1141,6 @@
             const map = window.currentMap;
             if (!map || !window.L) return;
 
-            const gpsFilters = document.getElementById('gasolineras-gps-filters');
-            if (gpsFilters) {
-                gpsFilters.style.display = layerId === 'gasolineras' ? 'flex' : 'none';
-                if (layerId !== 'gasolineras') {
-                    window.lastGasFilter = null; // Reset filter on layer change
-                    // Podríamos desactivar el GPS simulado aquí, pero mejor dejarlo persistente para test.
-                }
-            }
-
             const targetBtn = document.querySelector(`button[onclick*="${layerId}"]`);
 
             if (layerId === 'popular' || layerId === 'red') {
@@ -1161,6 +1153,9 @@
                 
                 const filtersMenu = document.getElementById('radial-menu-filters');
                 if (filtersMenu) filtersMenu.classList.remove('open');
+                
+                const gpsFilters = document.getElementById('gasolineras-gps-filters');
+                if (gpsFilters) gpsFilters.style.display = 'none';
                 return;
             }
 
@@ -1171,6 +1166,17 @@
             if (!filterObj) return;
 
             const isCurrentlyActive = filterObj._isActive;
+
+            // Update GPS Filters UI
+            const gpsFilters = document.getElementById('gasolineras-gps-filters');
+            if (gpsFilters) {
+                if (layerId === 'gasolineras') {
+                    gpsFilters.style.display = !isCurrentlyActive ? 'flex' : 'none';
+                    if (isCurrentlyActive) window.lastGasFilter = null; // Reset if turning off
+                } else {
+                    gpsFilters.style.display = 'none';
+                }
+            }
 
             if (isCurrentlyActive) {
                 filterObj._isActive = false;
@@ -1429,7 +1435,7 @@
         window.lastGasFilter = null;
 
         window.filterGasolineras = function(mode) {
-            const filterObj = mapConfig.layers['gasolineras'];
+            const filterObj = window.MapFilterRegistry['gasolineras'];
             if (!filterObj) { console.error('No se encontró la capa de gasolineras.'); return; }
             if (!filterObj._allData) { alert('Cargando datos, por favor espera...'); return; }
             if (!window.currentMap || !window.L) return;
