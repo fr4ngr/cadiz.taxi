@@ -1,13 +1,11 @@
 export async function onRequest(context) {
   const { env } = context;
-  const cacheKey = "gasolineras_cadiz_extended_v1";
+  const cacheKey = "gasolineras_cadiz_comarcas_v2";
   
-  // 1. Check cache first
   try {
     const row = await env.DB.prepare(`SELECT value, updated_at FROM system_cache WHERE key = ?`).bind(cacheKey).first();
     if (row) {
       const updatedDate = new Date(row.updated_at + 'Z');
-      // If cache is less than 30 minutes old, return it
       if ((Date.now() - updatedDate.getTime()) < 30 * 60 * 1000) {
         return new Response(row.value, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8', 'Access-Control-Allow-Origin': '*', 'X-Source': 'D1-Cache' }
@@ -17,8 +15,7 @@ export async function onRequest(context) {
   } catch(e) { console.error("Cache read error", e); }
 
   try {
-      // 2. Fetch fresh data
-      const response = await fetch('https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/PreciosCarburantes/EstacionesTerrestres/');
+      const response = await fetch('https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/PreciosCarburantes/EstacionesTerrestres/FiltroProvincia/11');
       if (!response.ok) throw new Error('MITECO API response not OK');
       
       const data = await response.json();
@@ -26,42 +23,100 @@ export async function onRequest(context) {
           throw new Error('Invalid data format from MITECO');
       }
 
-      const N = 37.2;
-      const S = 35.9;
-      const E = -5.0;
-      const W = -6.7;
+      const COMARCAS = {
+          'Bahía de Cádiz': ['Cádiz', 'Chiclana de la Frontera', 'Puerto de Santa María (El)', 'Puerto Real', 'San Fernando'],
+          'Campo de Gibraltar': ['Algeciras', 'Barrios (Los)', 'Castellar de la Frontera', 'Jimena de la Frontera', 'Línea de la Concepción (La)', 'San Roque', 'Tarifa', 'San Martín del Tesorillo'],
+          'Campiña de Jerez': ['Jerez de la Frontera', 'San José del Valle'],
+          'Costa Noroeste': ['Chipiona', 'Rota', 'Sanlúcar de Barrameda', 'Trebujena'],
+          'La Janda': ['Alcalá de los Gazules', 'Barbate', 'Benalup-Casas Viejas', 'Conil de la Frontera', 'Medina-Sidonia', 'Paterna de Rivera', 'Vejer de la Frontera'],
+          'Sierra de Cádiz': ['Alcalá del Valle', 'Algar', 'Algodonales', 'Arcos de la Frontera', 'Benaocaz', 'Bornos', 'Bosque (El)', 'Espera', 'Gastor (El)', 'Grazalema', 'Olvera', 'Prado del Rey', 'Puerto Serrano', 'Setenil de las Bodegas', 'Torre Alháquime', 'Ubrique', 'Villaluenga del Rosario', 'Villamartín', 'Zahara']
+      };
 
-      const filtered = data.ListaEESSPrecio
-          .map(g => {
-              const lat = parseFloat(g.Latitud.replace(',', '.'));
-              const lon = parseFloat(g['Longitud (WGS84)'].replace(',', '.'));
-              return {
-                  ...g,
-                  _lat: lat,
-                  _lon: lon
-              };
-          })
-          .filter(g => {
-              if (isNaN(g._lat) || isNaN(g._lon)) return false;
-              return g._lat <= N && g._lat >= S && g._lon <= E && g._lon >= W;
-          });
+      const getComarca = (municipio) => {
+          for (const [comarca, munis] of Object.entries(COMARCAS)) {
+              if (munis.includes(municipio)) return comarca;
+          }
+          return 'Desconocida';
+      };
 
-      const result = filtered.map(g => ({
-          id: g.IDEESS,
-          lat: g._lat,
-          lon: g._lon,
-          rotulo: g['Rótulo'],
-          direccion: g['Dirección'],
-          localidad: g['Localidad'],
-          provincia: g['Provincia'],
-          horario: g['Horario'],
-          precio95: g['Precio Gasolina 95 E5'] ? parseFloat(g['Precio Gasolina 95 E5'].replace(',', '.')) : null,
-          precioDiesel: g['Precio Gasoleo A'] ? parseFloat(g['Precio Gasoleo A'].replace(',', '.')) : null,
-      }));
+      // 1. First Pass: Format data and collect valid prices for averages/minimums
+      const stations = data.ListaEESSPrecio.map(g => {
+          const lat = parseFloat(g.Latitud.replace(',', '.'));
+          const lon = parseFloat(g['Longitud (WGS84)'].replace(',', '.'));
+          
+          const p95 = g['Precio Gasolina 95 E5'] ? parseFloat(g['Precio Gasolina 95 E5'].replace(',', '.')) : null;
+          const pDiesel = g['Precio Gasoleo A'] ? parseFloat(g['Precio Gasoleo A'].replace(',', '.')) : null;
+          
+          return {
+              id: g.IDEESS,
+              lat, lon,
+              rotulo: g['Rótulo'],
+              direccion: g['Dirección'],
+              localidad: g['Localidad'],
+              municipio: g['Municipio'],
+              comarca: getComarca(g['Municipio']),
+              horario: g['Horario'],
+              // All possible prices
+              fuels: {
+                  'Gasolina 95': p95,
+                  'Gasolina 98': g['Precio Gasolina 98 E5'] ? parseFloat(g['Precio Gasolina 98 E5'].replace(',', '.')) : null,
+                  'Diésel A': pDiesel,
+                  'Diésel Premium': g['Precio Gasoleo Premium'] ? parseFloat(g['Precio Gasoleo Premium'].replace(',', '.')) : null,
+                  'GLP': g['Precio Gases licuados del petróleo'] ? parseFloat(g['Precio Gases licuados del petróleo'].replace(',', '.')) : null,
+                  'GNC': g['Precio Gas Natural Comprimido'] ? parseFloat(g['Precio Gas Natural Comprimido'].replace(',', '.')) : null,
+                  'GNL': g['Precio Gas Natural Licuado'] ? parseFloat(g['Precio Gas Natural Licuado'].replace(',', '.')) : null,
+                  'AdBlue': g['Precio Adblue'] ? parseFloat(g['Precio Adblue'].replace(',', '.')) : null,
+              },
+              // Ref price for calculations (Prefer 95, fallback to Diesel)
+              refPrice: p95 || pDiesel
+          };
+      }).filter(s => !isNaN(s.lat) && !isNaN(s.lon));
 
-      const finalJson = JSON.stringify(result);
+      // 2. Statistics Calculation
+      let totalRefPrice = 0;
+      let countRefPrice = 0;
+      const minPriceByComarca = {};
 
-      // 3. Save to cache
+      stations.forEach(s => {
+          if (s.refPrice) {
+              totalRefPrice += s.refPrice;
+              countRefPrice++;
+              
+              if (!minPriceByComarca[s.comarca] || s.refPrice < minPriceByComarca[s.comarca]) {
+                  minPriceByComarca[s.comarca] = s.refPrice;
+              }
+          }
+      });
+
+      const avgProvincial = countRefPrice > 0 ? totalRefPrice / countRefPrice : 0;
+
+      // 3. Assign price levels
+      stations.forEach(s => {
+          if (!s.refPrice) {
+              s.priceLevel = 2; // Default to orange if no prices available
+              s.isCheapest = false;
+              return;
+          }
+
+          s.isCheapest = s.refPrice === minPriceByComarca[s.comarca];
+
+          if (s.isCheapest) {
+              s.priceLevel = 1; // Green
+          } else {
+              const diffPerc = (s.refPrice - avgProvincial) / avgProvincial;
+              
+              if (diffPerc > 0.10) {
+                  s.priceLevel = 4; // Purple (Very Expensive, > +10%)
+              } else if (diffPerc > 0.05) {
+                  s.priceLevel = 3; // Red (Expensive, > +5%)
+              } else {
+                  s.priceLevel = 2; // Orange/Yellow (Average, within -∞ to +5%)
+              }
+          }
+      });
+
+      const finalJson = JSON.stringify(stations);
+
       try {
         await env.DB.prepare(`
           INSERT INTO system_cache (key, value, updated_at) 

@@ -420,15 +420,21 @@
                 source: 'Geoportal MITECO',
                 _markers: [],
                 _isActive: false,
-                contextBounds: [[35.9, -6.7], [37.2, -5.0]],
+                contextBounds: [[35.95, -6.5], [37.0, -5.1]], // Revert to Cadiz strict bounds
                 fetchData: async () => {
                     const res = await fetch('/api/gasolineras');
                     return await res.json();
                 },
                 renderMarker: (gas, map) => {
-                    const iconHtml = `<div style="background-color: #eab308; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.3); border: 2px solid white; color: white;">
+                    let bgColor = '#f97316'; // Level 2 (Average - Orange)
+                    if (gas.priceLevel === 1) bgColor = '#22c55e'; // Level 1 (Cheapest - Green)
+                    else if (gas.priceLevel === 3) bgColor = '#ef4444'; // Level 3 (Expensive - Red)
+                    else if (gas.priceLevel === 4) bgColor = '#a855f7'; // Level 4 (Very Expensive - Purple)
+
+                    const iconHtml = `<div style="background-color: ${bgColor}; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.3); border: 2px solid white; color: white;">
                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="15" y2="22"></line><line x1="4" y1="9" x2="14" y2="9"></line><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"></path><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"></path></svg>
                        </div>`;
+                    
                     const marker = window.L.marker([gas.lat, gas.lon], {
                         icon: window.L.divIcon({
                             html: iconHtml,
@@ -441,23 +447,36 @@
                     return marker;
                 },
                 onMarkerClick: (gas) => {
+                    let cheapestBadge = gas.isCheapest 
+                        ? `<div style="display:inline-block;background:#dcfce7;color:#166534;font-size:11px;padding:2px 6px;border-radius:4px;font-weight:700;margin-bottom:8px;">🏆 Más barata en ${gas.comarca}</div>`
+                        : `<div style="font-size:11px;color:var(--text-secondary);margin-bottom:8px;">📍 Comarca: ${gas.comarca}</div>`;
+
                     let html = `
+                        ${cheapestBadge}
                         <div style="font-size:12px;color:var(--text-secondary);margin-bottom:8px;">${gas.direccion} (${gas.localidad})</div>
                         <div style="font-size:12px;color:var(--text-secondary);margin-bottom:12px;">🕒 ${gas.horario}</div>
-                        <div style="display:flex;gap:8px;">
+                        
+                        <div style="display:flex; flex-wrap:wrap; gap:8px;">
                     `;
-                    if (gas.precio95) {
-                        html += `<div style="flex:1;background:var(--chat-bg);border:1px solid var(--border-color);border-radius:8px;padding:8px;text-align:center;">
-                            <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;font-weight:600;">Gasolina 95</div>
-                            <div style="font-size:15px;color:var(--text-primary);font-weight:700;">${gas.precio95}€</div>
-                        </div>`;
-                    }
-                    if (gas.precioDiesel) {
-                        html += `<div style="flex:1;background:var(--chat-bg);border:1px solid var(--border-color);border-radius:8px;padding:8px;text-align:center;">
-                            <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;font-weight:600;">Diésel A</div>
-                            <div style="font-size:15px;color:var(--text-primary);font-weight:700;">${gas.precioDiesel}€</div>
-                        </div>`;
-                    }
+                    
+                    const fuels = gas.fuels || {};
+                    // We explicitly order common ones first
+                    const orderedFuels = ['Gasolina 95', 'Diésel A', 'Gasolina 98', 'Diésel Premium', 'GLP', 'GNC', 'GNL', 'AdBlue'];
+                    
+                    orderedFuels.forEach(fName => {
+                        if (fuels[fName]) {
+                            // Highlight 95 and Diesel A with a slightly thicker/darker design
+                            const isMain = (fName === 'Gasolina 95' || fName === 'Diésel A');
+                            const bg = isMain ? 'var(--chat-bg)' : 'transparent';
+                            const border = isMain ? 'border:1px solid var(--border-color);' : 'border:1px dashed var(--border-color);';
+                            
+                            html += `<div style="flex:1; min-width:80px; background:${bg}; ${border} border-radius:8px; padding:6px; text-align:center;">
+                                <div style="font-size:10px;color:var(--text-secondary);margin-bottom:2px;font-weight:600;">${fName}</div>
+                                <div style="font-size:14px;color:var(--text-primary);font-weight:700;">${fuels[fName]}€</div>
+                            </div>`;
+                        }
+                    });
+                    
                     html += `</div>`;
                     
                     return {
