@@ -402,7 +402,7 @@
             'gasolineras': {
                 name: 'Gasolineras',
                 type: 'data',
-                useClustering: true,
+                useClustering: false,
                 color: '#eab308',
                 source: 'Geoportal MITECO',
                 _markers: [],
@@ -413,10 +413,9 @@
                     return await res.json();
                 },
                 renderMarker: (gas, map) => {
-                    let bgColor = '#f97316'; // Level 2 (Average - Orange)
+                    let bgColor = '#eab308'; // Level 2 (Average - Yellowish Orange)
                     if (gas.priceLevel === 1) bgColor = '#22c55e'; // Level 1 (Cheapest - Green)
-                    else if (gas.priceLevel === 3) bgColor = '#ef4444'; // Level 3 (Expensive - Red)
-                    else if (gas.priceLevel === 4) bgColor = '#a855f7'; // Level 4 (Very Expensive - Purple)
+                    else if (gas.priceLevel === 3) bgColor = '#dc2626'; // Level 3 (Expensive - Red)
 
                     const iconHtml = `<div style="background-color: ${bgColor}; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.3); border: 2px solid white; color: white;">
                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="15" y2="22"></line><line x1="4" y1="9" x2="14" y2="9"></line><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"></path><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"></path></svg>
