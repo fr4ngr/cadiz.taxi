@@ -1344,26 +1344,34 @@
                     window.simulatedMarker = null;
                 }
                 if (btn) {
+                    btn.innerHTML = '🛰️ Simular GPS';
                     btn.style.background = 'var(--chat-bg)';
                     btn.style.color = 'var(--text-secondary)';
+                    btn.style.boxShadow = '0 2px 6px rgba(0,0,0,0.05)';
+                    btn.classList.remove('gps-active');
                 }
                 return;
             }
 
-            // Activar en el centro de Jerez por defecto
-            window.simulatedGPS = { lat: 36.685, lng: -6.126 };
+            // Activar en Cádiz capital con un poco de aleatoriedad
+            const randomLat = 36.500 + (Math.random() * 0.035);
+            const randomLng = -6.295 + (Math.random() * 0.030);
+            window.simulatedGPS = { lat: randomLat, lng: randomLng };
+            
             if (btn) {
+                btn.innerHTML = '🛰️ Simulando GPS... (Arrastra el punto)';
                 btn.style.background = 'var(--primary-color)';
                 btn.style.color = 'white';
+                btn.style.boxShadow = '0 0 10px var(--primary-color)';
             }
 
             window.simulatedMarker = window.L.marker([window.simulatedGPS.lat, window.simulatedGPS.lng], {
                 draggable: true,
                 icon: window.L.divIcon({
-                    html: '<div style="background:#3b82f6;width:16px;height:16px;border-radius:50%;border:3px solid white;box-shadow:0 2px 5px rgba(0,0,0,0.3);"></div>',
+                    html: '<div style="background:#3b82f6;width:18px;height:18px;border-radius:50%;border:3px solid white;box-shadow:0 0 15px rgba(59,130,246,0.8);"></div>',
                     className: '',
-                    iconSize: [22, 22],
-                    iconAnchor: [11, 11]
+                    iconSize: [24, 24],
+                    iconAnchor: [12, 12]
                 })
             }).addTo(map);
 
@@ -1377,7 +1385,7 @@
                 }
             });
 
-            map.setView([window.simulatedGPS.lat, window.simulatedGPS.lng], 12);
+            map.setView([window.simulatedGPS.lat, window.simulatedGPS.lng], 13);
             
             if (window.lastGasFilter) {
                 window.filterGasolineras(window.lastGasFilter);
@@ -1397,7 +1405,7 @@
                 let filtered = [...filterObj._allData];
                 
                 filtered.forEach(s => {
-                    s.distKm = getDistance(lat, lng, parseFloat(s.Latitud.replace(',','.')), parseFloat(s.Longitud.replace(',','.')));
+                    s.distKm = getDistance(lat, lng, s.lat, s.lon); // Fix: use s.lat and s.lon
                 });
 
                 if (mode === 'cercanas') {
@@ -1451,9 +1459,7 @@
                         marker.addTo(map);
                     }
                     
-                    const latNum = parseFloat(item.Latitud.replace(',','.'));
-                    const lngNum = parseFloat(item.Longitud.replace(',','.'));
-                    boundsArr.push([latNum, lngNum]);
+                    boundsArr.push([item.lat, item.lon]); // Fix: use item.lat and item.lon
                 });
 
                 if (boundsArr.length > 0) {
