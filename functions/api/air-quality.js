@@ -58,7 +58,7 @@ export async function onRequest(context) {
                     });
 
                     // Extract values
-                    const readings = { pm10: 0, pm25: 0, no2: 0, o3: 0, so2: 0, co: 0 };
+                    const readings = { pm10: null, pm25: null, no2: null, o3: null, so2: null, co: null };
                     let stationTimestamp = 0;
                     latestData.results.forEach(measurement => {
                         const param = sensorMap[measurement.sensorsId];
