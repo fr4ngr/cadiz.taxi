@@ -1397,73 +1397,80 @@
         window.filterGasolineras = function(mode) {
             window.lastGasFilter = mode;
             const filterObj = mapConfig.layers['gasolineras'];
-            if (!filterObj || !filterObj._allData || !window.currentMap || !window.L) return;
+            if (!filterObj) { alert('Error: No se encontró la capa de gasolineras.'); return; }
+            if (!filterObj._allData) { alert('Cargando datos, por favor espera...'); return; }
+            if (!window.currentMap || !window.L) { alert('Error: Mapa no inicializado.'); return; }
 
             const map = window.currentMap;
 
             const executeFilter = (lat, lng) => {
-                let filtered = [...filterObj._allData];
-                
-                filtered.forEach(s => {
-                    s.distKm = getDistance(lat, lng, s.lat, s.lon); // Fix: use s.lat and s.lon
-                });
-
-                if (mode === 'cercanas') {
-                    filtered = filtered.sort((a, b) => a.distKm - b.distKm).slice(0, 3);
-                } else if (mode === 'baratas_cercanas') {
-                    filtered = filtered.filter(s => s.priceLevel === 1 && s.distKm <= 5);
-                    filtered = filtered.sort((a, b) => a.distKm - b.distKm);
-                }
-
-                // Limpiar marcadores actuales
-                if (filterObj._clusterGroup) {
-                    filterObj._clusterGroup.clearLayers();
-                } else {
-                    filterObj._markers.forEach(m => {
-                        if (map.hasLayer(m)) map.removeLayer(m);
-                    });
-                }
-                filterObj._markers = [];
-
-                if (filtered.length === 0) {
-                    alert("No se encontraron gasolineras que cumplan este criterio en esta zona.");
-                    return;
-                }
-
-                const boundsArr = [];
-
-                filtered.forEach(item => {
-                    const marker = filterObj.renderMarker(item, map);
+                try {
+                    let filtered = [...filterObj._allData];
                     
-                    marker.on('click', () => {
-                        const popupData = filterObj.onMarkerClick(item);
-                        const container = document.getElementById('map-ui-container');
-                        if (!container) return;
-                        document.getElementById('map-info-label').innerText = popupData.label;
-                        document.getElementById('map-info-label').style.color = popupData.labelColor || filterObj.color;
-                        document.getElementById('map-info-title').innerText = popupData.title;
-                        document.getElementById('map-info-desc').innerHTML = popupData.desc;
-                        const actionsDiv = document.getElementById('map-pill-actions');
-                        if (actionsDiv) actionsDiv.style.display = popupData.showActions !== false ? 'flex' : 'none';
-                        if (popupData.recenter) map.setView(popupData.recenter, 14);
-                        container.style.opacity = '1';
-                        container.style.pointerEvents = 'auto';
-                        container.style.transform = 'translate(-50%, 0)';
+                    filtered.forEach(s => {
+                        s.distKm = getDistance(lat, lng, s.lat, s.lon); // Fix: use s.lat and s.lon
                     });
 
-                    filterObj._markers.push(marker);
-                    
-                    if (filterObj._clusterGroup) {
-                        filterObj._clusterGroup.addLayer(marker);
-                    } else {
-                        marker.addTo(map);
+                    if (mode === 'cercanas') {
+                        filtered = filtered.sort((a, b) => a.distKm - b.distKm).slice(0, 3);
+                    } else if (mode === 'baratas_cercanas') {
+                        filtered = filtered.filter(s => s.priceLevel === 1 && s.distKm <= 5);
+                        filtered = filtered.sort((a, b) => a.distKm - b.distKm);
                     }
-                    
-                    boundsArr.push([item.lat, item.lon]); // Fix: use item.lat and item.lon
-                });
 
-                if (boundsArr.length > 0) {
-                    map.fitBounds(boundsArr, { padding: [50, 50], maxZoom: 14 });
+                    // Limpiar marcadores actuales
+                    if (filterObj._clusterGroup) {
+                        filterObj._clusterGroup.clearLayers();
+                    } else {
+                        filterObj._markers.forEach(m => {
+                            try { map.removeLayer(m); } catch(e) {}
+                        });
+                    }
+                    filterObj._markers = [];
+
+                    if (filtered.length === 0) {
+                        alert("No se encontraron gasolineras que cumplan este criterio en esta zona.");
+                        return;
+                    }
+
+                    const boundsArr = [];
+
+                    filtered.forEach(item => {
+                        const marker = filterObj.renderMarker(item, map);
+                        
+                        marker.on('click', () => {
+                            const popupData = filterObj.onMarkerClick(item);
+                            const container = document.getElementById('map-ui-container');
+                            if (!container) return;
+                            document.getElementById('map-info-label').innerText = popupData.label;
+                            document.getElementById('map-info-label').style.color = popupData.labelColor || filterObj.color;
+                            document.getElementById('map-info-title').innerText = popupData.title;
+                            document.getElementById('map-info-desc').innerHTML = popupData.desc;
+                            const actionsDiv = document.getElementById('map-pill-actions');
+                            if (actionsDiv) actionsDiv.style.display = popupData.showActions !== false ? 'flex' : 'none';
+                            if (popupData.recenter) map.setView(popupData.recenter, 14);
+                            container.style.opacity = '1';
+                            container.style.pointerEvents = 'auto';
+                            container.style.transform = 'translate(-50%, 0)';
+                        });
+
+                        filterObj._markers.push(marker);
+                        
+                        if (filterObj._clusterGroup) {
+                            filterObj._clusterGroup.addLayer(marker);
+                        } else {
+                            marker.addTo(map);
+                        }
+                        
+                        boundsArr.push([item.lat, item.lon]); // Fix: use item.lat and item.lon
+                    });
+
+                    if (boundsArr.length > 0) {
+                        map.fitBounds(boundsArr, { padding: [50, 50], maxZoom: 14 });
+                    }
+                } catch (error) {
+                    alert('Error inesperado en executeFilter: ' + error.message);
+                    console.error(error);
                 }
             };
 
