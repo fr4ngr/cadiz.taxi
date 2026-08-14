@@ -297,21 +297,17 @@
 <script>
     if (typeof window !== 'undefined') {
         const btnClose = document.getElementById('btn-close-map-pill');
-        if (btnClose) {
-            btnClose.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
+        window.closeMapInfoCard = function() {
+            const pill = document.getElementById('map-ui-container');
+            const routeStats = document.getElementById('map-floating-route-stats');
+            const instruction = document.getElementById('route-instruction');
+            const actions = document.getElementById('map-pill-actions');
+            
+            if (pill && pill.style.opacity === '1') {
+                pill.style.opacity = '0';
+                pill.style.pointerEvents = 'none';
+                pill.style.transform = 'translateX(-50%) translateY(20px)';
                 
-                const pill = document.getElementById('map-ui-container');
-                const routeStats = document.getElementById('map-floating-route-stats');
-                const instruction = document.getElementById('route-instruction');
-                const actions = document.getElementById('map-pill-actions');
-                
-                if (pill) {
-                    pill.style.opacity = '0';
-                    pill.style.pointerEvents = 'none';
-                    pill.style.transform = 'translateX(-50%) translateY(20px)';
-                }
                 if (routeStats) routeStats.style.display = 'none';
                 if (instruction) instruction.style.display = 'none';
                 if (actions) actions.style.display = 'flex';
@@ -338,6 +334,14 @@
                         }
                     }
                 }
+            }
+        };
+
+        if (btnClose) {
+            btnClose.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                window.closeMapInfoCard();
             });
         }
 
@@ -397,6 +401,8 @@
         window.toggleFilters = function() {
             const filtersPills = document.getElementById('map-filters-pills');
             const addMenu = document.getElementById('radial-menu-add');
+            
+            if (window.closeMapInfoCard) window.closeMapInfoCard();
             
             if (filtersPills) filtersPills.classList.toggle('open');
             if (addMenu) addMenu.classList.remove('open');
