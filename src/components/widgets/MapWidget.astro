@@ -8,7 +8,7 @@
     <!-- Contenedor UI de la InfoPill -->
     <div id="map-ui-container" style="position: absolute; top: 16px; left: 50%; z-index: 1001; transform: translateX(-50%); width: calc(100% - 32px); max-width: 448px; display: flex; flex-direction: column; gap: 8px; transition: opacity 0.3s, transform 0.3s; opacity: 0; pointer-events: none;">
         <!-- Píldora informativa de parada -->
-        <div id="map-info-pill" style="background: var(--header-bg); border-radius: 20px; padding: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); display: flex; flex-direction: column; gap: 14px; border: 1px solid var(--header-border);">
+        <div id="map-info-pill" style="background: color-mix(in srgb, var(--header-bg) 75%, transparent); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: 20px; padding: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); display: flex; flex-direction: column; gap: 14px; border: 1px solid var(--header-border);">
         
         <div style="display: flex; align-items: flex-start; gap: 12px;">
             <div style="flex: 1;">
@@ -44,7 +44,7 @@
         <!-- Píldoras flotantes de ruta (Distancia y Tiempo) debajo de la tarjeta -->
         <div id="map-floating-route-stats" style="display: none; justify-content: flex-end; gap: 8px; pointer-events: none;">
             <div id="route-time" style="background: var(--primary-color); color: white; padding: 6px 14px; border-radius: 20px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 10px rgba(0,0,0,0.15); pointer-events: auto; display: flex; align-items: center; justify-content: center; height: 32px; box-sizing: border-box;">-- min</div>
-            <div id="route-distance" style="background: var(--header-bg); color: var(--text-primary); border: 1px solid var(--header-border); padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; box-shadow: 0 4px 10px rgba(0,0,0,0.15); pointer-events: auto; display: flex; align-items: center; justify-content: center; height: 32px; box-sizing: border-box;">-- m</div>
+            <div id="route-distance" style="background: color-mix(in srgb, var(--header-bg) 75%, transparent); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); color: var(--text-primary); border: 1px solid var(--header-border); padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; box-shadow: 0 4px 10px rgba(0,0,0,0.15); pointer-events: auto; display: flex; align-items: center; justify-content: center; height: 32px; box-sizing: border-box;">-- m</div>
         </div>
     </div>
 
@@ -172,7 +172,7 @@
         width: 56px;
         height: 56px;
         border-radius: 50%;
-        background: var(--header-bg);
+        background: color-mix(in srgb, var(--header-bg) 75%, transparent);
         border: 1px solid var(--header-border);
         color: var(--text-primary);
         display: flex;
@@ -208,7 +208,7 @@
         height: 44px;
         padding: 0 16px;
         border-radius: 22px;
-        background: color-mix(in srgb, var(--header-bg) 85%, transparent);
+        background: color-mix(in srgb, var(--header-bg) 75%, transparent);
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
         border: 1px solid var(--header-border);
@@ -251,7 +251,7 @@
         display: flex;
         align-items: center;
         gap: 6px;
-        background: color-mix(in srgb, var(--header-bg) 85%, transparent);
+        background: color-mix(in srgb, var(--header-bg) 75%, transparent);
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
         border: 1px solid var(--header-border);
