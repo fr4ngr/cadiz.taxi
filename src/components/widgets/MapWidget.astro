@@ -416,6 +416,7 @@
             'gasolineras': {
                 name: 'Gasolineras',
                 type: 'data',
+                useClustering: true,
                 color: '#eab308',
                 source: 'Geoportal MITECO',
                 _markers: [],
@@ -442,7 +443,7 @@
                             iconSize: [24, 24],
                             iconAnchor: [12, 12]
                         })
-                    }).addTo(map);
+                    }); // REMOVED .addTo(map)
 
                     return marker;
                 },
@@ -1088,6 +1089,11 @@
                     targetBtn.style.color = '';
                     targetBtn.style.borderColor = '';
                 }
+                if (filterObj._clusterGroup) {
+                    map.removeLayer(filterObj._clusterGroup);
+                    filterObj._clusterGroup.clearLayers();
+                    filterObj._clusterGroup = null;
+                }
                 if (filterObj._markers) {
                     filterObj._markers.forEach(m => map.removeLayer(m));
                     filterObj._markers = [];
@@ -1152,6 +1158,11 @@
 
                     if (!filterObj._isActive) return;
 
+                    if (filterObj._clusterGroup) {
+                        map.removeLayer(filterObj._clusterGroup);
+                        filterObj._clusterGroup.clearLayers();
+                        filterObj._clusterGroup = null;
+                    }
                     if (filterObj._markers && filterObj._markers.length > 0) {
                         filterObj._markers.forEach(m => map.removeLayer(m));
                     }
@@ -1180,6 +1191,13 @@
                     }
 
                     // Markers already cleared safely earlier
+                    if (filterObj.useClustering) {
+                        filterObj._clusterGroup = window.L.markerClusterGroup({
+                            showCoverageOnHover: false,
+                            maxClusterRadius: 40
+                        });
+                    }
+
                     data.forEach(item => {
                         const marker = filterObj.renderMarker(item, map);
                         
@@ -1204,8 +1222,16 @@
                             container.style.pointerEvents = 'auto';
                             container.style.transform = 'translate(-50%, 0)';
                         });
+
                         filterObj._markers.push(marker);
+                        if (filterObj.useClustering) {
+                            filterObj._clusterGroup.addLayer(marker);
+                        }
                     });
+
+                    if (filterObj.useClustering) {
+                        map.addLayer(filterObj._clusterGroup);
+                    }
 
                     if (filterObj.contextBounds) {
                         map.flyToBounds(filterObj.contextBounds, { duration: 1.5, padding: [20, 20] });
