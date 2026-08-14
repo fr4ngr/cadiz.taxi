@@ -400,6 +400,7 @@
                 _markers: [],
                 _isActive: false,
                 autoZoom: true,
+                contextBounds: [[34.0, -9.5], [37.5, -3.0]],
                 emptyState: {
                     title: 'Todo tranquilo 😌',
                     desc: '<div style="margin-top:8px; color:var(--text-secondary); line-height: 1.4;">No se han registrado seísmos en España en los últimos 3 días.</div>' +
@@ -527,6 +528,7 @@
                 _markers: [],
                 _isActive: false,
                 autoZoom: true,
+                contextBounds: [[35.5, -7.5], [40.5, -1.0]],
                 emptyState: {
                     title: 'Todo tranquilo 😌',
                     desc: '<div style="margin-top:8px; color:var(--text-secondary); line-height: 1.4;">No se han detectado anomalías térmicas en la Península Ibérica en las últimas horas.</div>' +
@@ -608,7 +610,7 @@
                 source: 'MITECO (Min. para la Transición Ecológica)',
                 _markers: [],
                 _isActive: false,
-                autoZoom: false,
+                contextBounds: [[35.95, -6.5], [37.0, -5.1]],
                 fetchData: async () => {
                     const res = await fetch('/api/water');
                     const data = await res.json();
@@ -709,7 +711,7 @@
                 source: 'Red de Aerobiología de Andalucía',
                 _markers: [],
                 _isActive: false,
-                autoZoom: false,
+                contextBounds: [[35.95, -6.5], [37.0, -5.1]],
                 fetchData: async () => {
                     const res = await fetch('/api/pollen?v=1');
                     const data = await res.json();
@@ -823,7 +825,7 @@
                 source: 'AEMA y OpenAQ',
                 _markers: [],
                 _isActive: false,
-                autoZoom: false,
+                contextBounds: [[35.95, -6.5], [37.0, -5.1]],
                 fetchData: async () => {
                     const res = await fetch('/api/air-quality?v=3'); // Bust cache to force timestamp data
                     const data = await res.json();
@@ -1093,7 +1095,9 @@
                         filterObj._markers.push(marker);
                     });
 
-                    if (filterObj.autoZoom && filterObj._markers.length > 0) {
+                    if (filterObj.contextBounds) {
+                        map.flyToBounds(filterObj.contextBounds, { duration: 1.5, padding: [20, 20] });
+                    } else if (filterObj.autoZoom && filterObj._markers.length > 0) {
                         const group = new window.L.featureGroup(filterObj._markers);
                         map.fitBounds(group.getBounds(), { padding: [50, 50], maxZoom: 9 });
                     }
