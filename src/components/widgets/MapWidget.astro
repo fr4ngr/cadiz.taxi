@@ -323,6 +323,21 @@
                         window.currentRouteControl = null;
                     } catch(err) {}
                 }
+
+                // Restaurar la vista por defecto del filtro activo
+                if (window.map && window.MapFilterRegistry) {
+                    for (const key in window.MapFilterRegistry) {
+                        const filter = window.MapFilterRegistry[key];
+                        if (filter._isActive) {
+                            if (filter.contextBounds) {
+                                window.map.flyToBounds(filter.contextBounds, { duration: 1.5, padding: [20, 20] });
+                            } else if (filter.flyTo && filter.flyToZoom) {
+                                window.map.flyTo(filter.flyTo, filter.flyToZoom, { duration: 1.5 });
+                            }
+                            break;
+                        }
+                    }
+                }
             });
         }
 
