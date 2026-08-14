@@ -73,47 +73,7 @@
         </div>
     </div>
 
-    <!-- Filtros Container (Top) -->
-    <div id="map-filters-pills" style="position: absolute; top: 84px; left: 50%; z-index: 1001; width: calc(100% - 32px); display: flex; justify-content: center; gap: 8px; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); flex-wrap: wrap;">
-        <button class="filter-pill active" onclick="window.selectMapLayer('popular')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
-            Popular
-        </button>
-        <button class="filter-pill" onclick="window.selectMapLayer('red')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-            Mi Red
-        </button>
-        <button class="filter-pill" onclick="window.selectMapLayer('incendios')" style="border-color: #ef4444; color: #ef4444;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
-            Incendios Activos
-        </button>
-        <button class="filter-pill" onclick="window.selectMapLayer('embalses')" style="border-color: #3b82f6; color: #3b82f6;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
-            Embalses
-        </button>
-        <button class="filter-pill" onclick="window.selectMapLayer('sismos')" style="border-color: #f97316; color: #f97316;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M12 19V5"></path><path d="M17 12H7"></path></svg>
-            Seísmos
-        </button>
-        <button class="filter-pill" onclick="window.selectMapLayer('aire')" style="border-color: #10b981; color: #10b981;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"></path></svg>
-            Calidad Aire
-        </button>
-        <button class="filter-pill" onclick="window.selectMapLayer('polen')" style="border-color: #8b5cf6; color: #8b5cf6;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
-            Polen / Alergias
-        </button>
-        <button class="filter-pill" onclick="window.selectMapLayer('dust_live')" style="border-color: #d946ef; color: #d946ef;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h3"/><path d="M19 12h3"/><path d="M12 2v3"/><path d="M12 19v3"/><path d="M4.93 4.93l2.12 2.12"/><path d="M16.95 16.95l2.12 2.12"/><path d="M4.93 19.07l2.12-2.12"/><path d="M16.95 7.05l2.12-2.12"/><circle cx="12" cy="12" r="4"/></svg>
-            Calima (En vivo)
-        </button>
-        <!--
-        <button class="filter-pill" onclick="window.selectMapLayer('dust_forecast')" style="border-color: #f59e0b; color: #f59e0b;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0z"></path><polyline points="12 6 12 12 16 14"></polyline></svg>
-            Calima (Previsión)
-        </button>
-        -->
-    </div>
+
 
     <!-- RADIAL MENUS CONTAINER -->
     <div id="map-actions-container" style="position: absolute; bottom: 96px; right: 16px; z-index: 1005; display: flex; flex-direction: column; gap: 16px; align-items: flex-end;">
@@ -138,20 +98,50 @@
             </button>
         </div>
 
-        <!-- Filtros Button -->
-        <button id="map-filters-btn" class="radial-main-btn" onclick="window.toggleFilters()" aria-label="Filtros">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="21" y1="4" x2="14" y2="4"></line>
-                <line x1="10" y1="4" x2="3" y2="4"></line>
-                <line x1="21" y1="12" x2="12" y2="12"></line>
-                <line x1="8" y1="12" x2="3" y2="12"></line>
-                <line x1="21" y1="20" x2="16" y2="20"></line>
-                <line x1="12" y1="20" x2="3" y2="20"></line>
-                <line x1="14" y1="2" x2="14" y2="6"></line>
-                <line x1="8" y1="10" x2="8" y2="14"></line>
-                <line x1="16" y1="18" x2="16" y2="22"></line>
-            </svg>
-        </button>
+        <!-- Filtros Radial Menu (Capas) -->
+        <div class="radial-menu-wrapper" id="radial-menu-filters">
+            <button class="radial-pill-item filter-pill" style="--ty: -450px; border-color: #d946ef; color: #d946ef;" onclick="window.selectMapLayer('dust_live')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h3"/><path d="M19 12h3"/><path d="M12 2v3"/><path d="M12 19v3"/><path d="M4.93 4.93l2.12 2.12"/><path d="M16.95 16.95l2.12 2.12"/><path d="M4.93 19.07l2.12-2.12"/><path d="M16.95 7.05l2.12-2.12"/><circle cx="12" cy="12" r="4"/></svg>
+                Calima (V)
+            </button>
+            <button class="radial-pill-item filter-pill" style="--ty: -395px; border-color: #8b5cf6; color: #8b5cf6;" onclick="window.selectMapLayer('polen')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+                Polen
+            </button>
+            <button class="radial-pill-item filter-pill" style="--ty: -340px; border-color: #10b981; color: #10b981;" onclick="window.selectMapLayer('aire')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"></path></svg>
+                Calidad Aire
+            </button>
+            <button class="radial-pill-item filter-pill" style="--ty: -285px; border-color: #f97316; color: #f97316;" onclick="window.selectMapLayer('sismos')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M12 19V5"></path><path d="M17 12H7"></path></svg>
+                Seísmos
+            </button>
+            <button class="radial-pill-item filter-pill" style="--ty: -230px; border-color: #3b82f6; color: #3b82f6;" onclick="window.selectMapLayer('embalses')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
+                Embalses
+            </button>
+            <button class="radial-pill-item filter-pill" style="--ty: -175px; border-color: #ef4444; color: #ef4444;" onclick="window.selectMapLayer('incendios')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
+                Incendios
+            </button>
+            <button class="radial-pill-item filter-pill" style="--ty: -120px;" onclick="window.selectMapLayer('red')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                Mi Red
+            </button>
+            <button class="radial-pill-item filter-pill active" style="--ty: -65px;" onclick="window.selectMapLayer('popular')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
+                Popular
+            </button>
+
+            <!-- Filtros Button (Layers Icon) -->
+            <button id="map-filters-btn" class="radial-main-btn" onclick="window.toggleRadialMenu('filters')" aria-label="Capas">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                    <polyline points="2 12 12 17 22 12"></polyline>
+                    <polyline points="2 17 12 22 22 17"></polyline>
+                </svg>
+            </button>
+        </div>
     </div>
 </div>
 
@@ -233,20 +223,24 @@
         pointer-events: auto;
         transform: translate(0, var(--ty));
     }
+    .radial-pill-item.active {
+        background: var(--primary-color) !important;
+        color: white !important;
+        border-color: var(--primary-color) !important;
+    }
+    .radial-pill-item.active svg {
+        stroke: white !important;
+    }
+
     .radial-menu-wrapper.open .radial-pill-item:nth-child(1) { transition-delay: 0.05s; }
     .radial-menu-wrapper.open .radial-pill-item:nth-child(2) { transition-delay: 0.1s; }
     .radial-menu-wrapper.open .radial-pill-item:nth-child(3) { transition-delay: 0.15s; }
+    .radial-menu-wrapper.open .radial-pill-item:nth-child(4) { transition-delay: 0.2s; }
+    .radial-menu-wrapper.open .radial-pill-item:nth-child(5) { transition-delay: 0.25s; }
+    .radial-menu-wrapper.open .radial-pill-item:nth-child(6) { transition-delay: 0.3s; }
+    .radial-menu-wrapper.open .radial-pill-item:nth-child(7) { transition-delay: 0.35s; }
+    .radial-menu-wrapper.open .radial-pill-item:nth-child(8) { transition-delay: 0.4s; }
 
-    #map-filters-pills {
-        opacity: 0;
-        pointer-events: none;
-        transform: translateX(-50%) translateY(-20px);
-    }
-    #map-filters-pills.open {
-        opacity: 1;
-        pointer-events: auto;
-        transform: translateX(-50%) translateY(0);
-    }
     .filter-pill {
         display: flex;
         align-items: center;
@@ -388,24 +382,21 @@
         };
 
         window.toggleRadialMenu = function(menuId) {
-            const wrapper = document.getElementById('radial-menu-' + menuId);
-            const filtersPills = document.getElementById('map-filters-pills');
+            const addMenu = document.getElementById('radial-menu-add');
+            const filtersMenu = document.getElementById('radial-menu-filters');
             
-            // Si abrimos 'add', cerramos filtros
             if (menuId === 'add') {
-                if (wrapper) wrapper.classList.toggle('open');
-                if (filtersPills) filtersPills.classList.remove('open');
+                if (addMenu) addMenu.classList.toggle('open');
+                if (filtersMenu) filtersMenu.classList.remove('open');
+            } else if (menuId === 'filters') {
+                if (window.closeMapInfoCard) window.closeMapInfoCard();
+                if (filtersMenu) filtersMenu.classList.toggle('open');
+                if (addMenu) addMenu.classList.remove('open');
             }
         };
 
         window.toggleFilters = function() {
-            const filtersPills = document.getElementById('map-filters-pills');
-            const addMenu = document.getElementById('radial-menu-add');
-            
-            if (window.closeMapInfoCard) window.closeMapInfoCard();
-            
-            if (filtersPills) filtersPills.classList.toggle('open');
-            if (addMenu) addMenu.classList.remove('open');
+            window.toggleRadialMenu('filters');
         };
 
         
@@ -988,11 +979,14 @@
                     }
                 });
                 if (targetBtn) targetBtn.classList.add('active');
+                
+                const filtersMenu = document.getElementById('radial-menu-filters');
+                if (filtersMenu) filtersMenu.classList.remove('open');
                 return;
             }
 
-            const filtersPills = document.getElementById('map-filters-pills');
-            if (filtersPills) filtersPills.classList.remove('open');
+            const filtersMenu = document.getElementById('radial-menu-filters');
+            if (filtersMenu) filtersMenu.classList.remove('open');
 
             const filterObj = window.MapFilterRegistry[layerId];
             if (!filterObj) return;
