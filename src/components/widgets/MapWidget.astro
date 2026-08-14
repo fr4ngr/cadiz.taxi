@@ -466,7 +466,12 @@
                     html += `</div>`;
 
                     // Add visual progress bar for price level
-                    const levelText = gas.priceLevel === 1 ? 'ENTRE LAS MÁS BARATAS' : (gas.priceLevel === 2 ? `CON PRECIOS EN LA MEDIA DE ${gas.comarca.toUpperCase()}` : 'ENTRE LAS MÁS CARAS');
+                    const comarcaUpper = gas.comarca.toUpperCase();
+                    const levelText = gas.priceLevel === 1 
+                        ? `ENTRE LAS MÁS BARATAS DE ${comarcaUpper}` 
+                        : (gas.priceLevel === 2 
+                            ? `EN LA MEDIA DE ${comarcaUpper}` 
+                            : `ENTRE LAS MÁS CARAS DE ${comarcaUpper}`);
                     const levelColor = gas.priceLevel === 1 ? '#22c55e' : (gas.priceLevel === 2 ? '#eab308' : '#dc2626');
                     
                     html += `
