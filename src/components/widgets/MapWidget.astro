@@ -759,7 +759,7 @@
                                 ${Math.floor((Date.now() - station.timestamp) / 60000) > 1440 ? `<div style="background: var(--chat-bg); border-left: 4px solid #ef4444; padding: 10px; border-radius: 4px; display: flex; gap: 8px; align-items: flex-start; border-top: 1px solid var(--header-border); border-right: 1px solid var(--header-border); border-bottom: 1px solid var(--header-border);">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" style="flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
                                     <div style="font-size: 11px; color: var(--text-secondary); line-height: 1.4;">
-                                        <strong style="color: var(--text-primary);">Estación inactiva:</strong> No envía datos desde hace ${Math.floor(Math.floor((Date.now() - station.timestamp) / 60000)/1440)} días.
+                                        <strong style="color: var(--text-primary);">Sin conexión reciente:</strong> No envía datos desde hace ${Math.floor(Math.floor((Date.now() - station.timestamp) / 60000)/1440)} días.
                                     </div>
                                 </div>` : ''}
                                 <div style="display: flex; align-items: flex-start; justify-content: space-between; background: linear-gradient(to right, transparent, ${isInactive ? '#94a3b8' : station.color}15); padding: 12px; border-radius: 8px; border-left: 4px solid ${isInactive ? '#94a3b8' : station.color};">

@@ -62,24 +62,27 @@ export async function onRequest(context) {
                     let stationTimestamp = 0;
                     latestData.results.forEach(measurement => {
                         const param = sensorMap[measurement.sensorsId];
+                        
+                        let ts = 0;
+                        try {
+                            if (measurement.period && measurement.period.datetimeTo && measurement.period.datetimeTo.utc) {
+                                ts = new Date(measurement.period.datetimeTo.utc).getTime();
+                            } else if (measurement.datetime && measurement.datetime.utc) {
+                                ts = new Date(measurement.datetime.utc).getTime();
+                            } else if (measurement.datetime) {
+                                ts = new Date(measurement.datetime).getTime();
+                            }
+                            if (ts > stationTimestamp) stationTimestamp = ts;
+                        } catch (e) {}
+
                         if (param && readings[param] !== undefined) {
                             // Ignore negative values (sensor error codes like -1 or -999)
-                            if (measurement.value >= 0) {
+                            // Ignore stale values (> 24 hours old)
+                            const isStale = ts > 0 && (Date.now() - ts) > 1440 * 60000;
+                            if (measurement.value >= 0 && !isStale) {
                                 readings[param] = measurement.value;
                             }
                         }
-                        try {
-                            if (measurement.period && measurement.period.datetimeTo && measurement.period.datetimeTo.utc) {
-                                const ts = new Date(measurement.period.datetimeTo.utc).getTime();
-                                if (ts > stationTimestamp) stationTimestamp = ts;
-                            } else if (measurement.datetime && measurement.datetime.utc) {
-                                const ts = new Date(measurement.datetime.utc).getTime();
-                                if (ts > stationTimestamp) stationTimestamp = ts;
-                            } else if (measurement.datetime) {
-                                const ts = new Date(measurement.datetime).getTime();
-                                if (ts > stationTimestamp) stationTimestamp = ts;
-                            }
-                        } catch (e) {}
                     });
                     if (stationTimestamp === 0) stationTimestamp = Date.now();
 
