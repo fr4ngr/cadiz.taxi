@@ -519,10 +519,7 @@ import MapWidget from '../components/widgets/MapWidget.astro';
                 
                 <!-- TAB CHAT -->
                 <div id="tab-chat" style="flex: 1; width: 100%; min-height: 0; display: flex; flex-direction: column; position: relative; background: var(--chat-bg);">
-                    <div style="width: 100%; max-width: 480px; margin: 0 auto; padding-top: 60px; z-index: 10;">
-                        
-                    </div>
-                    <main class="messages-area" id="messages-container" style="width: 100%; max-width: 480px; margin: 0 auto; height: 100%; overflow-y: auto; padding-top: 20px; padding-bottom: 160px; scroll-behavior: smooth;">
+                    <main class="messages-area" id="messages-container" style="width: 100%; max-width: 480px; margin: 0 auto; height: 100%; overflow-y: auto; padding-top: 86px; padding-bottom: 160px; scroll-behavior: smooth;">
                         <slot />
                     </main>
                     
@@ -559,8 +556,11 @@ import MapWidget from '../components/widgets/MapWidget.astro';
             <!-- TAB NOTICIAS -->
             <div id="tab-noticias" style="display: none; flex: 1; width: 100%; min-height: 0; flex-direction: column; background: var(--bg-color); max-width: 480px; margin: 0 auto; overflow-y: auto;">
 
+                <!-- Spacer for floating global header -->
+                <div style="height: 86px; flex-shrink: 0; width: 100%;"></div>
+
                 <!-- Cabecera sticky -->
-                <div style="padding: 16px 16px 0 16px; background: var(--header-bg); border-bottom: 1px solid var(--header-border); position: sticky; top: 0; z-index: 10;">
+                <div style="padding: 16px 16px 0 16px; background: var(--header-bg); border-bottom: 1px solid var(--header-border); position: sticky; top: 86px; z-index: 10;">
                     <h2 style="margin: 0 0 12px 0; font-size: 20px; color: var(--text-primary); font-weight: 700;">Noticias</h2>
 
                     <!-- Filtros Categoría -->

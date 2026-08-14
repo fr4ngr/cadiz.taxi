@@ -2,7 +2,7 @@
 // src/components/layout/Header.astro
 ---
 
-<header class="chat-header" id="main-header" style="display: flex; justify-content: space-between; align-items: center; position: relative; max-width: 448px; width: calc(100% - 32px); margin: 16px auto 0 auto; background: color-mix(in srgb, var(--header-bg) 75%, transparent); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--header-border); border-radius: 40px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); z-index: 2000; padding: 0 16px; height: 60px; flex-shrink: 0;">
+<header class="chat-header" id="main-header" style="display: flex; justify-content: space-between; align-items: center; position: absolute; top: 16px; left: 50%; transform: translateX(-50%); max-width: 448px; width: calc(100% - 32px); background: color-mix(in srgb, var(--header-bg) 75%, transparent); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--header-border); border-radius: 40px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); z-index: 2000; padding: 0 16px; height: 60px; flex-shrink: 0;">
     
     <!-- Info Central (Avatar y Títulos) -->
     <div class="chat-header-info" id="header-info" style="display: flex; align-items: center; gap: 0.5rem; flex-shrink: 1; min-width: 0;">
