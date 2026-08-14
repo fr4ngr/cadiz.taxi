@@ -6,13 +6,45 @@
 <div id="tab-mapa" style="display: none; flex: 1; flex-direction: column; width: 100%; min-height: 0; position: relative; background: var(--bg-color);">
 
     <!-- Filtros GPS Gasolineras (Ocultos por defecto) -->
+    <style>
+        .map-chip {
+            background: color-mix(in srgb, var(--header-bg) 85%, transparent);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--header-border);
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+        .map-chip:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+        }
+        .map-chip.active {
+            background: #dbeafe; /* azul clarito */
+            border-color: #3b82f6; /* azul vivo */
+            color: #1e3a8a;
+        }
+        .map-chip.active-green {
+            background: #dcfce7;
+            border-color: #22c55e;
+            color: #14532d;
+        }
+    </style>
     <div id="gasolineras-gps-filters" style="display: none; position: absolute; top: 76px; left: 16px; z-index: 1000; flex-direction: column; gap: 8px; pointer-events: none; max-width: calc(100% - 32px);">
         <div style="display: flex; gap: 8px; pointer-events: auto; flex-wrap: wrap;">
-            <button onclick="window.filterGasolineras('cercanas')" style="background: color-mix(in srgb, var(--header-bg) 85%, transparent); backdrop-filter: blur(12px); border: 1px solid var(--header-border); padding: 8px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; color: var(--text-primary); cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 6px;">
+            <button id="chip-cercanas" class="map-chip" onclick="window.filterGasolineras('cercanas')">
                 📍 Cercanas
             </button>
-            <button onclick="window.filterGasolineras('baratas_cercanas')" style="background: color-mix(in srgb, var(--header-bg) 85%, transparent); backdrop-filter: blur(12px); border: 1px solid #22c55e; padding: 8px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; color: #16a34a; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 6px;">
-                💰 Baratas y Cercanas
+            <button id="chip-baratas" class="map-chip" onclick="window.filterGasolineras('baratas_cercanas')">
+                💰 Cercanas y Baratas
             </button>
         </div>
         <button id="btn-simulate-gps" onclick="window.toggleGpsSimulator()" style="pointer-events: auto; background: var(--chat-bg); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; gap: 4px; width: fit-content; opacity: 0.9; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
@@ -1397,30 +1429,49 @@
         window.lastGasFilter = null;
 
         window.filterGasolineras = function(mode) {
-            window.lastGasFilter = mode;
             const filterObj = mapConfig.layers['gasolineras'];
-            if (!filterObj) { alert('Error: No se encontró la capa de gasolineras.'); return; }
+            if (!filterObj) { console.error('No se encontró la capa de gasolineras.'); return; }
             if (!filterObj._allData) { alert('Cargando datos, por favor espera...'); return; }
-            if (!window.currentMap || !window.L) { alert('Error: Mapa no inicializado.'); return; }
+            if (!window.currentMap || !window.L) return;
 
             const map = window.currentMap;
+
+            // Lógica de Toggle
+            if (window.lastGasFilter === mode) {
+                window.lastGasFilter = null; // Desactivar
+            } else {
+                window.lastGasFilter = mode; // Activar
+            }
+
+            // Actualizar UI de los Chips
+            const chipCercanas = document.getElementById('chip-cercanas');
+            const chipBaratas = document.getElementById('chip-baratas');
+            
+            if (chipCercanas) {
+                chipCercanas.className = window.lastGasFilter === 'cercanas' ? 'map-chip active' : 'map-chip';
+            }
+            if (chipBaratas) {
+                chipBaratas.className = window.lastGasFilter === 'baratas_cercanas' ? 'map-chip active-green' : 'map-chip';
+            }
 
             const executeFilter = (lat, lng) => {
                 try {
                     let filtered = [...filterObj._allData];
                     
-                    filtered.forEach(s => {
-                        s.distKm = getDistance(lat, lng, s.lat, s.lon); // Fix: use s.lat and s.lon
-                    });
+                    if (window.lastGasFilter) {
+                        filtered.forEach(s => {
+                            s.distKm = getDistance(lat, lng, s.lat, s.lon);
+                        });
 
-                    if (mode === 'cercanas') {
-                        filtered = filtered.sort((a, b) => a.distKm - b.distKm).slice(0, 3);
-                    } else if (mode === 'baratas_cercanas') {
-                        filtered = filtered.filter(s => s.priceLevel === 1 && s.distKm <= 5);
-                        filtered = filtered.sort((a, b) => a.distKm - b.distKm);
+                        if (window.lastGasFilter === 'cercanas') {
+                            filtered = filtered.sort((a, b) => a.distKm - b.distKm).slice(0, 3);
+                        } else if (window.lastGasFilter === 'baratas_cercanas') {
+                            filtered = filtered.filter(s => s.priceLevel === 1 && s.distKm <= 5);
+                            filtered = filtered.sort((a, b) => a.distKm - b.distKm);
+                        }
                     }
 
-                    // Limpiar marcadores actuales
+                    // Limpiar marcadores actuales SIEMPRE
                     if (filterObj._clusterGroup) {
                         filterObj._clusterGroup.clearLayers();
                     } else {
@@ -1430,8 +1481,21 @@
                     }
                     filterObj._markers = [];
 
-                    if (filtered.length === 0) {
-                        alert("No se encontraron gasolineras que cumplan este criterio en esta zona.");
+                    if (filtered.length === 0 && window.lastGasFilter) {
+                        // Toast notification instead of blocking alert
+                        const toast = document.createElement('div');
+                        toast.style.cssText = 'position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); background: #ef4444; color: white; padding: 10px 20px; border-radius: 30px; font-size: 14px; z-index: 2000; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: opacity 0.3s; pointer-events: none;';
+                        toast.innerText = 'No hay gasolineras que cumplan el criterio.';
+                        document.getElementById('tab-mapa').appendChild(toast);
+                        setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
+                        
+                        // Revert toggle
+                        window.lastGasFilter = null;
+                        if (chipCercanas) chipCercanas.className = 'map-chip';
+                        if (chipBaratas) chipBaratas.className = 'map-chip';
+                        
+                        // Execute without filter to restore points
+                        executeFilter(lat, lng);
                         return;
                     }
 
@@ -1464,39 +1528,56 @@
                             marker.addTo(map);
                         }
                         
-                        boundsArr.push([item.lat, item.lon]); // Fix: use item.lat and item.lon
+                        if (item.lat && item.lon) {
+                            boundsArr.push([item.lat, item.lon]);
+                        }
                     });
 
-                    if (boundsArr.length > 0) {
-                        map.fitBounds(boundsArr, { padding: [50, 50], maxZoom: 14 });
+                    // Handle map zoom
+                    if (window.lastGasFilter && boundsArr.length > 0) {
+                        // Zoom a los resultados
+                        map.fitBounds(boundsArr, { padding: [50, 50], maxZoom: 14, animate: true, duration: 0.5 });
+                    } else if (!window.lastGasFilter && boundsArr.length > 0) {
+                        // Si se quitó el filtro, volvemos a la vista general de la provincia (aprox)
+                        map.setView([36.527, -5.967], 9, { animate: true, duration: 0.5 });
                     }
                 } catch (error) {
-                    alert('Error inesperado en executeFilter: ' + error.message);
-                    console.error(error);
+                    console.error('Error en executeFilter:', error);
                 }
             };
 
-            if (window.simulatedGPS) {
+            // Solo necesitamos lat/lng si vamos a aplicar un filtro de distancia
+            if (!window.lastGasFilter) {
+                // Si estamos desactivando, no hace falta GPS
+                executeFilter(0, 0);
+            } else if (window.simulatedGPS) {
                 executeFilter(window.simulatedGPS.lat, window.simulatedGPS.lng);
+            } else if (navigator.geolocation) {
+                const oldText = document.getElementById('map-info-label').innerText;
+                document.getElementById('map-info-label').innerText = "📍 Buscando tu ubicación...";
+                
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        document.getElementById('map-info-label').innerText = oldText;
+                        executeFilter(pos.coords.latitude, pos.coords.longitude);
+                    },
+                    (err) => {
+                        document.getElementById('map-info-label').innerText = oldText;
+                        const toast = document.createElement('div');
+                        toast.style.cssText = 'position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); background: #ef4444; color: white; padding: 10px 20px; border-radius: 30px; font-size: 14px; z-index: 2000; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: opacity 0.3s; pointer-events: none;';
+                        toast.innerText = 'GPS denegado o inactivo. Activa el simulador para probar.';
+                        document.getElementById('tab-mapa').appendChild(toast);
+                        setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
+                        
+                        // Revert UI toggle
+                        window.lastGasFilter = null;
+                        if (chipCercanas) chipCercanas.className = 'map-chip';
+                        if (chipBaratas) chipBaratas.className = 'map-chip';
+                    },
+                    { timeout: 5000 } // 5 second timeout so it doesn't hang forever
+                );
             } else {
-                if (navigator.geolocation) {
-                    // Feedback visual mientras busca GPS
-                    const oldText = document.getElementById('map-info-label').innerText;
-                    document.getElementById('map-info-label').innerText = "Buscando GPS...";
-                    
-                    navigator.geolocation.getCurrentPosition(
-                        (pos) => {
-                            document.getElementById('map-info-label').innerText = oldText;
-                            executeFilter(pos.coords.latitude, pos.coords.longitude);
-                        },
-                        (err) => {
-                            document.getElementById('map-info-label').innerText = oldText;
-                            alert("No se pudo obtener la ubicación GPS o denegaste el permiso.");
-                        }
-                    );
-                } else {
-                    alert("Tu navegador no soporta Geolocalización.");
-                }
+                alert("Tu navegador no soporta Geolocalización.");
             }
         };
 
