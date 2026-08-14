@@ -63,7 +63,10 @@ export async function onRequest(context) {
                     latestData.results.forEach(measurement => {
                         const param = sensorMap[measurement.sensorsId];
                         if (param && readings[param] !== undefined) {
-                            readings[param] = measurement.value;
+                            // Ignore negative values (sensor error codes like -1 or -999)
+                            if (measurement.value >= 0) {
+                                readings[param] = measurement.value;
+                            }
                         }
                         try {
                             if (measurement.period && measurement.period.datetimeTo && measurement.period.datetimeTo.utc) {
