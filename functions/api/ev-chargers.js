@@ -71,7 +71,7 @@ export async function onRequest(context) {
 
       let maxKw = 0;
       const allConnectors = [];
-      let basePrice = 'Consultar';
+      let allFees = [];
       const detailedEvses = [];
       
       if (loc.evses && Array.isArray(loc.evses)) {
@@ -103,25 +103,36 @@ export async function onRequest(context) {
               if (!allConnectors.includes(readableStd)) allConnectors.push(readableStd);
               if (!evseConnectors.includes(readableStd)) evseConnectors.push(readableStd);
 
-              // Attempt to extract basic price from conn.tariffs (must be ENERGY type)
-              if (basePrice === 'Consultar' && conn.tariffs && Array.isArray(conn.tariffs)) {
+              // Attempt to extract all price components from conn.tariffs
+              if (conn.tariffs && Array.isArray(conn.tariffs)) {
                  for (const t of conn.tariffs) {
                      if (t.tariff && Array.isArray(t.tariff.elements)) {
                          for (const el of t.tariff.elements) {
                              if (Array.isArray(el.price_components)) {
-                                 const energyComp = el.price_components.find(c => c.type === 'ENERGY');
-                                 if (energyComp && energyComp.price !== undefined) {
-                                     if (Number(energyComp.price) === 0) {
-                                         basePrice = 'Gratis';
-                                     } else {
-                                         basePrice = Number(energyComp.price).toFixed(2) + ' €/kWh';
+                                 for (const c of el.price_components) {
+                                     if (c.price !== undefined) {
+                                         let formatted = '';
+                                         const p = Number(c.price);
+                                         if (c.type === 'ENERGY') {
+                                             formatted = p === 0 ? 'Energía gratis' : p.toFixed(2) + ' €/kWh';
+                                         } else if (c.type === 'PARKING_TIME') {
+                                             formatted = p === 0 ? 'Parking gratis' : p.toFixed(2) + ' €/h (parking)';
+                                         } else if (c.type === 'FLAT') {
+                                             formatted = p === 0 ? 'Sin tasa fija' : p.toFixed(2) + ' € (fijo)';
+                                         } else if (c.type === 'TIME') {
+                                             formatted = p === 0 ? 'Tiempo gratis' : p.toFixed(2) + ' €/h (tiempo)';
+                                         } else {
+                                             formatted = p.toFixed(2) + ' €';
+                                         }
+                                         
+                                         if (formatted && !allFees.includes(formatted)) {
+                                             allFees.push(formatted);
+                                         }
                                      }
-                                     break;
                                  }
                              }
                          }
                      }
-                     if (basePrice !== 'Consultar') break;
                  }
               }
             });
@@ -149,7 +160,7 @@ export async function onRequest(context) {
         maxKw: maxKw,
         connectors: allConnectors,
         detailedEvses: detailedEvses,
-        fee: basePrice,
+        fee: allFees.length > 0 ? allFees.join('<br>') : 'Consultar',
         network: 'REVE MITECO'
       };
     }).filter(e => e !== null);
