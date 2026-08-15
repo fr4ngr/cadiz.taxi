@@ -26,7 +26,9 @@ export async function onRequest(context) {
     const res = await fetch('https://overpass-api.de/api/interpreter', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json',
+        'User-Agent': 'GaditanApp/1.0 (Contact: local@example.com)'
       },
       body: params.toString()
     });
