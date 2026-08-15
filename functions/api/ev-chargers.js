@@ -103,11 +103,25 @@ export async function onRequest(context) {
               if (!allConnectors.includes(readableStd)) allConnectors.push(readableStd);
               if (!evseConnectors.includes(readableStd)) evseConnectors.push(readableStd);
 
-              // Attempt to extract basic price from conn.tariffs
-              if (basePrice === 'Consultar' && conn.tariffs && conn.tariffs.length > 0 && conn.tariffs[0].tariff && conn.tariffs[0].tariff.elements && conn.tariffs[0].tariff.elements.length > 0) {
-                 const el = conn.tariffs[0].tariff.elements[0];
-                 if (el && el.price_components && el.price_components.length > 0 && el.price_components[0].price !== undefined) {
-                     basePrice = el.price_components[0].price + ' €/kWh';
+              // Attempt to extract basic price from conn.tariffs (must be ENERGY type)
+              if (basePrice === 'Consultar' && conn.tariffs && Array.isArray(conn.tariffs)) {
+                 for (const t of conn.tariffs) {
+                     if (t.tariff && Array.isArray(t.tariff.elements)) {
+                         for (const el of t.tariff.elements) {
+                             if (Array.isArray(el.price_components)) {
+                                 const energyComp = el.price_components.find(c => c.type === 'ENERGY');
+                                 if (energyComp && energyComp.price !== undefined) {
+                                     if (Number(energyComp.price) === 0) {
+                                         basePrice = 'Gratis';
+                                     } else {
+                                         basePrice = Number(energyComp.price).toFixed(2) + ' €/kWh';
+                                     }
+                                     break;
+                                 }
+                             }
+                         }
+                     }
+                     if (basePrice !== 'Consultar') break;
                  }
               }
             });
