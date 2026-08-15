@@ -71,7 +71,7 @@ export async function onRequest(context) {
 
       let maxKw = 0;
       const allConnectors = [];
-      let allFees = [];
+      let rawTariffs = {};
       const detailedEvses = [];
       
       if (loc.evses && Array.isArray(loc.evses)) {
@@ -111,24 +111,26 @@ export async function onRequest(context) {
                              if (Array.isArray(el.price_components)) {
                                  for (const c of el.price_components) {
                                      if (c.price !== undefined) {
-                                         let formatted = '';
                                          const p = Number(c.price);
-                                         let prefix = kw > 0 ? `${Math.round(kw)}kW: ` : '';
-                                         if (c.type === 'ENERGY') {
-                                             formatted = prefix + (p === 0 ? 'Energía gratis' : p.toFixed(2) + ' €/kWh');
-                                         } else if (c.type === 'PARKING_TIME') {
-                                             formatted = prefix + (p === 0 ? 'Parking gratis' : p.toFixed(2) + ' €/h (parking)');
-                                         } else if (c.type === 'FLAT') {
-                                             formatted = prefix + (p === 0 ? 'Sin tasa fija' : p.toFixed(2) + ' € (fijo)');
-                                         } else if (c.type === 'TIME') {
-                                             formatted = prefix + (p === 0 ? 'Tiempo gratis' : p.toFixed(2) + ' €/h (tiempo)');
+                                         const kwLabel = kw > 0 ? `${Math.round(kw)} kW` : 'Punto';
+                                         const type = c.type || 'ENERGY';
+                                         
+                                         if (!rawTariffs[type]) rawTariffs[type] = [];
+                                         
+                                         let text = '';
+                                         if (type === 'ENERGY') {
+                                             text = p === 0 ? 'Gratis' : p.toFixed(2) + ' €/kWh';
+                                         } else if (type === 'PARKING_TIME') {
+                                             text = p === 0 ? 'Gratis' : p.toFixed(2) + ' €/h';
+                                         } else if (type === 'FLAT') {
+                                             text = p === 0 ? 'Gratis' : p.toFixed(2) + ' €';
+                                         } else if (type === 'TIME') {
+                                             text = p === 0 ? 'Gratis' : p.toFixed(2) + ' €/h';
                                          } else {
-                                             formatted = prefix + p.toFixed(2) + ' €';
+                                             text = p.toFixed(2) + ' €';
                                          }
                                          
-                                         if (formatted && !allFees.includes(formatted)) {
-                                             allFees.push(formatted);
-                                         }
+                                         rawTariffs[type].push({ kwLabel, text });
                                      }
                                  }
                              }
@@ -148,8 +150,37 @@ export async function onRequest(context) {
         });
       }
 
+      let feeHtml = '';
+      const typeNames = { 'ENERGY': 'ENERGÍA', 'PARKING_TIME': 'PARKING', 'FLAT': 'ENGANCHE', 'TIME': 'TIEMPO' };
+      const uniqueTariffs = (arr) => {
+         const seen = new Set();
+         return arr.filter(item => {
+             const key = item.kwLabel + '|' + item.text;
+             if (seen.has(key)) return false;
+             seen.add(key);
+             return true;
+         });
+      };
+      
+      let totalTariffs = 0;
+      for (const type of ['ENERGY', 'PARKING_TIME', 'FLAT', 'TIME']) {
+          if (rawTariffs[type]) {
+              let items = uniqueTariffs(rawTariffs[type]);
+              if (items.length > 0) {
+                  totalTariffs += items.length;
+                  feeHtml += `<div style="text-align:left; margin-top:6px; margin-bottom:2px; font-size:9px; color:var(--text-secondary); font-weight:800; letter-spacing:0.5px; border-bottom:1px solid rgba(128,128,128,0.2); padding-bottom:2px;">${typeNames[type]}</div>`;
+                  for (const item of items) {
+                      feeHtml += `<div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; margin-bottom:2px; line-height:1.2;">
+                                    <span style="font-weight:600; opacity:0.8;">${item.kwLabel}</span>
+                                    <span>${item.text}</span>
+                                  </div>`;
+                  }
+              }
+          }
+      }
+
       let missingFeeStr = '<span style="color:var(--text-secondary);font-size:11px;">No informan precios al Ministerio</span>';
-      if (allFees.length === 0 && loc.last_updated) {
+      if (totalTariffs === 0 && loc.last_updated) {
           const diffMs = Date.now() - new Date(loc.last_updated).getTime();
           const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
           let timeStr = diffDays === 0 ? 'hoy' : (diffDays === 1 ? 'hace 1 día' : `hace ${diffDays} días`);
@@ -169,7 +200,7 @@ export async function onRequest(context) {
         maxKw: maxKw,
         connectors: allConnectors,
         detailedEvses: detailedEvses,
-        fee: allFees.length > 0 ? allFees.join('<br>') : missingFeeStr,
+        fee: totalTariffs > 0 ? feeHtml : missingFeeStr,
         network: 'REVE MITECO'
       };
     }).filter(e => e !== null);
