@@ -1,6 +1,6 @@
 export async function onRequest(context) {
   const { env } = context;
-  const cacheKey = "ev_chargers_cadiz_v1";
+  const cacheKey = "ev_chargers_cadiz_v2";
   
   // 1. Check D1 Cache (24 hours)
   try {
@@ -42,10 +42,10 @@ export async function onRequest(context) {
       const t = e.tags || {};
       
       // Extract best name / operator
-      const operatorName = t.operator || t.brand || t.name || 'Operador Desconocido';
+      const operatorName = t.operator || t.brand || t.name || 'Operador no especificado';
       
       // Parse capacity
-      const capacity = parseInt(t.capacity) || 1;
+      const capacity = parseInt(t.capacity) || null;
       
       // Parse Max kW output (search through tags for 'output' or 'kW' keywords)
       let maxKw = 0;
@@ -61,9 +61,9 @@ export async function onRequest(context) {
       
       // Connectors
       const connectors = [];
-      if (t['socket:type2'] || t['socket:type2_combo']) connectors.push('Tipo 2 (CCS)');
+      if (t['socket:type2'] || t['socket:type2_combo'] || t['socket:type2_cable']) connectors.push('Tipo 2 (CCS)');
       if (t['socket:chademo']) connectors.push('CHAdeMO');
-      if (t['socket:schuko']) connectors.push('Schuko (Doméstico)');
+      if (t['socket:schuko']) connectors.push('Schuko (Enchufe normal)');
 
       return {
         id: e.id,
@@ -72,7 +72,7 @@ export async function onRequest(context) {
         operator: operatorName,
         capacity: capacity,
         maxKw: maxKw,
-        connectors: connectors.length > 0 ? connectors : ['Varios/Desconocido'],
+        connectors: connectors,
         fee: t.fee === 'no' ? 'Gratis' : (t.fee === 'yes' ? 'De pago' : 'Consultar'),
         network: t.network || null
       };
