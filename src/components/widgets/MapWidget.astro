@@ -474,7 +474,7 @@
 
                     const iconHtml = `<div style="background-color: ${bgColor}; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.3); border: 2px solid white; color: white; font-size: 13px;">🔌</div>`;
                     
-                    const marker = window.L.marker([charger.lat, charger.lon], {
+                    return window.L.marker([charger.lat, charger.lon], {
                         icon: window.L.divIcon({
                             html: iconHtml,
                             className: '',
@@ -482,8 +482,13 @@
                             iconAnchor: [12, 12]
                         })
                     });
+                },
+                onMarkerClick: (charger) => {
+                    let bgColor = '#64748b';
+                    if (charger.maxKw >= 100) bgColor = '#8b5cf6';
+                    else if (charger.maxKw >= 43) bgColor = '#3b82f6';
+                    else if (charger.maxKw > 0) bgColor = '#22c55e';
 
-                    // Build popup
                     let speedBadge = charger.maxKw > 0 
                         ? `<div style="display:inline-block;background:${bgColor};color:white;font-size:11px;padding:2px 6px;border-radius:4px;font-weight:700;margin-bottom:8px;">⚡ Máx ${charger.maxKw} kW</div>`
                         : '';
