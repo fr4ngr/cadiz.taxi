@@ -39,7 +39,8 @@ export async function onRequest(context) {
             const row = await env.DB.prepare(`SELECT value FROM system_cache WHERE key = ?`).bind(cacheKey).first();
             if (row) return new Response(row.value, { headers: { 'Content-Type': 'application/json;charset=UTF-8', 'Access-Control-Allow-Origin': '*', 'X-Source': 'D1-Cache-Fallback' } });
         } catch(e) {}
-        return new Response(JSON.stringify({ areas: [] }), { status: 500 });
+        const errorText = await res.text().catch(()=>'');
+        return new Response(JSON.stringify({ areas: [], error: `External API failed: ${res.status} ${res.statusText}`, details: errorText.substring(0, 200) }), { status: 500 });
     }
 
     const data = await res.json();
