@@ -493,12 +493,32 @@
                         ? `<div style="display:inline-block;background:${bgColor};color:white;font-size:11px;padding:2px 6px;border-radius:4px;font-weight:700;margin-bottom:8px;">⚡ Máx ${charger.maxKw} kW</div>`
                         : '';
                         
-                    let feeBadge = charger.fee === 'Gratis'
-                        ? `<div style="display:inline-block;background:#dcfce7;color:#166534;font-size:11px;padding:2px 6px;border-radius:4px;font-weight:700;margin-bottom:8px;margin-left:4px;">🤑 Gratis</div>`
+                    let feeBadge = charger.fee !== 'Consultar'
+                        ? `<div style="display:inline-block;background:#dcfce7;color:#166534;font-size:11px;padding:2px 6px;border-radius:4px;font-weight:700;margin-bottom:8px;margin-left:4px;">🤑 ${charger.fee}</div>`
                         : '';
 
+                    // Status Badge
+                    let statusHtml = '';
+                    if (charger.status === 'AVAILABLE') {
+                        statusHtml = `<span style="display:inline-block;width:8px;height:8px;background:#22c55e;border-radius:50%;margin-right:4px;"></span><span style="font-size:12px;color:#22c55e;font-weight:600;">Libre</span>`;
+                    } else if (charger.status === 'CHARGING') {
+                        statusHtml = `<span style="display:inline-block;width:8px;height:8px;background:#3b82f6;border-radius:50%;margin-right:4px;"></span><span style="font-size:12px;color:#3b82f6;font-weight:600;">Ocupado</span>`;
+                    } else if (charger.status === 'OUTOFORDER') {
+                        statusHtml = `<span style="display:inline-block;width:8px;height:8px;background:#ef4444;border-radius:50%;margin-right:4px;"></span><span style="font-size:12px;color:#ef4444;font-weight:600;">Averiado</span>`;
+                    } else {
+                        statusHtml = `<span style="display:inline-block;width:8px;height:8px;background:#94a3b8;border-radius:50%;margin-right:4px;"></span><span style="font-size:12px;color:#94a3b8;font-weight:600;">Estado desc.</span>`;
+                    }
+
                     let capacityHtml = charger.capacity
-                        ? `<div style="font-size:12px;color:var(--text-secondary);margin-bottom:12px;">🚗 ${charger.capacity} puntos de carga en total</div>`
+                        ? `<div style="font-size:12px;color:var(--text-secondary);margin-bottom:6px;">🚗 ${charger.capacity} puntos de carga en total</div>`
+                        : '';
+
+                    let addressHtml = charger.address 
+                        ? `<div style="font-size:11px;color:var(--text-secondary);margin-bottom:12px;">📍 ${charger.address}</div>`
+                        : '<div style="margin-bottom:12px;"></div>';
+
+                    let paymentHtml = charger.paymentMethods && charger.paymentMethods !== 'No especificado'
+                        ? `<div style="font-size:11px;color:var(--text-secondary);margin-bottom:12px;">💳 Pagos: ${charger.paymentMethods}</div>`
                         : '';
 
                     let connectorsHtml = '';
@@ -513,11 +533,16 @@
 
                     let html = `
                         ${speedBadge} ${feeBadge}
-                        <div style="font-size:14px;color:var(--text-primary);font-weight:700;margin-bottom:4px;">${charger.operator}</div>
+                        <div style="font-size:14px;color:var(--text-primary);font-weight:700;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;">
+                            <span>${charger.operator}</span>
+                            <span>${statusHtml}</span>
+                        </div>
+                        ${addressHtml}
                         ${capacityHtml}
+                        ${paymentHtml}
                         ${connectorsHtml}
-                        <div style="font-size:10px;color:var(--text-secondary);margin-top:12px;border-top:1px solid var(--border-color);padding-top:8px;">
-                            ℹ️ Fuente: MITECO (REVE)
+                        <div style="font-size:10px;color:var(--text-secondary);margin-top:12px;border-top:1px solid var(--border-color);padding-top:8px;line-height:1.4;">
+                            ℹ️ Fuente: MITECO (REVE). <br>El estado en tiempo real tiene un retardo máximo de 5 minutos.
                         </div>
                     `;
 

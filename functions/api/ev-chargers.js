@@ -2,12 +2,12 @@ export async function onRequest(context) {
   const { env } = context;
   const cacheKey = "ev_chargers_cadiz_v4";
   
-  // 1. Check D1 Cache (24 hours)
+  // 1. Check D1 Cache (5 minutes)
   try {
     const row = await env.DB.prepare(`SELECT value, updated_at FROM system_cache WHERE key = ?`).bind(cacheKey).first();
     if (row) {
       const updatedDate = new Date(row.updated_at + 'Z');
-      if ((Date.now() - updatedDate.getTime()) < 24 * 60 * 60 * 1000) {
+      if ((Date.now() - updatedDate.getTime()) < 5 * 60 * 1000) {
         return new Response(row.value, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8', 'Access-Control-Allow-Origin': '*', 'X-Source': 'D1-Cache' }
         });
@@ -71,6 +71,7 @@ export async function onRequest(context) {
 
       let maxKw = 0;
       const connectors = [];
+      let basePrice = 'Consultar';
       
       if (loc.evses && Array.isArray(loc.evses)) {
         loc.evses.forEach(evse => {
@@ -86,6 +87,14 @@ export async function onRequest(context) {
               else if (std.includes('T2') && !connectors.includes('Tipo 2')) connectors.push('Tipo 2');
               else if (std.includes('CHADEMO') && !connectors.includes('CHAdeMO')) connectors.push('CHAdeMO');
               else if (std.includes('DOMESTIC') && !connectors.includes('Schuko (Enchufe normal)')) connectors.push('Schuko (Enchufe normal)');
+              
+              // Attempt to extract basic price if present
+              if (basePrice === 'Consultar' && conn.tariffs && conn.tariffs.length > 0 && conn.tariffs[0].elements) {
+                 const el = conn.tariffs[0].elements[0];
+                 if (el.price_components && el.price_components.length > 0 && el.price_components[0].price) {
+                     basePrice = el.price_components[0].price + ' €/kWh';
+                 }
+              }
             });
           }
         });
@@ -96,10 +105,13 @@ export async function onRequest(context) {
         lat: parseFloat(loc.coordinates.latitude),
         lon: parseFloat(loc.coordinates.longitude),
         operator: operatorName,
+        address: loc.address || '',
+        status: loc.status || 'UNKNOWN',
+        paymentMethods: loc.payment_methods ? loc.payment_methods.join(', ') : 'No especificado',
         capacity: capacity,
         maxKw: maxKw,
         connectors: connectors,
-        fee: 'Consultar', // REVE API often abstracts tariffs into OCPI, complex to parse instantly
+        fee: basePrice,
         network: 'REVE MITECO'
       };
     }).filter(e => e !== null);
