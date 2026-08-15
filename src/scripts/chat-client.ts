@@ -760,8 +760,6 @@ import { renderCardDOM } from '../components/cards/CardRenderer';
                 window.currentMap.fitBounds(window.globalAirportsBounds, { padding: [20, 20] });
                 const topPills = document.getElementById('map-top-pills');
                 if (topPills) topPills.style.display = 'flex';
-            } else {
-                window.currentMap.setView([36.516, -6.283], 13);
             }
             if (window.currentActiveMarker) window.currentMap.removeLayer(window.currentActiveMarker);
             if (window.currentAirportRouteLayer) window.currentMap.removeLayer(window.currentAirportRouteLayer);
