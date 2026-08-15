@@ -160,7 +160,7 @@ export async function onRequest(context) {
         maxKw: maxKw,
         connectors: allConnectors,
         detailedEvses: detailedEvses,
-        fee: allFees.length > 0 ? allFees.join('<br>') : '<span style="color:var(--text-secondary);font-size:11px;">No informado</span>',
+        fee: allFees.length > 0 ? allFees.join('<br>') : '<span style="color:var(--text-secondary);font-size:11px;">No informan precios al ministerio</span>',
         network: 'REVE MITECO'
       };
     }).filter(e => e !== null);
