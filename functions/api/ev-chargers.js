@@ -147,6 +147,14 @@ export async function onRequest(context) {
         });
       }
 
+      let missingFeeStr = '<span style="color:var(--text-secondary);font-size:11px;">No informan precios al ministerio</span>';
+      if (allFees.length === 0 && loc.last_updated) {
+          const diffMs = Date.now() - new Date(loc.last_updated).getTime();
+          const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+          let timeStr = diffDays === 0 ? 'hoy' : (diffDays === 1 ? 'hace 1 día' : `hace ${diffDays} días`);
+          missingFeeStr = `<span style="color:var(--text-secondary);font-size:11px;line-height:1.2;display:inline-block;">No informan precios<br><span style="font-size:9px;opacity:0.8;">(desde ${timeStr})</span></span>`;
+      }
+
       return {
         id: loc.id,
         lat: parseFloat(loc.coordinates.latitude),
@@ -160,7 +168,7 @@ export async function onRequest(context) {
         maxKw: maxKw,
         connectors: allConnectors,
         detailedEvses: detailedEvses,
-        fee: allFees.length > 0 ? allFees.join('<br>') : '<span style="color:var(--text-secondary);font-size:11px;">No informan precios al ministerio</span>',
+        fee: allFees.length > 0 ? allFees.join('<br>') : missingFeeStr,
         network: 'REVE MITECO'
       };
     }).filter(e => e !== null);
