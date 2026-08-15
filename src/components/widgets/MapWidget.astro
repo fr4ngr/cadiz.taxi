@@ -515,9 +515,24 @@
                 _isActive: false,
                 contextBounds: [[35.95, -6.5], [37.0, -5.1]],
                 fetchData: async () => {
-                    const res = await fetch('/api/aviones');
-                    const json = await res.json();
-                    return json.aviones || [];
+                    try {
+                        const res = await fetch('/api/aviones');
+                        if (!res.ok && res.status === 500) {
+                            alert("Radar bloqueado temporalmente. El servidor de origen de datos ha bloqueado el acceso o está saturado. Inténtalo más tarde.");
+                            return [];
+                        }
+                        const json = await res.json();
+                        if (json.error) {
+                            console.error(json.error, json.details);
+                        }
+                        if (json.aviones && json.aviones.length === 0 && json.error) {
+                            alert("Radar no disponible: " + json.error);
+                        }
+                        return json.aviones || [];
+                    } catch (e) {
+                        alert("Error de red al conectar con el servidor de vuelos.");
+                        return [];
+                    }
                 },
                 applyLocalFilter: (data) => {
                     if (window.lastAvionesFilter === 'no_comerciales') {
@@ -590,9 +605,37 @@
                 _isActive: false,
                 contextBounds: [[35.95, -6.5], [37.0, -5.1]],
                 fetchData: async () => {
-                    const res = await fetch('/api/autocaravanas');
-                    const json = await res.json();
-                    return json.areas || [];
+                    const query = `[out:json][timeout:25];(node["tourism"="caravan_site"](35.9,-6.5,37.0,-5.1);way["tourism"="caravan_site"](35.9,-6.5,37.0,-5.1););out center;`;
+                    try {
+                        const res = await fetch('https://overpass-api.de/api/interpreter', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: "data=" + encodeURIComponent(query)
+                        });
+                        if (!res.ok) {
+                            alert("No se han podido cargar las áreas de autocaravanas. El servidor OpenStreetMap está saturado (Status: " + res.status + ").");
+                            return [];
+                        }
+                        const json = await res.json();
+                        
+                        const areas = [];
+                        if (json.elements) {
+                            for (const el of json.elements) {
+                                areas.push({
+                                    id: el.id,
+                                    name: el.tags && el.tags.name ? el.tags.name : 'Área de Autocaravanas',
+                                    lat: el.lat || el.center?.lat,
+                                    lon: el.lon || el.center?.lon
+                                });
+                            }
+                        }
+                        return areas;
+                    } catch (e) {
+                        alert("Error de red al conectar con OpenStreetMap para obtener autocaravanas.");
+                        return [];
+                    }
                 },
                 renderMarker: (area, map) => {
                     let bgColor = '#8b5cf6'; // Purple for motorhomes
