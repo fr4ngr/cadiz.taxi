@@ -543,7 +543,14 @@
                     }
 
                     const addressText = charger.address ? charger.address : 'Dirección no especificada';
-                    const paymentText = (charger.paymentMethods && charger.paymentMethods !== 'No especificado') ? charger.paymentMethods : 'App/RFID';
+                    const paymentText = (charger.paymentMethods && charger.paymentMethods !== 'No especificado') ? charger.paymentMethods : 'App o Tarjeta del Operador';
+                    
+                    let feeBg = 'var(--chat-bg)';
+                    let feeBorder = 'var(--border-color)';
+                    if (charger.fee && charger.fee.includes('No informan precios')) {
+                        feeBg = 'rgba(239, 68, 68, 0.05)';
+                        feeBorder = 'rgba(239, 68, 68, 0.3)';
+                    }
                     
                     let html = `
                         <div style="display:flex;flex-direction:column;gap:12px;font-family:'Inter',system-ui,sans-serif;margin-top:4px;">
@@ -558,8 +565,8 @@
                                     <div style="font-size:10px;color:var(--text-secondary);font-weight:700;margin-bottom:4px;text-transform:uppercase;">⚡ Max Potencia</div>
                                     <div style="font-size:14px;font-weight:800;color:var(--text-primary);">${charger.maxKw > 0 ? charger.maxKw + ' kW' : 'N/D'}</div>
                                 </div>
-                                <div style="background:var(--chat-bg);border:1px solid var(--border-color);border-radius:8px;padding:8px;text-align:center;">
-                                    <div style="font-size:10px;color:var(--text-secondary);font-weight:700;margin-bottom:4px;text-transform:uppercase;">🤑 Tarifas</div>
+                                <div style="background:${feeBg};border:1px solid ${feeBorder};border-radius:8px;padding:8px;text-align:center;">
+                                    <div style="font-size:10px;color:var(--text-secondary);font-weight:700;margin-bottom:4px;text-transform:uppercase;">Tarifas</div>
                                     <div style="font-size:12px;font-weight:700;color:var(--text-primary);line-height:1.4;">${charger.fee}</div>
                                 </div>
                             </div>
@@ -567,9 +574,9 @@
                             ${detailedEvsesHtml}
 
                             <div style="border-top:1px solid var(--border-color);padding-top:10px;display:flex;flex-direction:column;gap:6px;font-size:11px;color:var(--text-secondary);margin-top:4px;">
-                                <div style="display:flex;align-items:center;gap:6px;"><span style="font-size:13px;">💳</span> <span><strong>Pagos:</strong> ${paymentText}</span></div>
-                                <div style="display:flex;align-items:center;gap:6px;"><span style="font-size:13px;">ℹ️</span> <span><strong>Fuente:</strong> Ministerio para la Transición Ecológica</span></div>
-                                <div style="display:flex;align-items:center;gap:6px;"><span style="font-size:13px;">⏱️</span> <span><strong>Actualizado:</strong> Hace < 5 min</span></div>
+                                <div style="display:flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg> <span><strong>Pagos:</strong> ${paymentText}</span></div>
+                                <div style="display:flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg> <span><strong>Fuente:</strong> Ministerio para la Transición Ecológica</span></div>
+                                <div style="display:flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> <span><strong>Actualizado:</strong> Hace < 5 min</span></div>
                             </div>
                         </div>
                     `;
