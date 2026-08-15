@@ -1,6 +1,6 @@
 export async function onRequest(context) {
   const { env } = context;
-  const cacheKey = "ev_chargers_cadiz_v2";
+  const cacheKey = "ev_chargers_cadiz_v3";
   
   // 1. Check D1 Cache (24 hours)
   try {
@@ -15,70 +15,94 @@ export async function onRequest(context) {
     }
   } catch(e) { console.error("Cache read error", e); }
 
-  // 2. Fetch from Overpass API
-  try {
-    const query = `
-      [out:json];
-      area["name"="Cádiz"]["admin_level"="6"]->.searchArea;
-      node["amenity"="charging_station"](area.searchArea);
-      out;
-    `;
-    
-    const response = await fetch('https://overpass-api.de/api/interpreter', {
-      method: 'POST',
-      headers: {
-        'User-Agent': 'GaditanApp/1.0 (Contact: frn)',
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      body: query
-    });
+    // 2. Fetch from REVE API (Official MITECO map)
+    const boundsPayload = {
+      "latitude_ne": 37.0,
+      "longitude_ne": -5.1,
+      "latitude_sw": 35.9,
+      "longitude_sw": -6.5,
+      "zoom": 10
+    };
 
-    if (!response.ok) throw new Error('Overpass API response not OK: ' + await response.text());
-    
-    const data = await response.json();
+    const fetchPage = async (page) => {
+      const p = { ...boundsPayload, page };
+      const res = await fetch('https://www.mapareve.es/api/public/v1/locations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'User-Agent': 'Mozilla/5.0'
+        },
+        body: JSON.stringify(p)
+      });
+      if (!res.ok) return { data: [] };
+      return res.json();
+    };
 
-    // 3. Parse OSM Data
-    const chargers = data.elements.map(e => {
-      const t = e.tags || {};
-      
-      // Extract best name / operator
-      const operatorName = t.operator || t.brand || t.name || 'Operador no especificado';
-      
-      // Parse capacity
-      const capacity = parseInt(t.capacity) || null;
-      
-      // Parse Max kW output (search through tags for 'output' or 'kW' keywords)
-      let maxKw = 0;
-      for (const [key, value] of Object.entries(t)) {
-        if (key.includes('output') && typeof value === 'string') {
-          const match = value.match(/(\d+)\s*(?:kw|kW)/i);
-          if (match) {
-            const kw = parseInt(match[1]);
-            if (kw > maxKw) maxKw = kw;
-          }
+    // Fetch page 1 to get total pages
+    const firstPage = await fetchPage(1);
+    const totalPages = firstPage.pagination ? firstPage.pagination.total_pages : 1;
+    let allLocations = firstPage.data || [];
+
+    // Fetch remaining pages concurrently
+    if (totalPages > 1) {
+      const promises = [];
+      for (let i = 2; i <= totalPages; i++) {
+        promises.push(fetchPage(i));
+      }
+      const results = await Promise.all(promises);
+      for (const res of results) {
+        if (res.data) {
+          allLocations = allLocations.concat(res.data);
         }
       }
+    }
+
+    // 3. Parse and standardize REVE data
+    const finalData = allLocations.map(e => {
+      // Some results from zoom:10 might be clusters, skip them if they don't have location data
+      if (e.type === 'cluster' && !e.owner) return null;
       
-      // Connectors
+      const loc = e.type === 'location' && e.location ? e.location : e;
+      if (!loc.coordinates) return null;
+
+      const operatorName = loc.owner && loc.owner.name ? loc.owner.name : 'Operador no especificado';
+      const capacity = loc.total_evse || null;
+
+      let maxKw = 0;
       const connectors = [];
-      if (t['socket:type2'] || t['socket:type2_combo'] || t['socket:type2_cable']) connectors.push('Tipo 2 (CCS)');
-      if (t['socket:chademo']) connectors.push('CHAdeMO');
-      if (t['socket:schuko']) connectors.push('Schuko (Enchufe normal)');
+      
+      if (loc.evses && Array.isArray(loc.evses)) {
+        loc.evses.forEach(evse => {
+          if (evse.connectors && Array.isArray(evse.connectors)) {
+            evse.connectors.forEach(conn => {
+              if (conn.max_power && conn.max_power > maxKw) {
+                maxKw = conn.max_power;
+              }
+              // Map REVE connector standards to readable names
+              const std = conn.standard || '';
+              if (std.includes('T2_COMBO') && !connectors.includes('Tipo 2 (CCS)')) connectors.push('Tipo 2 (CCS)');
+              else if (std.includes('T2') && !connectors.includes('Tipo 2')) connectors.push('Tipo 2');
+              else if (std.includes('CHADEMO') && !connectors.includes('CHAdeMO')) connectors.push('CHAdeMO');
+              else if (std.includes('DOMESTIC') && !connectors.includes('Schuko (Enchufe normal)')) connectors.push('Schuko (Enchufe normal)');
+            });
+          }
+        });
+      }
 
       return {
-        id: e.id,
-        lat: e.lat,
-        lon: e.lon,
+        id: loc.id,
+        lat: parseFloat(loc.coordinates.latitude),
+        lon: parseFloat(loc.coordinates.longitude),
         operator: operatorName,
         capacity: capacity,
         maxKw: maxKw,
         connectors: connectors,
-        fee: t.fee === 'no' ? 'Gratis' : (t.fee === 'yes' ? 'De pago' : 'Consultar'),
-        network: t.network || null
+        fee: 'Consultar', // REVE API often abstracts tariffs into OCPI, complex to parse instantly
+        network: 'REVE MITECO'
       };
-    });
+    }).filter(e => e !== null);
 
-    const finalJson = JSON.stringify({ chargers, updated: new Date().toISOString() });
+    const finalJson = JSON.stringify({ chargers: finalData, updated: new Date().toISOString() });
 
     // 4. Save to Cache
     try {
