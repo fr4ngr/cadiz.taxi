@@ -52,6 +52,7 @@ export async function onRequest(context) {
                 icao24: plane.hex || '',
                 callsign: plane.flight ? plane.flight.trim() : (plane.r || 'Desconocido'),
                 country: plane.t || 'Desconocido', // Using 'type' (e.g. B738) in place of country for now, more useful!
+                category: plane.category || 'unknown',
                 lon: plane.lon,
                 lat: plane.lat,
                 alt_m: altM,
