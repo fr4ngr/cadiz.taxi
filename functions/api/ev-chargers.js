@@ -1,6 +1,6 @@
 export async function onRequest(context) {
   const { env } = context;
-  const cacheKey = "ev_chargers_cadiz_v4";
+  const cacheKey = "ev_chargers_cadiz_v5";
   
   // 1. Check D1 Cache (5 minutes)
   try {
@@ -70,33 +70,47 @@ export async function onRequest(context) {
       const capacity = loc.total_evse || null;
 
       let maxKw = 0;
-      const connectors = [];
+      const allConnectors = [];
       let basePrice = 'Consultar';
+      const detailedEvses = [];
       
       if (loc.evses && Array.isArray(loc.evses)) {
         loc.evses.forEach(evse => {
+          
+          let evseMaxKw = 0;
+          const evseConnectors = [];
+          
           if (evse.connectors && Array.isArray(evse.connectors)) {
             evse.connectors.forEach(conn => {
               const kw = (conn.max_electric_power || 0) / 1000;
-              if (kw > maxKw) {
-                maxKw = Math.round(kw);
-              }
-              // Map REVE connector standards to readable names
-              const std = conn.standard || '';
-              if (std.includes('T2_COMBO') && !connectors.includes('Tipo 2 (CCS)')) connectors.push('Tipo 2 (CCS)');
-              else if (std.includes('T2') && !connectors.includes('Tipo 2')) connectors.push('Tipo 2');
-              else if (std.includes('CHADEMO') && !connectors.includes('CHAdeMO')) connectors.push('CHAdeMO');
-              else if (std.includes('DOMESTIC') && !connectors.includes('Schuko (Enchufe normal)')) connectors.push('Schuko (Enchufe normal)');
+              if (kw > maxKw) maxKw = Math.round(kw);
+              if (kw > evseMaxKw) evseMaxKw = Math.round(kw);
               
-              // Attempt to extract basic price if present
-              if (basePrice === 'Consultar' && conn.tariffs && conn.tariffs.length > 0 && conn.tariffs[0].elements) {
-                 const el = conn.tariffs[0].elements[0];
-                 if (el.price_components && el.price_components.length > 0 && el.price_components[0].price) {
-                     basePrice = el.price_components[0].price + ' €/kWh';
-                 }
-              }
+              const std = conn.standard || '';
+              let readableStd = std;
+              if (std.includes('T2_COMBO')) readableStd = 'Tipo 2 (CCS)';
+              else if (std.includes('T2')) readableStd = 'Tipo 2';
+              else if (std.includes('CHADEMO')) readableStd = 'CHAdeMO';
+              else if (std.includes('DOMESTIC')) readableStd = 'Schuko';
+              
+              if (!allConnectors.includes(readableStd)) allConnectors.push(readableStd);
+              if (!evseConnectors.includes(readableStd)) evseConnectors.push(readableStd);
             });
           }
+
+          // Attempt to extract basic price from evse.tariffs
+          if (basePrice === 'Consultar' && evse.tariffs && evse.tariffs.length > 0 && evse.tariffs[0].elements) {
+             const el = evse.tariffs[0].elements[0];
+             if (el.price_components && el.price_components.length > 0 && el.price_components[0].price) {
+                 basePrice = el.price_components[0].price + ' €/kWh';
+             }
+          }
+
+          detailedEvses.push({
+            status: evse.status || 'UNKNOWN',
+            kw: evseMaxKw,
+            connectors: evseConnectors
+          });
         });
       }
 
@@ -107,10 +121,12 @@ export async function onRequest(context) {
         operator: operatorName,
         address: loc.address || '',
         status: loc.status || 'UNKNOWN',
+        accessibility: loc.accessibility || 'PUBLIC',
         paymentMethods: loc.payment_methods ? loc.payment_methods.join(', ') : 'No especificado',
         capacity: capacity,
         maxKw: maxKw,
-        connectors: connectors,
+        connectors: allConnectors,
+        detailedEvses: detailedEvses,
         fee: basePrice,
         network: 'REVE MITECO'
       };
