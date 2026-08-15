@@ -150,8 +150,6 @@ export async function onRequest(context) {
         });
       }
 
-      let feeHtml = '';
-      const typeNames = { 'ENERGY': 'ENERGÍA', 'PARKING_TIME': 'PARKING', 'FLAT': 'ENGANCHE', 'TIME': 'TIEMPO' };
       const uniqueTariffs = (arr) => {
          const seen = new Set();
          return arr.filter(item => {
@@ -162,29 +160,23 @@ export async function onRequest(context) {
          });
       };
       
+      let cleanTariffs = {};
       let totalTariffs = 0;
       for (const type of ['ENERGY', 'PARKING_TIME', 'FLAT', 'TIME']) {
           if (rawTariffs[type]) {
               let items = uniqueTariffs(rawTariffs[type]);
               if (items.length > 0) {
+                  cleanTariffs[type] = items;
                   totalTariffs += items.length;
-                  feeHtml += `<div style="text-align:left; margin-top:6px; margin-bottom:2px; font-size:9px; color:var(--text-secondary); font-weight:800; letter-spacing:0.5px; border-bottom:1px solid rgba(128,128,128,0.2); padding-bottom:2px;">${typeNames[type]}</div>`;
-                  for (const item of items) {
-                      feeHtml += `<div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; margin-bottom:2px; line-height:1.2;">
-                                    <span style="font-weight:600; opacity:0.8;">${item.kwLabel}</span>
-                                    <span>${item.text}</span>
-                                  </div>`;
-                  }
               }
           }
       }
 
-      let missingFeeStr = '<span style="color:var(--text-secondary);font-size:11px;">No informan precios al Ministerio</span>';
-      if (totalTariffs === 0 && loc.last_updated) {
+      let timeAgoStr = null;
+      if (loc.last_updated) {
           const diffMs = Date.now() - new Date(loc.last_updated).getTime();
           const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-          let timeStr = diffDays === 0 ? 'hoy' : (diffDays === 1 ? 'hace 1 día' : `hace ${diffDays} días`);
-          missingFeeStr = `<span style="color:var(--text-secondary);font-size:11px;line-height:1.2;display:inline-block;">No informan precios al Ministerio<br><span style="font-size:9px;opacity:0.8;">(desde ${timeStr})</span></span>`;
+          timeAgoStr = diffDays === 0 ? 'hoy' : (diffDays === 1 ? 'hace 1 día' : `hace ${diffDays} días`);
       }
 
       return {
@@ -200,7 +192,9 @@ export async function onRequest(context) {
         maxKw: maxKw,
         connectors: allConnectors,
         detailedEvses: detailedEvses,
-        fee: totalTariffs > 0 ? feeHtml : missingFeeStr,
+        tariffs: cleanTariffs,
+        hasTariffs: totalTariffs > 0,
+        tariffsUpdatedAgo: timeAgoStr,
         network: 'REVE MITECO'
       };
     }).filter(e => e !== null);

@@ -549,11 +549,65 @@
                     const addressText = charger.address ? charger.address : 'Dirección no especificada';
                     const paymentText = (charger.paymentMethods && charger.paymentMethods !== 'No especificado') ? charger.paymentMethods : 'App o Tarjeta del Operador';
                     
-                    let feeBg = 'var(--chat-bg)';
-                    let feeBorder = 'var(--border-color)';
-                    if (charger.fee && charger.fee.includes('No informan precios')) {
-                        feeBg = 'rgba(239, 68, 68, 0.05)';
-                        feeBorder = 'rgba(239, 68, 68, 0.3)';
+                    let feeHtml = '';
+                    if (!charger.hasTariffs) {
+                        feeHtml = `
+                            <div style="background:rgba(239, 68, 68, 0.05);border:1px solid rgba(239, 68, 68, 0.3);border-radius:8px;padding:12px;text-align:center;">
+                                <div style="font-size:11px;color:var(--text-secondary);font-weight:700;margin-bottom:2px;text-transform:uppercase;">Tarifas</div>
+                                <div style="font-size:12px;font-weight:700;color:var(--text-primary);line-height:1.4;">No informan precios al Ministerio</div>
+                                <div style="font-size:10px;color:var(--text-secondary);margin-top:2px;">(desde ${charger.tariffsUpdatedAgo || 'desconocido'})</div>
+                            </div>
+                        `;
+                    } else {
+                        let energyRows = '';
+                        if (charger.tariffs['ENERGY']) {
+                            for (const item of charger.tariffs['ENERGY']) {
+                                energyRows += `<div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; margin-bottom:4px; line-height:1.2;">
+                                    <span style="font-weight:600; opacity:0.8;">${item.kwLabel}</span>
+                                    <span>${item.text}</span>
+                                </div>`;
+                            }
+                        } else {
+                            energyRows = `<div style="text-align:center; font-size:12px; color:var(--text-secondary); padding:4px 0;">No informa</div>`;
+                        }
+
+                        const buildSmallCard = (title, key) => {
+                            let rows = '';
+                            let bg = 'var(--chat-bg)';
+                            let border = 'var(--border-color)';
+                            if (charger.tariffs[key]) {
+                                for (const item of charger.tariffs[key]) {
+                                    rows += `<div style="display:flex; justify-content:space-between; align-items:center; font-size:10px; margin-bottom:2px; line-height:1.2;">
+                                        <span style="font-weight:600; opacity:0.8;">${item.kwLabel}</span>
+                                        <span>${item.text}</span>
+                                    </div>`;
+                                }
+                            } else {
+                                bg = 'rgba(239, 68, 68, 0.03)';
+                                border = 'rgba(239, 68, 68, 0.15)';
+                                rows = `<div style="text-align:center; font-size:10px; color:var(--text-secondary); margin-top:2px;">No informa</div>`;
+                            }
+                            return `
+                                <div style="background:${bg};border:1px solid ${border};border-radius:8px;padding:6px;">
+                                    <div style="font-size:9px;color:var(--text-secondary);font-weight:700;margin-bottom:4px;text-transform:uppercase;text-align:center;border-bottom:1px solid rgba(128,128,128,0.1);padding-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${title}</div>
+                                    ${rows}
+                                </div>
+                            `;
+                        };
+
+                        feeHtml = `
+                            <div style="display:flex; flex-direction:column; gap:8px;">
+                                <div style="background:var(--chat-bg);border:1px solid var(--border-color);border-radius:8px;padding:8px;">
+                                    <div style="font-size:10px;color:var(--text-secondary);font-weight:700;margin-bottom:6px;text-transform:uppercase;text-align:center;border-bottom:1px solid rgba(128,128,128,0.2);padding-bottom:4px;">⚡ ENERGÍA (Potencia / Precio)</div>
+                                    <div style="color:var(--text-primary);padding:0 8px;">${energyRows}</div>
+                                </div>
+                                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;">
+                                    ${buildSmallCard('🅿️ Parking', 'PARKING_TIME')}
+                                    ${buildSmallCard('🔌 Enganche', 'FLAT')}
+                                    ${buildSmallCard('⏱️ Tiempo', 'TIME')}
+                                </div>
+                            </div>
+                        `;
                     }
                     
                     let html = `
@@ -564,16 +618,7 @@
                             
                             ${restrictionHtml}
 
-                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-                                <div style="background:var(--chat-bg);border:1px solid var(--border-color);border-radius:8px;padding:8px;text-align:center;">
-                                    <div style="font-size:10px;color:var(--text-secondary);font-weight:700;margin-bottom:4px;text-transform:uppercase;">⚡ Max Potencia</div>
-                                    <div style="font-size:14px;font-weight:800;color:var(--text-primary);">${charger.maxKw > 0 ? charger.maxKw + ' kW' : 'N/D'}</div>
-                                </div>
-                                <div style="background:${feeBg};border:1px solid ${feeBorder};border-radius:8px;padding:8px;text-align:center;">
-                                    <div style="font-size:10px;color:var(--text-secondary);font-weight:700;margin-bottom:4px;text-transform:uppercase;">Tarifas</div>
-                                    <div style="font-size:12px;font-weight:700;color:var(--text-primary);line-height:1.4;">${charger.fee}</div>
-                                </div>
-                            </div>
+                            ${feeHtml}
 
                             ${detailedEvsesHtml}
 
