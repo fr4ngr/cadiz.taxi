@@ -1,6 +1,6 @@
 export async function onRequest(context) {
   const { env } = context;
-  const cacheKey = "gasolineras_cadiz_comarcas_v7";
+  const cacheKey = "gasolineras_cadiz_comarcas_v8";
   
   try {
     const row = await env.DB.prepare(`SELECT value, updated_at FROM system_cache WHERE key = ?`).bind(cacheKey).first();
@@ -57,7 +57,7 @@ export async function onRequest(context) {
               comarca: getComarca(g['Municipio']),
               horario: g['Horario'],
               fecha: data.Fecha,
-              tipoVenta: ['14453', '13131', '8021'].includes(g.IDEESS) ? 'R' : g['Tipo Venta'],
+              tipoVenta: ['14453', '13131', '8021', '11893'].includes(g.IDEESS) ? 'R' : g['Tipo Venta'],
               // All possible prices
               fuels: {
                   'Gasolina 95': p95,
