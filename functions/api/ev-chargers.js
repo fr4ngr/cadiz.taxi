@@ -1,6 +1,6 @@
 export async function onRequest(context) {
   const { env } = context;
-  const cacheKey = "ev_chargers_cadiz_v3";
+  const cacheKey = "ev_chargers_cadiz_v4";
   
   // 1. Check D1 Cache (24 hours)
   try {
@@ -76,8 +76,9 @@ export async function onRequest(context) {
         loc.evses.forEach(evse => {
           if (evse.connectors && Array.isArray(evse.connectors)) {
             evse.connectors.forEach(conn => {
-              if (conn.max_power && conn.max_power > maxKw) {
-                maxKw = conn.max_power;
+              const kw = (conn.max_electric_power || 0) / 1000;
+              if (kw > maxKw) {
+                maxKw = Math.round(kw);
               }
               // Map REVE connector standards to readable names
               const std = conn.standard || '';
