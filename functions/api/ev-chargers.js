@@ -15,6 +15,7 @@ export async function onRequest(context) {
     }
   } catch(e) { console.error("Cache read error", e); }
 
+  try {
     // 2. Fetch from REVE API (Official MITECO map)
     const boundsPayload = {
       "latitude_ne": 37.0,
