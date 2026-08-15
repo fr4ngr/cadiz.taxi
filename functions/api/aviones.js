@@ -16,9 +16,9 @@ export async function onRequest(context) {
   } catch(e) { console.error("Cache read error", e); }
 
   try {
-    // 2. Fetch from OpenSky Network
-    // Cadiz bounding box
-    const url = 'https://opensky-network.org/api/states/all?lamin=35.9&lomin=-6.5&lamax=37.0&lomax=-5.1';
+    // 2. Fetch from ADSB.lol (Community driven, no rate limit/datacenter block)
+    // 50 nautical miles around center of Cadiz (36.5, -5.8)
+    const url = 'https://api.adsb.lol/v2/lat/36.5/lon/-5.8/dist/50';
     
     const res = await fetch(url, {
         headers: {
@@ -37,25 +37,26 @@ export async function onRequest(context) {
     const data = await res.json();
     
     // 3. Normalize Data
-    // OpenSky array format:
-    // 0: icao24, 1: callsign, 2: origin_country, 3: time_position, 4: last_contact, 
-    // 5: longitude, 6: latitude, 7: baro_altitude, 8: on_ground, 9: velocity, 
-    // 10: true_track, 11: vertical_rate, 12: sensors, 13: geo_altitude, 14: squawk, 15: spi, 16: position_source
     const aviones = [];
-    if (data.states && Array.isArray(data.states)) {
-        for (const state of data.states) {
-            if (state[8] === true) continue; // Skip if on ground
-            if (state[5] === null || state[6] === null) continue; // Skip if no position
+    if (data.ac && Array.isArray(data.ac)) {
+        for (const plane of data.ac) {
+            if (plane.lat === undefined || plane.lon === undefined) continue;
+            if (plane.alt_baro === "ground") continue; // Skip if on ground
+            
+            // alt_baro is in feet, convert to meters
+            const altM = typeof plane.alt_baro === 'number' ? plane.alt_baro * 0.3048 : 0;
+            // gs is ground speed in knots, convert to m/s
+            const velMs = typeof plane.gs === 'number' ? plane.gs * 0.514444 : 0;
             
             aviones.push({
-                icao24: state[0],
-                callsign: state[1] ? state[1].trim() : 'Desconocido',
-                country: state[2],
-                lon: parseFloat(state[5]),
-                lat: parseFloat(state[6]),
-                alt_m: state[7] !== null ? parseFloat(state[7]) : (state[13] !== null ? parseFloat(state[13]) : 0),
-                vel_ms: state[9] !== null ? parseFloat(state[9]) : 0,
-                heading: state[10] !== null ? parseFloat(state[10]) : 0
+                icao24: plane.hex || '',
+                callsign: plane.flight ? plane.flight.trim() : (plane.r || 'Desconocido'),
+                country: plane.t || 'Desconocido', // Using 'type' (e.g. B738) in place of country for now, more useful!
+                lon: plane.lon,
+                lat: plane.lat,
+                alt_m: altM,
+                vel_ms: velMs,
+                heading: plane.track || 0
             });
         }
     }
