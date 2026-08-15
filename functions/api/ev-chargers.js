@@ -113,16 +113,17 @@ export async function onRequest(context) {
                                      if (c.price !== undefined) {
                                          let formatted = '';
                                          const p = Number(c.price);
+                                         let prefix = kw > 0 ? `${Math.round(kw)}kW: ` : '';
                                          if (c.type === 'ENERGY') {
-                                             formatted = p === 0 ? 'Energía gratis' : p.toFixed(2) + ' €/kWh';
+                                             formatted = prefix + (p === 0 ? 'Energía gratis' : p.toFixed(2) + ' €/kWh');
                                          } else if (c.type === 'PARKING_TIME') {
-                                             formatted = p === 0 ? 'Parking gratis' : p.toFixed(2) + ' €/h (parking)';
+                                             formatted = prefix + (p === 0 ? 'Parking gratis' : p.toFixed(2) + ' €/h (parking)');
                                          } else if (c.type === 'FLAT') {
-                                             formatted = p === 0 ? 'Sin tasa fija' : p.toFixed(2) + ' € (fijo)';
+                                             formatted = prefix + (p === 0 ? 'Sin tasa fija' : p.toFixed(2) + ' € (fijo)');
                                          } else if (c.type === 'TIME') {
-                                             formatted = p === 0 ? 'Tiempo gratis' : p.toFixed(2) + ' €/h (tiempo)';
+                                             formatted = prefix + (p === 0 ? 'Tiempo gratis' : p.toFixed(2) + ' €/h (tiempo)');
                                          } else {
-                                             formatted = p.toFixed(2) + ' €';
+                                             formatted = prefix + p.toFixed(2) + ' €';
                                          }
                                          
                                          if (formatted && !allFees.includes(formatted)) {

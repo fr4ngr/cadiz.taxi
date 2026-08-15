@@ -508,7 +508,7 @@
                     if (charger.detailedEvses && charger.detailedEvses.length > 0) {
                         const cards = charger.detailedEvses.map((evse, idx) => {
                             let evseColor = '#94a3b8';
-                            let evseText = 'Desc.';
+                            let evseText = 'Desconocido';
                             let timeText = '';
                             
                             if (evse.status === 'AVAILABLE') { 
@@ -526,7 +526,7 @@
                             return `
                                 <div style="background:var(--chat-bg);border:1px solid var(--border-color);border-radius:8px;padding:8px;display:flex;flex-direction:column;justify-content:space-between;min-height:64px;">
                                     <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-                                        <div style="font-size:11px;font-weight:600;line-height:1.2;"><span style="width:6px;height:6px;background:${evseColor};border-radius:50%;display:inline-block;margin-right:4px;"></span>Poste ${idx + 1}<br><span style="color:${evseColor};font-size:10px;">${evseText}</span>${timeText}</div>
+                                        <div style="font-size:11px;font-weight:600;line-height:1.2;"><span style="width:6px;height:6px;background:${evseColor};border-radius:50%;display:inline-block;margin-right:4px;"></span>Cargador ${idx + 1}<br><span style="color:${evseColor};font-size:10px;">${evseText}</span>${timeText}</div>
                                         ${kwLabel}
                                     </div>
                                     <div style="margin-top:6px;">${connLabels}</div>
@@ -535,8 +535,8 @@
                         }).join('');
 
                         detailedEvsesHtml = `
-                            <div style="font-size:11px;color:var(--text-secondary);margin-bottom:6px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;">ESTADO DE LOS POSTES (${charger.detailedEvses.length})</div>
-                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;max-height:220px;overflow-y:auto;padding-right:4px;padding-bottom:4px;">
+                            <div style="font-size:11px;color:var(--text-secondary);margin-bottom:6px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;">ESTADO DE LOS CARGADORES (${charger.detailedEvses.length})</div>
+                            <div style="display:grid;grid-template-columns:${charger.detailedEvses.length === 1 ? '1fr' : '1fr 1fr'};gap:8px;max-height:220px;overflow-y:auto;padding-right:4px;padding-bottom:4px;">
                                 ${cards}
                             </div>
                         `;
