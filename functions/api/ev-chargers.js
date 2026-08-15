@@ -1,6 +1,6 @@
 export async function onRequest(context) {
   const { env } = context;
-  const cacheKey = "ev_chargers_cadiz_v5";
+  const cacheKey = "ev_chargers_cadiz_v6";
   
   // 1. Check D1 Cache (5 minutes)
   try {
@@ -95,15 +95,15 @@ export async function onRequest(context) {
               
               if (!allConnectors.includes(readableStd)) allConnectors.push(readableStd);
               if (!evseConnectors.includes(readableStd)) evseConnectors.push(readableStd);
-            });
-          }
 
-          // Attempt to extract basic price from evse.tariffs
-          if (basePrice === 'Consultar' && evse.tariffs && evse.tariffs.length > 0 && evse.tariffs[0].elements) {
-             const el = evse.tariffs[0].elements[0];
-             if (el.price_components && el.price_components.length > 0 && el.price_components[0].price) {
-                 basePrice = el.price_components[0].price + ' €/kWh';
-             }
+              // Attempt to extract basic price from conn.tariffs
+              if (basePrice === 'Consultar' && conn.tariffs && conn.tariffs.length > 0 && conn.tariffs[0].elements) {
+                 const el = conn.tariffs[0].elements[0];
+                 if (el.price_components && el.price_components.length > 0 && el.price_components[0].price !== undefined) {
+                     basePrice = el.price_components[0].price + ' €/kWh';
+                 }
+              }
+            });
           }
 
           detailedEvses.push({
