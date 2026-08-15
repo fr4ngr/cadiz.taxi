@@ -1,6 +1,6 @@
 export async function onRequest(context) {
   const { env } = context;
-  const cacheKey = "ev_chargers_cadiz_v6";
+  const cacheKey = "ev_chargers_cadiz_v7";
   
   // 1. Check D1 Cache (5 minutes)
   try {
@@ -79,12 +79,19 @@ export async function onRequest(context) {
           
           let evseMaxKw = 0;
           const evseConnectors = [];
+          const evseStatus = evse.status || 'UNKNOWN';
+          const isHealthy = evseStatus === 'AVAILABLE' || evseStatus === 'CHARGING';
           
           if (evse.connectors && Array.isArray(evse.connectors)) {
             evse.connectors.forEach(conn => {
               const kw = (conn.max_electric_power || 0) / 1000;
-              if (kw > maxKw) maxKw = Math.round(kw);
-              if (kw > evseMaxKw) evseMaxKw = Math.round(kw);
+              
+              if (isHealthy && kw > maxKw) {
+                  maxKw = Math.round(kw);
+              }
+              if (kw > evseMaxKw) {
+                  evseMaxKw = Math.round(kw);
+              }
               
               const std = conn.standard || '';
               let readableStd = std;
@@ -97,8 +104,8 @@ export async function onRequest(context) {
               if (!evseConnectors.includes(readableStd)) evseConnectors.push(readableStd);
 
               // Attempt to extract basic price from conn.tariffs
-              if (basePrice === 'Consultar' && conn.tariffs && conn.tariffs.length > 0 && conn.tariffs[0].elements) {
-                 const el = conn.tariffs[0].elements[0];
+              if (basePrice === 'Consultar' && conn.tariffs && conn.tariffs.length > 0 && conn.tariffs[0].tariff && conn.tariffs[0].tariff.elements) {
+                 const el = conn.tariffs[0].tariff.elements[0];
                  if (el.price_components && el.price_components.length > 0 && el.price_components[0].price !== undefined) {
                      basePrice = el.price_components[0].price + ' €/kWh';
                  }
@@ -107,9 +114,10 @@ export async function onRequest(context) {
           }
 
           detailedEvses.push({
-            status: evse.status || 'UNKNOWN',
+            status: evseStatus,
             kw: evseMaxKw,
-            connectors: evseConnectors
+            connectors: evseConnectors,
+            updatedAt: evse.last_updated || null
           });
         });
       }

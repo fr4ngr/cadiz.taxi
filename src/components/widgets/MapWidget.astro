@@ -484,6 +484,17 @@
                     });
                 },
                 onMarkerClick: (charger) => {
+                    const timeAgo = (dateStr) => {
+                        if (!dateStr) return '';
+                        const diffMs = Date.now() - new Date(dateStr).getTime();
+                        if (isNaN(diffMs) || diffMs < 0) return '';
+                        const diffMins = Math.floor(diffMs / 60000);
+                        if (diffMins < 60) return ` (hace ${diffMins}m)`;
+                        const diffHrs = Math.floor(diffMins / 60);
+                        if (diffHrs < 24) return ` (hace ${diffHrs}h)`;
+                        return ` (hace +1d)`;
+                    };
+
                     let bgColor = '#64748b';
                     if (charger.maxKw >= 100) bgColor = '#8b5cf6';
                     else if (charger.maxKw >= 43) bgColor = '#3b82f6';
@@ -502,18 +513,6 @@
                         ? `<div style="background:#fff7ed;border:1px solid #fdba74;color:#c2410c;padding:6px 8px;border-radius:4px;font-size:11px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:6px;">⚠️ Acceso ${charger.accessibility === 'PRIVATE' ? 'Privado' : 'Restringido'}</div>`
                         : '';
 
-                    // Status Badge (Global fallback)
-                    let statusHtml = '';
-                    if (charger.status === 'AVAILABLE') {
-                        statusHtml = `<span style="display:inline-block;width:8px;height:8px;background:#22c55e;border-radius:50%;margin-right:4px;"></span><span style="font-size:12px;color:#22c55e;font-weight:600;">Libre</span>`;
-                    } else if (charger.status === 'CHARGING') {
-                        statusHtml = `<span style="display:inline-block;width:8px;height:8px;background:#3b82f6;border-radius:50%;margin-right:4px;"></span><span style="font-size:12px;color:#3b82f6;font-weight:600;">Ocupado</span>`;
-                    } else if (charger.status === 'OUTOFORDER') {
-                        statusHtml = `<span style="display:inline-block;width:8px;height:8px;background:#ef4444;border-radius:50%;margin-right:4px;"></span><span style="font-size:12px;color:#ef4444;font-weight:600;">Averiado</span>`;
-                    } else {
-                        statusHtml = `<span style="display:inline-block;width:8px;height:8px;background:#94a3b8;border-radius:50%;margin-right:4px;"></span><span style="font-size:12px;color:#94a3b8;font-weight:600;">Estado desc.</span>`;
-                    }
-
                     let addressHtml = charger.address 
                         ? `<div style="font-size:11px;color:var(--text-secondary);margin-bottom:12px;">📍 ${charger.address}</div>`
                         : '<div style="margin-bottom:12px;"></div>';
@@ -527,9 +526,16 @@
                         const cards = charger.detailedEvses.map((evse, idx) => {
                             let evseColor = '#94a3b8';
                             let evseText = 'Desc.';
-                            if (evse.status === 'AVAILABLE') { evseColor = '#22c55e'; evseText = 'Libre'; }
-                            else if (evse.status === 'CHARGING') { evseColor = '#3b82f6'; evseText = 'Ocupado'; }
-                            else if (evse.status === 'OUTOFORDER') { evseColor = '#ef4444'; evseText = 'Roto'; }
+                            let timeText = '';
+                            
+                            if (evse.status === 'AVAILABLE') { 
+                                evseColor = '#22c55e'; evseText = 'Libre'; 
+                            } else if (evse.status === 'CHARGING') { 
+                                evseColor = '#3b82f6'; evseText = 'Ocupado';
+                                timeText = `<span style="font-size:9px;color:var(--text-secondary);font-weight:normal;">${timeAgo(evse.updatedAt)}</span>`;
+                            } else if (evse.status === 'OUTOFORDER') { 
+                                evseColor = '#ef4444'; evseText = 'Roto'; 
+                            }
 
                             const connLabels = (evse.connectors || []).map(c => `<span style="background:var(--bg-color);border:1px solid var(--border-color);padding:1px 4px;border-radius:3px;font-size:9px;margin-right:3px;">${c}</span>`).join('');
                             const kwLabel = evse.kw > 0 ? `<span style="font-size:10px;font-weight:bold;color:var(--text-secondary);">⚡ ${evse.kw} kW</span>` : '';
@@ -537,7 +543,7 @@
                             return `
                                 <div style="background:var(--chat-bg);border:1px solid var(--border-color);border-radius:6px;padding:6px;margin-bottom:6px;display:flex;flex-direction:column;gap:4px;">
                                     <div style="display:flex;justify-content:space-between;align-items:center;">
-                                        <span style="font-size:11px;font-weight:600;display:flex;align-items:center;gap:4px;"><span style="width:6px;height:6px;background:${evseColor};border-radius:50%;display:inline-block;"></span> Poste ${idx + 1} (${evseText})</span>
+                                        <span style="font-size:11px;font-weight:600;display:flex;align-items:center;gap:4px;"><span style="width:6px;height:6px;background:${evseColor};border-radius:50%;display:inline-block;"></span> Poste ${idx + 1} (${evseText}) ${timeText}</span>
                                         ${kwLabel}
                                     </div>
                                     <div style="display:flex;flex-wrap:wrap;margin-top:2px;">${connLabels}</div>
@@ -558,7 +564,6 @@
                         ${speedBadge} ${feeBadge}
                         <div style="font-size:14px;color:var(--text-primary);font-weight:700;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;">
                             <span>${charger.operator}</span>
-                            <span>${statusHtml}</span>
                         </div>
                         ${addressHtml}
                         ${detailedEvsesHtml}
