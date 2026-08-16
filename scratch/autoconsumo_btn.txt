@@ -1,0 +1,8 @@
+                <button class="radial-pill-item" onclick="window.selectMapLayer('evchargers')">
+                    <span style="font-size: 16px; margin-right: 4px;">🔋</span>
+                    Recarga EV
+                </button>
+                <button class="radial-pill-item" onclick="window.selectMapLayer('autoconsumo')">
+                    <span style="font-size: 16px; margin-right: 4px;">☀️</span>
+                    Energía Solar
+                </button>

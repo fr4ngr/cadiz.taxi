@@ -1,0 +1,272 @@
+[
+  {
+    "id": 342089,
+    "name": "Paterna de Rivera",
+    "lat": 36.5176773,
+    "lon": -5.8620221
+  },
+  {
+    "id": 342092,
+    "name": "Olvera",
+    "lat": 36.953765,
+    "lon": -5.2567867
+  },
+  {
+    "id": 342093,
+    "name": "El Puerto de Santa María",
+    "lat": 36.6231857,
+    "lon": -6.2313306
+  },
+  {
+    "id": 342094,
+    "name": "Prado del Rey",
+    "lat": 36.7845252,
+    "lon": -5.5500608
+  },
+  {
+    "id": 342096,
+    "name": "Jimena de la Frontera",
+    "lat": 36.4407762,
+    "lon": -5.466083
+  },
+  {
+    "id": 342097,
+    "name": "Jerez de la Frontera",
+    "lat": 36.6899995,
+    "lon": -5.8809564
+  },
+  {
+    "id": 342098,
+    "name": "Medina Sidonia",
+    "lat": 36.3752806,
+    "lon": -5.8443829
+  },
+  {
+    "id": 342099,
+    "name": "La Línea de la Concepción",
+    "lat": 36.1997014,
+    "lon": -5.3407289
+  },
+  {
+    "id": 342100,
+    "name": "Puerto Serrano",
+    "lat": 36.9729463,
+    "lon": -5.4853529
+  },
+  {
+    "id": 342101,
+    "name": "Puerto Real",
+    "lat": 36.5275877,
+    "lon": -6.1196186
+  },
+  {
+    "id": 342439,
+    "name": "Algar",
+    "lat": 36.6569486,
+    "lon": -5.6408613
+  },
+  {
+    "id": 342440,
+    "name": "Alcalá del Valle",
+    "lat": 36.9231568,
+    "lon": -5.1461564
+  },
+  {
+    "id": 342441,
+    "name": "Alcalá de los Gazules",
+    "lat": 36.4369334,
+    "lon": -5.699168
+  },
+  {
+    "id": 342443,
+    "name": "Barbate",
+    "lat": 36.1860751,
+    "lon": -5.920729
+  },
+  {
+    "id": 342444,
+    "name": "Arcos de la Frontera",
+    "lat": 36.7491867,
+    "lon": -5.7371318
+  },
+  {
+    "id": 342445,
+    "name": "Algodonales",
+    "lat": 36.8878966,
+    "lon": -5.4196028
+  },
+  {
+    "id": 342446,
+    "name": "Algeciras",
+    "lat": 36.1128466,
+    "lon": -5.4867014
+  },
+  {
+    "id": 342449,
+    "name": "Benaocaz",
+    "lat": 36.7044995,
+    "lon": -5.4660492
+  },
+  {
+    "id": 342450,
+    "name": "Los Barrios",
+    "lat": 36.2299222,
+    "lon": -5.5607045
+  },
+  {
+    "id": 343140,
+    "name": "Zahara",
+    "lat": 36.8274838,
+    "lon": -5.443996
+  },
+  {
+    "id": 343141,
+    "name": "Villamartín",
+    "lat": 36.869298,
+    "lon": -5.6297525
+  },
+  {
+    "id": 343142,
+    "name": "Villaluenga del Rosario",
+    "lat": 36.6816098,
+    "lon": -5.3653914
+  },
+  {
+    "id": 346645,
+    "name": "Torre Alháquime",
+    "lat": 36.9104737,
+    "lon": -5.2341916
+  },
+  {
+    "id": 346646,
+    "name": "Trebujena",
+    "lat": 36.8702001,
+    "lon": -6.2094727
+  },
+  {
+    "id": 346647,
+    "name": "Setenil de las Bodegas",
+    "lat": 36.8758461,
+    "lon": -5.1779857
+  },
+  {
+    "id": 346648,
+    "name": "Tarifa",
+    "lat": 36.1325044,
+    "lon": -5.6685773
+  },
+  {
+    "id": 346649,
+    "name": "Sanlúcar de Barrameda",
+    "lat": 36.8039196,
+    "lon": -6.3001578
+  },
+  {
+    "id": 346650,
+    "name": "San Roque",
+    "lat": 36.2508645,
+    "lon": -5.3458574
+  },
+  {
+    "id": 346651,
+    "name": "Rota",
+    "lat": 36.6719422,
+    "lon": -6.3586639
+  },
+  {
+    "id": 346652,
+    "name": "San Fernando",
+    "lat": 36.4426097,
+    "lon": -6.2050112
+  },
+  {
+    "id": 346653,
+    "name": "Ubrique",
+    "lat": 36.6583799,
+    "lon": -5.4678193
+  },
+  {
+    "id": 346654,
+    "name": "Vejer de la Frontera",
+    "lat": 36.2903357,
+    "lon": -5.9309949
+  },
+  {
+    "id": 346897,
+    "name": "San José del Valle",
+    "lat": 36.6201403,
+    "lon": -5.7042882
+  },
+  {
+    "id": 346898,
+    "name": "Benalup-Casas Viejas",
+    "lat": 36.3325236,
+    "lon": -5.7742344
+  },
+  {
+    "id": 346948,
+    "name": "El Gastor",
+    "lat": 36.8407808,
+    "lon": -5.3416814
+  },
+  {
+    "id": 346949,
+    "name": "Grazalema",
+    "lat": 36.7699877,
+    "lon": -5.3962231
+  },
+  {
+    "id": 346950,
+    "name": "Conil de la Frontera",
+    "lat": 36.2961572,
+    "lon": -6.075457
+  },
+  {
+    "id": 346951,
+    "name": "Chiclana de la Frontera",
+    "lat": 36.4015477,
+    "lon": -6.1055775
+  },
+  {
+    "id": 346952,
+    "name": "Chipiona",
+    "lat": 36.7256813,
+    "lon": -6.4069566
+  },
+  {
+    "id": 346953,
+    "name": "Espera",
+    "lat": 36.8758525,
+    "lon": -5.7993923
+  },
+  {
+    "id": 346954,
+    "name": "Bornos",
+    "lat": 36.8532763,
+    "lon": -5.7133266
+  },
+  {
+    "id": 346955,
+    "name": "El Bosque",
+    "lat": 36.7526782,
+    "lon": -5.5117913
+  },
+  {
+    "id": 346956,
+    "name": "Cádiz",
+    "lat": 36.494726,
+    "lon": -6.2713116
+  },
+  {
+    "id": 346957,
+    "name": "Castellar de la Frontera",
+    "lat": 36.3067981,
+    "lon": -5.4669863
+  },
+  {
+    "id": 10906955,
+    "name": "San Martín del Tesorillo",
+    "lat": 36.3671451,
+    "lon": -5.3655892
+  }
+]

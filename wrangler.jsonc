@@ -24,6 +24,11 @@
 			"binding": "DB",
 			"database_name": "cadiz-chat",
 			"database_id": "cc0e148a-210f-454a-8ece-404442858c82"
+		},
+		{
+			"binding": "gaditan_data",
+			"database_name": "gaditan-data",
+			"database_id": "a0c7c621-f5b1-400a-af2f-45eb56643302"
 		}
 	],
 	"r2_buckets": [
