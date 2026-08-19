@@ -90,14 +90,22 @@
                 💰 Cercanas y Baratas
             </button>
         </div>
-        <button id="btn-simulate-gps" onclick="window.toggleGpsSimulator()" style="pointer-events: auto !important; background: var(--chat-bg); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; gap: 4px; width: fit-content; opacity: 0.9; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
+        
+<button id="btn-simulate-gps" onclick="window.toggleGpsSimulator()" style="pointer-events: auto !important; background: var(--chat-bg); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; gap: 4px; width: fit-content; opacity: 0.9; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
             🛰️ Simular GPS
         </button>
     </div>
 
     
 
-    <!-- Contenedor UI de la InfoPill -->
+        <div id="desertificacion-filters" style="display: none; position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%); z-index: 9999; flex-direction: row; gap: 8px; pointer-events: auto; max-width: calc(100% - 32px); background: var(--chat-bg); padding: 8px; border-radius: 20px; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
+        <button class="map-chip desert-year-btn" data-year="1956" onclick="window.changeDesertYear('1956')" style="padding: 4px 10px; font-size: 11px;">1956</button>
+        <button class="map-chip desert-year-btn" data-year="1999" onclick="window.changeDesertYear('1999')" style="padding: 4px 10px; font-size: 11px;">1999</button>
+        <button class="map-chip desert-year-btn" data-year="2040" onclick="window.changeDesertYear('2040')" style="padding: 4px 10px; font-size: 11px;">2040</button>
+        <button class="map-chip desert-year-btn" data-year="2070" onclick="window.changeDesertYear('2070')" style="padding: 4px 10px; font-size: 11px;">2070</button>
+        <button class="map-chip desert-year-btn active" data-year="2100" onclick="window.changeDesertYear('2100')" style="padding: 4px 10px; font-size: 11px; background: #eab308; color: white; border-color: #eab308;">2100</button>
+    </div>
+<!-- Contenedor UI de la InfoPill -->
     <div id="map-ui-container" style="position: absolute; top: 86px; left: 50%; z-index: 1001; transform: translateX(-50%); width: calc(100% - 32px); max-width: 448px; display: flex; flex-direction: column; gap: 8px; transition: opacity 0.3s, transform 0.3s; opacity: 0; pointer-events: none;">
         <!-- Píldora informativa de parada -->
         <div id="map-info-pill" style="background: color-mix(in srgb, var(--header-bg) 75%, transparent); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: 20px; padding: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); display: flex; flex-direction: column; gap: 14px; border: 1px solid var(--header-border);">
@@ -200,6 +208,30 @@
                 <button class="radial-pill-item" onclick="window.selectMapLayer('evchargers')">
                     <span style="font-size: 16px; margin-right: 4px;">🔌</span>
                     Recarga EV
+                </button>
+                <button class="radial-pill-item" onclick="window.selectMapLayer('desertificacion')">
+                    <span class="icon">🏜️</span>
+                    <span class="label">Desierto</span>
+                </button>
+                <button class="radial-pill-item" onclick="window.selectMapLayer('ndvi')">
+                    <span class="icon">🌱</span>
+                    <span class="label">Salud Vegetal</span>
+                </button>
+                <button class="radial-pill-item" onclick="window.selectMapLayer('tsunami')">
+                    <span class="icon">🌊</span>
+                    <span class="label">Evacuación Maremotos</span>
+                </button>
+                <button class="radial-pill-item" onclick="window.selectMapLayer('sismos')">
+                    <span class="icon">🌋</span>
+                    <span class="label">Sismos Históricos</span>
+                </button>
+                <button class="radial-pill-item" onclick="window.selectMapLayer('virus')">
+                    <span class="icon">🦟</span>
+                    <span class="label">Alertas Víricas</span>
+                </button>
+                <button class="radial-pill-item" onclick="window.selectMapLayer('inmo')">
+                    <span class="icon">🏠</span>
+                    <span class="label">Mercado Inmob.</span>
                 </button>
                 <button class="radial-pill-item" onclick="window.selectMapLayer('gasolineras')">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="15" y2="22"></line><line x1="4" y1="9" x2="14" y2="9"></line><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"></path><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"></path></svg>
@@ -534,7 +566,509 @@
         };
 
         
+        
+        window.desertYear = '2100';
+        window.changeDesertYear = (year) => {
+            window.desertYear = year;
+            // Update UI buttons
+            document.querySelectorAll('.desert-year-btn').forEach(btn => {
+                if (btn.dataset.year === year) {
+                    btn.classList.add('active');
+                    btn.style.background = '#eab308';
+                    btn.style.color = 'white';
+                    btn.style.borderColor = '#eab308';
+                } else {
+                    btn.classList.remove('active');
+                    btn.style.background = '';
+                    btn.style.color = '';
+                    btn.style.borderColor = '';
+                }
+            });
+            // Update WMS Layer
+            const filterObj = window.MapFilterRegistry['desertificacion'];
+            if (filterObj && filterObj._wmsLayer) {
+                filterObj._wmsLayer.setParams({ layers: 'riesgo_desertificacion_' + year, query_layers: 'riesgo_desertificacion_' + year });
+            }
+        };
+
         window.MapFilterRegistry = {
+
+            'inmo': {
+                name: 'Mercado Inmobiliario (€/m²)',
+                type: 'geojson',
+                color: '#8b5cf6',
+                source: 'MIVAU (Valor Tasado Libre)',
+                url: '/api/inmobiliario',
+                options: {
+                    pointToLayer: (feature, latlng) => {
+                          const p = feature.properties.current;
+                          
+                          let col = '#9ca3af'; // Gris por defecto (Sin datos oficiales)
+                          let rad = 9;
+                          let opac = 0.5;
+
+                          if (p !== null) {
+                              rad = 12;
+                              opac = 0.8;
+                              col = '#22c55e'; // Green (< 1200)
+                              if (p >= 2000) col = '#ef4444'; // Red
+                              else if (p >= 1500) col = '#f97316'; // Orange
+                              else if (p >= 1200) col = '#eab308'; // Yellow
+                          }
+  
+                          return L.circleMarker(latlng, {
+                              radius: rad,
+                              fillColor: col,
+                              color: '#ffffff',
+                              weight: 2,
+                              opacity: 1,
+                              fillOpacity: opac
+                          });
+                      },
+                    onEachFeature: (feature, layer) => {
+                          layer.on('click', () => {
+                              const container = document.getElementById('map-ui-container');
+                              if (container) {
+                                  let p = feature.properties;
+                                  
+                                  const fallback = window.currentMapData?.metadata?.fallback_provincial;
+                                  const isFallback = p.current === null;
+
+                                  if (isFallback && fallback) {
+                                      p = { ...p, ...fallback };
+                                      // Expand history for chart
+                                      const h = p.history;
+                                      const result = [];
+                                      const interpolate = (startVal, endVal, steps, yearStart) => {
+                                          for (let i = 0; i < steps; i++) {
+                                              const progress = i / steps;
+                                              const ease = progress < .5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress;
+                                              const baseVal = startVal + (endVal - startVal) * ease;
+                                              result.push({ year: yearStart + i, price: Math.round(baseVal) });
+                                          }
+                                      };
+                                      // No interpolation. Puntos reales.
+p.history = h;
+                                      
+                                      const current = result[result.length - 1].price;
+                                      const prevQuarter = result[result.length - 2].price;
+                                      const lastYear = result[result.length - 5].price;
+                                      p.current = current;
+                                      p.interanual = (((current - lastYear) / lastYear) * 100).toFixed(1);
+                                  }
+                                  
+                                  document.getElementById('map-info-label').innerText = 'Dashboard Inmobiliario 360º';
+                                  document.getElementById('map-info-label').style.color = '#8b5cf6';
+                                  document.getElementById('map-info-title').innerText = p.municipio;
+                                  
+                                  const actionsDiv = document.getElementById('map-pill-actions');
+                                  if (actionsDiv) actionsDiv.style.display = 'none';
+
+                                  if (!p.current) return;
+
+                                  const h = p.history;
+                                  const width = 280;
+                                  const height = 70;
+                                  const maxP = Math.max(...h.map(d => d.price));
+                                  const minP = Math.min(...h.map(d => d.price));
+                                  const range = (maxP - minP) || 1;
+                                  
+                                  const trendColor = p.interanual > 0 ? '#ea4335' : '#34a853';
+                                  const trendFill = p.interanual > 0 ? 'rgba(234, 67, 53, 0.1)' : 'rgba(52, 168, 83, 0.1)';
+                                  
+                                  const linePoints = h.map((d, i) => {
+                                      const x = (i / (h.length - 1)) * width;
+                                      const y = height - ((d.price - minP) / range) * (height - 10);
+                                      return x + "," + y;
+                                  }).join(" L ");
+                                  const areaPoints = "M 0," + height + " L " + linePoints + " L " + width + "," + height + " Z";
+
+                                  const euribor = window.currentMapData?.metadata?.euribor_series || [];
+                                  const euriborPoints = euribor.length > 1 ? euribor.map((e, i) => {
+                                      const x = (i / (euribor.length - 1)) * width;
+                                      const y = height - ((e - -0.5) / 6.0) * (height - 10);
+                                      return x + "," + y;
+                                  }).join(" L ") : "";
+
+                                  const formatND = (val, suffix = '') => val !== null ? val + suffix : '<span style="color:#9ca3af;font-size:11px;">N/D</span>';
+                                  const notarioColor = (p.notario_current > p.current) ? '#ef4444' : '#22c55e';
+                                  
+
+                                  const censo = p.censo || { principal: 0, secundaria: 0, vacia: 0 };
+                                  const hasCenso = p.censo !== null;
+
+                                  const fallbackBadge = isFallback ? `<div style="background:#fef3c7; color:#d97706; padding:6px 10px; border-radius:6px; font-size:11px; margin-bottom:12px; border:1px solid #fde68a; display:flex; align-items:center; gap:6px;"><strong>⚠️ Dato Municipal Protegido.</strong> Mostrando la Media de la Provincia de Cádiz.</div>` : '';
+
+                                  const html = `
+                                      <div style="padding-right: 4px;">
+                                          
+                                          ${fallbackBadge}
+
+                                          <!-- Bloque 1: Precios -->
+                                          <div style="margin-bottom: 16px;">
+                                              <div style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary); font-weight: bold; margin-bottom: 8px;">1. Precios de Mercado</div>
+                                              
+                                              <div style="background: var(--bg-color); border: 1px solid var(--header-border); border-radius: 6px; padding: 12px; margin-bottom: 12px;">
+                                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                                        <div>
+                                                            <div style="font-size: 12px; color: var(--primary-color); font-weight: bold; text-transform: uppercase;">PRECIO M² PROMEDIO EN EL TÉRMINO MUNICIPAL</div>
+                                                            <div style="font-size: 10px; color: var(--text-secondary); margin-top: 4px; max-width: 200px; line-height: 1.3;">Promedio oficial de las tasaciones hipotecarias (vivienda libre) recopiladas por el Ministerio.</div>
+                                                        </div>
+                                                        <div style="font-size: 20px; font-weight: bold; color: var(--text-primary);">${p.current} €/m²</div>
+                                                    </div>
+                                                    <div style="background: var(--chat-bg); padding: 8px; border-radius: 6px; font-size: 10px; color: var(--text-secondary); display: flex; flex-direction: column; gap: 6px; border: 1px solid rgba(0,0,0,0.05);">
+                                                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                                                            <span style="display: flex; align-items: center; gap: 4px;"><span style="font-size: 12px;">📅</span> <strong>Dato actual:</strong> 2º Trimestre 2026</span>
+                                                        </div>
+                                                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                                                            <span style="display: flex; align-items: center; gap: 4px;"><span style="font-size: 12px;">🔜</span> <strong>Próximo dato:</strong> Noviembre 2026 (Q3)</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div style="position: relative; width: 100%; height: ${height}px; background: var(--bg-color); border-radius: 8px; border: 1px solid var(--header-border); margin-bottom: 12px; overflow: hidden;">
+                                                  <svg width="100%" height="100%" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
+                                                      <path d="${areaPoints}" fill="${trendFill}" />
+                                                      <path d="M ${linePoints}" fill="none" stroke="${trendColor}" stroke-width="2" />
+                                                      ${euriborPoints ? '<path d="M ' + euriborPoints + '" fill="none" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6" />' : ''}
+                                                  </svg>
+                                                  <div style="position: absolute; top: 4px; left: 6px; font-size: 9px; color: var(--text-secondary); font-weight: bold;">EVOLUCIÓN</div>
+                                                  ${euriborPoints ? '<div style="position: absolute; bottom: 4px; right: 6px; font-size: 9px; color: #9ca3af; font-weight: bold;">-- EURÍBOR</div>' : ''}
+                                              </div>
+
+                                              </div>
+                                          </div>
+                                          <hr style="border: 0; border-top: 1px solid var(--header-border); margin: 16px 0;">
+                                          
+                                          <!-- Bloque 2: Tendencias INE -->
+                                          <div style="margin-bottom: 16px;">
+                                              <div style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary); font-weight: bold; margin-bottom: 8px;">2. Termómetro de Mercado (Fuente: INE)</div>
+                                              
+                                              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                                  <!-- Variación IPV Andalucía -->
+                                                  <div style="background: #fdf4ff; border: 1px solid #f5d0fe; border-radius: 6px; padding: 8px;">
+                                                      <div style="font-size: 10px; color: #a21caf;">Evolución Precio (Andalucía)</div>
+                                                      <div style="font-size: 16px; font-weight: bold; color: #86198f;">
+                                                          ${inmoData.metadata.ine_market ? (inmoData.metadata.ine_market.tendencia_precio_andalucia > 0 ? '+' : '') + inmoData.metadata.ine_market.tendencia_precio_andalucia + '%' : 'N/D'}
+                                                      </div>
+                                                      <div style="font-size: 9px; color: #a21caf; margin-top: 2px;">${inmoData.metadata.ine_market ? 'Interanual ' + inmoData.metadata.ine_market.tendencia_periodo : ''}</div>
+                                                  </div>
+                                                  
+                                                  <!-- Compraventas Cádiz -->
+                                                  <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 8px;">
+                                                      <div style="font-size: 10px; color: #166534;">Ventas (Provincia Cádiz)</div>
+                                                      <div style="font-size: 16px; font-weight: bold; color: #15803d;">
+                                                          ${inmoData.metadata.ine_market ? new Intl.NumberFormat('es-ES').format(inmoData.metadata.ine_market.ventas_cadiz) : 'N/D'}
+                                                      </div>
+                                                      <div style="font-size: 9px; color: #166534; margin-top: 2px;">Viviendas / ${inmoData.metadata.ine_market ? inmoData.metadata.ine_market.ventas_periodo : ''}</div>
+                                                  </div>
+                                              </div>
+                                          </div>
+
+                                          <hr style="border: 0; border-top: 1px solid var(--header-border); margin: 16px 0;">
+
+                                          <!-- Bloque 3: Demografía -->
+                                          <div>
+                                              <div style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary); font-weight: bold; margin-bottom: 8px;">3. Censo de Viviendas (INE)</div>
+                                              ${hasCenso ? `
+                                              <div style="height: 16px; width: 100%; display: flex; border-radius: 4px; overflow: hidden; margin-bottom: 6px;">
+                                                  <div style="width: ${censo.principal}%; background: #3b82f6;" title="Principal: ${censo.principal}%"></div>
+                                                  <div style="width: ${censo.secundaria}%; background: #f59e0b;" title="Secundaria: ${censo.secundaria}%"></div>
+                                                  <div style="width: ${censo.vacia}%; background: #9ca3af;" title="Vacía: ${censo.vacia}%"></div>
+                                              </div>
+                                              <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--text-secondary);">
+                                                  <span style="color: #3b82f6;">${censo.principal}% Habitual</span>
+                                                  <span style="color: #f59e0b;">${censo.secundaria}% Turística/2ª</span>
+                                                  <span style="color: #9ca3af;">${censo.vacia}% Vacía</span>
+                                              </div>
+                                              ` : `<div style="font-size: 12px; color: #9ca3af; font-style: italic;">Datos del censo N/D para este municipio.</div>`}
+                                          </div>
+
+                                      </div>
+                                      
+                                      <div style="margin-top: 12px; font-size: 9px; color: #9ca3af; text-align: center;">
+                                          Fuentes: MIVAU, Informes Mercado (Idealista/Fotocasa), INE.
+                                      </div>
+                                  `;
+                                  document.getElementById('map-info-desc').innerHTML = html;
+                                  container.style.opacity = '1';
+                                  container.style.pointerEvents = 'auto';
+                                  container.style.transform = 'translate(-50%, 0)';
+                              }
+                          });
+                      } } },
+              'virus': {
+                name: 'Alertas Víricas (Virus del Nilo)',
+                type: 'geojson',
+                color: '#f97316',
+                source: 'Consejería de Salud (Junta de Andalucía)',
+                url: '/api/alertas_viricas',
+                options: {
+                    pointToLayer: (feature, latlng) => {
+                        return L.circleMarker(latlng, {
+                            radius: feature.properties.nivel * 5 + 10,
+                            fillColor: feature.properties.color,
+                            color: feature.properties.color,
+                            weight: 2,
+                            opacity: 0.9,
+                            fillOpacity: 0.4
+                        });
+                    },
+                    onEachFeature: (feature, layer) => {
+                        // Animación de pulso para niveles altos
+                        if (feature.properties.nivel >= 4) {
+                            layer.on('add', function() {
+                                setInterval(() => {
+                                    if (layer._path) {
+                                        layer.setStyle({ fillOpacity: layer.options.fillOpacity === 0.4 ? 0.7 : 0.4 });
+                                    }
+                                }, 1000);
+                            });
+                        }
+                        
+                        layer.on('click', () => {
+                            const container = document.getElementById('map-ui-container');
+                            if (container) {
+                                document.getElementById('map-info-label').innerText = 'Alerta Epidemiológica';
+                                document.getElementById('map-info-label').style.color = feature.properties.color;
+                                document.getElementById('map-info-title').innerText = feature.properties.municipio;
+                                
+                                const actionsDiv = document.getElementById('map-pill-actions');
+                                if (actionsDiv) actionsDiv.style.display = 'none';
+                                
+                                const html = `
+                                    <div style="font-size: 14px; font-weight: bold; color: ${feature.properties.color}; margin-bottom: 8px;">
+                                        ${feature.properties.estado}
+                                    </div>
+                                    <div style="font-size: 13px; color: var(--text-primary); margin-bottom: 12px; line-height: 1.5;">
+                                        <strong>Agente:</strong> ${feature.properties.virus}<br><br>
+                                        ${feature.properties.desc}
+                                    </div>
+                                    <hr style="border: 0; border-top: 1px solid var(--header-border); margin: 12px 0;">
+                                    <div style="font-size: 11px; color: var(--text-secondary);">
+                                        <strong>Fuente:</strong> Salud Pública (Junta de Andalucía)<br>
+                                        <strong>Actualización:</strong> Semanal
+                                    </div>
+                                `;
+                                document.getElementById('map-info-desc').innerHTML = html;
+                                
+                                container.style.opacity = '1';
+                                container.style.pointerEvents = 'auto';
+                                container.style.transform = 'translate(-50%, 0)';
+                            }
+                        });
+                    }
+                }
+            },
+
+
+            'sismos': {
+                name: 'Terremotos Históricos',
+                type: 'geojson',
+                color: '#ef4444',
+                source: 'IGN / Registros Históricos',
+                url: '/api/sismos_historicos',
+                options: {
+                    pointToLayer: (feature, latlng) => {
+                        return L.circleMarker(latlng, {
+                            radius: 12,
+                            fillColor: '#ef4444',
+                            color: '#ffffff',
+                            weight: 2,
+                            opacity: 1,
+                            fillOpacity: 0.8
+                        });
+                    },
+                    onEachFeature: (feature, layer) => {
+                        layer.on('click', () => {
+                            const container = document.getElementById('map-ui-container');
+                            if (container) {
+                                document.getElementById('map-info-label').innerText = 'Evento Histórico';
+                                document.getElementById('map-info-label').style.color = '#ef4444';
+                                document.getElementById('map-info-title').innerText = feature.properties.name;
+                                
+                                const actionsDiv = document.getElementById('map-pill-actions');
+                                if (actionsDiv) actionsDiv.style.display = 'none';
+                                
+                                const html = `
+                                    <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                                        <span style="background: #ef4444; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">Año ${feature.properties.year}</span>
+                                        <span style="background: #f3f4f6; color: #374151; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">Mag: ${feature.properties.mag}</span>
+                                    </div>
+                                    <div style="font-size: 13px; color: var(--text-primary); margin-bottom: 12px; line-height: 1.5;">
+                                        ${feature.properties.desc}
+                                    </div>
+                                    <hr style="border: 0; border-top: 1px solid var(--header-border); margin: 12px 0;">
+                                    <div style="font-size: 11px; color: var(--text-secondary);">
+                                        <strong>Fecha:</strong> ${feature.properties.date}<br>
+                                        <strong>Fuente:</strong> Catálogo Sísmico (IGN)
+                                    </div>
+                                `;
+                                document.getElementById('map-info-desc').innerHTML = html;
+                                
+                                container.style.opacity = '1';
+                                container.style.pointerEvents = 'auto';
+                                container.style.transform = 'translate(-50%, 0)';
+                            }
+                        });
+                    }
+                }
+            },
+
+
+            'tsunami': {
+                name: 'Zonas Inundables (Tsunami)',
+                type: 'wms',
+                color: '#3b82f6',
+                source: 'SNCZI / Protección Civil',
+                url: 'https://servicios.idee.es/wms-inspire/riesgos-naturales/inundaciones',
+                options: {
+                    layers: 'NZ.Flood.MarinaT500',
+                    format: 'image/png',
+                    transparent: true,
+                    attribution: 'SNCZI MITECO'
+                },
+                onMapClick: (e, map) => {
+                    const container = document.getElementById('map-ui-container');
+                    if (container) {
+                        document.getElementById('map-info-label').innerText = 'Plan de Evacuación';
+                        document.getElementById('map-info-label').style.color = '#3b82f6';
+                        document.getElementById('map-info-title').innerText = 'Peor Escenario (Tipo 1755)';
+                        
+                        const actionsDiv = document.getElementById('map-pill-actions');
+                        if (actionsDiv) actionsDiv.style.display = 'none';
+                        
+                        const html = `
+                            <div style="font-size: 13px; color: var(--text-primary); margin-bottom: 12px; line-height: 1.4;">
+                                Las zonas azules muestran hasta dónde llegaría el mar en el peor de los casos: un tsunami provocado por un terremoto masivo (Mag. >8.5) en la falla del Cabo de San Vicente, idéntico al que destruyó Lisboa y golpeó Cádiz en <strong>1755</strong>.
+                            </div>
+                            <div style="font-size: 11px; font-weight: 700; color: #ef4444; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Instrucciones de Evacuación</div>
+                            <ul style="font-size: 12px; margin: 0; padding-left: 16px; color: var(--text-secondary); line-height: 1.5;">
+                                <li><strong>Alejarse del mar:</strong> Correr tierra adentro y hacia zonas altas (cerros).</li>
+                                <li><strong>Refugio vertical:</strong> Si no hay tiempo, subir al menos a un 3º piso de un edificio sólido.</li>
+                                <li><strong>No usar coche:</strong> Los atascos son una trampa mortal. Huir a pie.</li>
+                            </ul>
+                            <hr style="border: 0; border-top: 1px solid var(--header-border); margin: 12px 0;">
+                            <div style="font-size: 11px; color: var(--text-secondary);">
+                                <strong>Fuente:</strong> SNCZI / Riesgo T-500 años<br>
+                                <strong>Precaución:</strong> Mapa orientativo de peligrosidad
+                            </div>
+                        `;
+                        document.getElementById('map-info-desc').innerHTML = html;
+                        
+                        container.style.opacity = '1';
+                        container.style.pointerEvents = 'auto';
+                        container.style.transform = 'translate(-50%, 0)';
+                    }
+                }
+            },
+
+
+            'ndvi': {
+                name: 'Salud Vegetal',
+                type: 'wms',
+                color: '#22c55e',
+                source: 'REDIAM (Junta de Andalucía)',
+                url: 'https://www.juntadeandalucia.es/medioambiente/mapwms/REDIAM_terra_modis_ndvi_mensual_2025',
+                options: {
+                    layers: 'terra_modis_media_mensual_ndvi_nov_2025',
+                    format: 'image/png',
+                    transparent: true,
+                    attribution: 'REDIAM'
+                },
+                onMapClick: async (e, map) => {
+                    const lat = e.latlng.lat;
+                    const lng = e.latlng.lng;
+                    try {
+                        const res = await fetch(`/api/ndvi?lat=${lat}&lng=${lng}`);
+                        const data = await res.json();
+                        if (data && data.estado) {
+                            const container = document.getElementById('map-ui-container');
+                            if (container) {
+                                document.getElementById('map-info-label').innerText = 'Salud de la Vegetación';
+                                document.getElementById('map-info-label').style.color = '#22c55e';
+                                document.getElementById('map-info-title').innerText = 'Índice de Vitalidad (NDVI)';
+                                
+                                const actionsDiv = document.getElementById('map-pill-actions');
+                                if (actionsDiv) actionsDiv.style.display = 'none';
+                                
+                                const html = `
+                                    <div style="font-size: 14px; font-weight: 600; color: ${data.estadoColor}; margin-bottom: 4px;">${data.estado}</div>
+                                    <div style="font-size: 12px; color: var(--text-primary); margin-bottom: 12px;">Valor satelital puro: ${data.valor}</div>
+                                    
+                                    <div style="font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Impacto Sequía vs Año Pasado</div>
+                                    <div style="font-size: 13px; font-weight: 500; color: ${data.compColor};">${data.comparativa}</div>
+                                    
+                                    <hr style="border: 0; border-top: 1px solid var(--header-border); margin: 12px 0;">
+                                    <div style="font-size: 11px; color: var(--text-secondary);">
+                                        <strong>Fuente:</strong> ${data.fuente}<br>
+                                        <strong>Actualizado:</strong> ${data.actualizado}
+                                    </div>
+                                `;
+                                document.getElementById('map-info-desc').innerHTML = html;
+                                
+                                container.style.opacity = '1';
+                                container.style.pointerEvents = 'auto';
+                                container.style.transform = 'translate(-50%, 0)';
+                            }
+                        }
+                    } catch (err) {
+                        console.error("Error fetching NDVI data", err);
+                    }
+                }
+            },
+
+
+            'desertificacion': {
+                name: 'Riesgo Desertificación',
+                type: 'wms',
+                color: '#eab308',
+                source: 'REDIAM (Junta de Andalucía)',
+                url: 'https://www.juntadeandalucia.es/medioambiente/mapwms/REDIAM_riesgo_desertificacion_1956_2100',
+                options: {
+                    layers: 'riesgo_desertificacion_2100',
+                    format: 'image/png',
+                    transparent: true,
+                    attribution: 'REDIAM'
+                },
+                onMapClick: async (e, map) => {
+                    const lat = e.latlng.lat;
+                    const lng = e.latlng.lng;
+                    try {
+                        const res = await fetch(`/api/desertificacion?lat=${lat}&lng=${lng}&year=${window.desertYear || '2100'}`);
+                        const data = await res.json();
+                        if (data && data.clase) {
+                            const container = document.getElementById('map-ui-container');
+                            if (container) {
+                                document.getElementById('map-info-label').innerText = 'Desertificación (2100)';
+                                document.getElementById('map-info-label').style.color = '#eab308';
+                                document.getElementById('map-info-title').innerText = 'Nivel de Riesgo';
+                                
+                                const actionsDiv = document.getElementById('map-pill-actions');
+                                if (actionsDiv) actionsDiv.style.display = 'none';
+                                
+                                const html = `
+                                    <div style="font-size: 14px; font-weight: 500; margin-bottom: 8px;">${data.clase}</div>
+                                    <div style="font-size: 12px; color: var(--text-secondary);">Coordenadas: ${data.coords.lat}, ${data.coords.lng}</div>
+                                    <hr style="border: 0; border-top: 1px solid var(--header-border); margin: 12px 0;">
+                                    <div style="font-size: 11px; color: var(--text-secondary);">
+                                        <strong>Fuente:</strong> ${data.fuente}<br>
+                                        <strong>Actualizado:</strong> ${data.actualizado}
+                                    </div>
+                                `;
+                                document.getElementById('map-info-desc').innerHTML = html;
+                                
+                                container.style.opacity = '1';
+                                container.style.pointerEvents = 'auto';
+                                container.style.transform = 'translate(-50%, 0)';
+                            }
+                        }
+                    } catch (err) {
+                        console.error("Error", err);
+                    }
+                }
+            },
+
             // ---------------------------------------------------------
             // AVIONES (OpenSky ADS-B)
             // ---------------------------------------------------------
@@ -1653,6 +2187,8 @@
                 
                 const gpsFilters = document.getElementById('gasolineras-gps-filters');
                 if (gpsFilters) gpsFilters.style.display = 'none';
+                const desertFilters = document.getElementById('desertificacion-filters');
+                if (desertFilters) desertFilters.style.display = 'none';
                 return;
             }
 
@@ -1671,6 +2207,19 @@
                     gpsFilters.style.display = !isCurrentlyActive ? 'flex' : 'none';
                     if (isCurrentlyActive) window.lastGasFilter = null; // Reset if turning off
                 } else {
+                    gpsFilters.style.display = 'none';
+                }
+                const desertFilters = document.getElementById('desertificacion-filters');
+                if (desertFilters) {
+                    if (layerId === 'desertificacion') {
+                        desertFilters.style.display = !isCurrentlyActive ? 'flex' : 'none';
+                        if (!isCurrentlyActive && window.changeDesertYear) window.changeDesertYear('2100'); // Reset to default when opening
+                    } else {
+                        desertFilters.style.display = 'none';
+                    }
+                }
+                
+                if (layerId === 'fake') {
                     gpsFilters.style.display = 'none';
                 }
             }
@@ -1692,9 +2241,14 @@
                     filterObj._markers.forEach(m => map.removeLayer(m));
                     // Markers already cleared safely earlier
                 }
+                
                 if (filterObj._wmsLayer) {
                     map.removeLayer(filterObj._wmsLayer);
                     filterObj._wmsLayer = null;
+                }
+                if (filterObj._clickHandler) {
+                    map.off('click', filterObj._clickHandler);
+                    filterObj._clickHandler = null;
                 }
             } else {
                 filterObj._isActive = true;
@@ -1739,6 +2293,33 @@
                         }).catch(() => {
                             window.showMapError(() => window.selectMapLayer(layerId));
                         });
+                    
+                    }
+                    if (filterObj.onMapClick) {
+                        filterObj._clickHandler = (e) => filterObj.onMapClick(e, map);
+                        map.on('click', filterObj._clickHandler);
+                    }
+                    
+                    return;
+                }
+                
+                if (filterObj.type === 'geojson') {
+                    if (filterObj.flyTo && filterObj.flyToZoom) {
+                        map.flyTo(filterObj.flyTo, filterObj.flyToZoom, { duration: 1.5 });
+                    }
+                                          try {
+                          const res = await fetch(filterObj.url);
+                          if (!res.ok) throw new Error("Fetch failed");
+                          const data = await res.json();
+                          
+                          window.hideMapLoading();
+                          if (!filterObj._isActive) return;
+                          
+                          filterObj._allData = data;
+                          filterObj._wmsLayer = window.L.geoJSON(data, filterObj.options);
+                        filterObj._wmsLayer.addTo(map);
+                    } catch (e) {
+                        window.showMapError(() => window.selectMapLayer(layerId));
                     }
                     return;
                 }
