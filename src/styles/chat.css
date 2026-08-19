@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
 :root {
-  --bg-color: #f8fafc; /* Color de fondo general claro */
+  --bg-color: #e2e8f0; /* Color de fondo general claro */
   --header-bg: #ffffff; /* Fondo de la cabecera */
   --header-border: #e2e8f0;
   --text-primary: #1e293b;
@@ -45,7 +45,7 @@ body {
   flex-direction: column;
   height: 100%;
   width: 100%;
-  max-width: 600px; /* Ancho máximo en escritorio para que parezca móvil */
+  max-width: 480px; /* Ancho máximo en escritorio para que parezca móvil */
   margin: 0 auto;
   background-color: var(--chat-bg);
   position: relative;
