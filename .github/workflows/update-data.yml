@@ -1,0 +1,31 @@
+name: Update Real Estate Data (Cron)
+
+on:
+  schedule:
+    # Ejecutar todos los domingos a las 03:00 AM UTC
+    - cron: '0 3 * * 0'
+  workflow_dispatch: # Permite ejecución manual desde Github
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Data Scrapers
+        run: node scripts/scrapers/inmobiliario_scraper.cjs
+
+      - name: Commit and Push new data
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "🤖 Auto-update: Datos inmobiliarios (MIVAU/IECA/BDE)"
+          file_pattern: "scripts/data/*.json functions/api/*.json public/api/*.json"
