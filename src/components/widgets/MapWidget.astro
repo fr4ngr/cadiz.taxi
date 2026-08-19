@@ -597,7 +597,7 @@
                 name: 'Mercado Inmobiliario (€/m²)',
                 type: 'geojson',
                 color: '#8b5cf6',
-                source: 'MIVAU (Valor Tasado Libre)',
+                source: 'MIVAU e INE (Estadísticas Oficiales)',
                 url: '/api/inmobiliario',
                 options: {
                     pointToLayer: (feature, latlng) => {
@@ -636,25 +636,14 @@
 
                                   if (isFallback && fallback) {
                                       p = { ...p, ...fallback };
-                                      // Expand history for chart
+                                      // Set actual values from history
                                       const h = p.history;
-                                      const result = [];
-                                      const interpolate = (startVal, endVal, steps, yearStart) => {
-                                          for (let i = 0; i < steps; i++) {
-                                              const progress = i / steps;
-                                              const ease = progress < .5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress;
-                                              const baseVal = startVal + (endVal - startVal) * ease;
-                                              result.push({ year: yearStart + i, price: Math.round(baseVal) });
-                                          }
-                                      };
-                                      // No interpolation. Puntos reales.
-p.history = h;
-                                      
-                                      const current = result[result.length - 1].price;
-                                      const prevQuarter = result[result.length - 2].price;
-                                      const lastYear = result[result.length - 5].price;
-                                      p.current = current;
-                                      p.interanual = (((current - lastYear) / lastYear) * 100).toFixed(1);
+                                      if (h && h.length > 0) {
+                                          const current = h[h.length - 1].price;
+                                          const lastYear = h.length > 1 ? h[h.length - 2].price : current;
+                                          p.current = current;
+                                          p.interanual = (((current - lastYear) / lastYear) * 100).toFixed(1);
+                                      }
                                   }
                                   
                                   document.getElementById('map-info-label').innerText = 'Dashboard Inmobiliario 360º';
@@ -749,18 +738,18 @@ p.history = h;
                                                   <div style="background: #fdf4ff; border: 1px solid #f5d0fe; border-radius: 6px; padding: 8px;">
                                                       <div style="font-size: 10px; color: #a21caf;">Evolución Precio (Andalucía)</div>
                                                       <div style="font-size: 16px; font-weight: bold; color: #86198f;">
-                                                          ${inmoData.metadata.ine_market ? (inmoData.metadata.ine_market.tendencia_precio_andalucia > 0 ? '+' : '') + inmoData.metadata.ine_market.tendencia_precio_andalucia + '%' : 'N/D'}
+                                                          ${window.MapFilterRegistry['inmo']._allData && window.MapFilterRegistry['inmo']._allData.metadata && window.MapFilterRegistry['inmo']._allData.metadata.ine_market ? (window.MapFilterRegistry['inmo']._allData.metadata.ine_market.tendencia_precio_andalucia > 0 ? '+' : '') + window.MapFilterRegistry['inmo']._allData.metadata.ine_market.tendencia_precio_andalucia + '%' : 'N/D'}
                                                       </div>
-                                                      <div style="font-size: 9px; color: #a21caf; margin-top: 2px;">${inmoData.metadata.ine_market ? 'Interanual ' + inmoData.metadata.ine_market.tendencia_periodo : ''}</div>
+                                                      <div style="font-size: 9px; color: #a21caf; margin-top: 2px;">${window.MapFilterRegistry['inmo']._allData && window.MapFilterRegistry['inmo']._allData.metadata && window.MapFilterRegistry['inmo']._allData.metadata.ine_market ? 'Interanual ' + window.MapFilterRegistry['inmo']._allData.metadata.ine_market.tendencia_periodo : ''}</div>
                                                   </div>
                                                   
                                                   <!-- Compraventas Cádiz -->
                                                   <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 8px;">
                                                       <div style="font-size: 10px; color: #166534;">Ventas (Provincia Cádiz)</div>
                                                       <div style="font-size: 16px; font-weight: bold; color: #15803d;">
-                                                          ${inmoData.metadata.ine_market ? new Intl.NumberFormat('es-ES').format(inmoData.metadata.ine_market.ventas_cadiz) : 'N/D'}
+                                                          ${window.MapFilterRegistry['inmo']._allData && window.MapFilterRegistry['inmo']._allData.metadata && window.MapFilterRegistry['inmo']._allData.metadata.ine_market ? new Intl.NumberFormat('es-ES').format(window.MapFilterRegistry['inmo']._allData.metadata.ine_market.ventas_cadiz) : 'N/D'}
                                                       </div>
-                                                      <div style="font-size: 9px; color: #166534; margin-top: 2px;">Viviendas / ${inmoData.metadata.ine_market ? inmoData.metadata.ine_market.ventas_periodo : ''}</div>
+                                                      <div style="font-size: 9px; color: #166534; margin-top: 2px;">Viviendas / ${window.MapFilterRegistry['inmo']._allData && window.MapFilterRegistry['inmo']._allData.metadata && window.MapFilterRegistry['inmo']._allData.metadata.ine_market ? window.MapFilterRegistry['inmo']._allData.metadata.ine_market.ventas_periodo : ''}</div>
                                                   </div>
                                               </div>
                                           </div>
