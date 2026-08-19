@@ -58,7 +58,24 @@
   },
   {
     "municipio": "Arcos de la Frontera",
-    "history": null,
+    "history": [
+      {
+        "year": 2004,
+        "price": 850
+      },
+      {
+        "year": 2008,
+        "price": 1200
+      },
+      {
+        "year": 2014,
+        "price": 700
+      },
+      {
+        "year": 2026,
+        "price": 880
+      }
+    ],
     "notario_current": null,
     "alquiler_m2": null,
     "transacciones_q_actual": null,
@@ -123,7 +140,24 @@
   },
   {
     "municipio": "Cádiz",
-    "history": null,
+    "history": [
+      {
+        "year": 2004,
+        "price": 1820
+      },
+      {
+        "year": 2008,
+        "price": 2853
+      },
+      {
+        "year": 2014,
+        "price": 1780
+      },
+      {
+        "year": 2026,
+        "price": 2550
+      }
+    ],
     "notario_current": null,
     "alquiler_m2": null,
     "transacciones_q_actual": null,
@@ -143,7 +177,24 @@
   },
   {
     "municipio": "Chiclana de la Frontera",
-    "history": null,
+    "history": [
+      {
+        "year": 2004,
+        "price": 1210
+      },
+      {
+        "year": 2008,
+        "price": 1850
+      },
+      {
+        "year": 2014,
+        "price": 1100
+      },
+      {
+        "year": 2026,
+        "price": 1650
+      }
+    ],
     "notario_current": null,
     "alquiler_m2": null,
     "transacciones_q_actual": null,
@@ -224,7 +275,24 @@
   },
   {
     "municipio": "La Línea de la Concepción",
-    "history": null,
+    "history": [
+      {
+        "year": 2004,
+        "price": 1000
+      },
+      {
+        "year": 2008,
+        "price": 1400
+      },
+      {
+        "year": 2014,
+        "price": 800
+      },
+      {
+        "year": 2026,
+        "price": 1100
+      }
+    ],
     "notario_current": null,
     "alquiler_m2": null,
     "transacciones_q_actual": null,
@@ -264,7 +332,24 @@
   },
   {
     "municipio": "El Puerto de Santa María",
-    "history": null,
+    "history": [
+      {
+        "year": 2004,
+        "price": 1320
+      },
+      {
+        "year": 2008,
+        "price": 2150
+      },
+      {
+        "year": 2014,
+        "price": 1310
+      },
+      {
+        "year": 2026,
+        "price": 2000
+      }
+    ],
     "notario_current": null,
     "alquiler_m2": null,
     "transacciones_q_actual": null,
@@ -396,7 +481,24 @@
   },
   {
     "municipio": "Sanlúcar de Barrameda",
-    "history": null,
+    "history": [
+      {
+        "year": 2004,
+        "price": 1000
+      },
+      {
+        "year": 2008,
+        "price": 1750
+      },
+      {
+        "year": 2014,
+        "price": 980
+      },
+      {
+        "year": 2026,
+        "price": 1500
+      }
+    ],
     "notario_current": null,
     "alquiler_m2": null,
     "transacciones_q_actual": null,
@@ -468,168 +570,6 @@
   },
   {
     "municipio": "Zahara de la Sierra",
-    "history": null,
-    "notario_current": null,
-    "alquiler_m2": null,
-    "transacciones_q_actual": null,
-    "censo": null
-  },
-  {
-    "municipio": "Cádiz Capital",
-    "history": [
-      {
-        "year": 2004,
-        "price": 1820
-      },
-      {
-        "year": 2008,
-        "price": 2853
-      },
-      {
-        "year": 2014,
-        "price": 1780
-      },
-      {
-        "year": 2026,
-        "price": 2550
-      }
-    ],
-    "notario_current": null,
-    "alquiler_m2": null,
-    "transacciones_q_actual": null,
-    "censo": {
-      "principal": 93,
-      "secundaria": 2,
-      "vacia": 5
-    }
-  },
-  {
-    "municipio": "El Puerto de Sta. Mª",
-    "history": [
-      {
-        "year": 2004,
-        "price": 1320
-      },
-      {
-        "year": 2008,
-        "price": 2150
-      },
-      {
-        "year": 2014,
-        "price": 1310
-      },
-      {
-        "year": 2026,
-        "price": 2000
-      }
-    ],
-    "notario_current": null,
-    "alquiler_m2": null,
-    "transacciones_q_actual": null,
-    "censo": null
-  },
-  {
-    "municipio": "Chiclana",
-    "history": [
-      {
-        "year": 2004,
-        "price": 1210
-      },
-      {
-        "year": 2008,
-        "price": 1850
-      },
-      {
-        "year": 2014,
-        "price": 1100
-      },
-      {
-        "year": 2026,
-        "price": 1650
-      }
-    ],
-    "notario_current": null,
-    "alquiler_m2": null,
-    "transacciones_q_actual": null,
-    "censo": null
-  },
-  {
-    "municipio": "Sanlúcar de Bdra.",
-    "history": [
-      {
-        "year": 2004,
-        "price": 1000
-      },
-      {
-        "year": 2008,
-        "price": 1750
-      },
-      {
-        "year": 2014,
-        "price": 980
-      },
-      {
-        "year": 2026,
-        "price": 1500
-      }
-    ],
-    "notario_current": null,
-    "alquiler_m2": null,
-    "transacciones_q_actual": null,
-    "censo": null
-  },
-  {
-    "municipio": "La Línea",
-    "history": [
-      {
-        "year": 2004,
-        "price": 1000
-      },
-      {
-        "year": 2008,
-        "price": 1400
-      },
-      {
-        "year": 2014,
-        "price": 800
-      },
-      {
-        "year": 2026,
-        "price": 1100
-      }
-    ],
-    "notario_current": null,
-    "alquiler_m2": null,
-    "transacciones_q_actual": null,
-    "censo": null
-  },
-  {
-    "municipio": "Arcos de la Fra.",
-    "history": [
-      {
-        "year": 2004,
-        "price": 850
-      },
-      {
-        "year": 2008,
-        "price": 1200
-      },
-      {
-        "year": 2014,
-        "price": 700
-      },
-      {
-        "year": 2026,
-        "price": 880
-      }
-    ],
-    "notario_current": null,
-    "alquiler_m2": null,
-    "transacciones_q_actual": null,
-    "censo": null
-  },
-  {
-    "municipio": "Conil de la Fra.",
     "history": null,
     "notario_current": null,
     "alquiler_m2": null,

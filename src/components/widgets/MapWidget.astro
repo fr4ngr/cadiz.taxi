@@ -230,8 +230,8 @@
                     <span class="label">Alertas Víricas</span>
                 </button>
                 <button class="radial-pill-item" onclick="window.selectMapLayer('inmo')">
-                    <span class="icon">🏠</span>
-                    <span class="label">Mercado Inmob.</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                    <span class="label">Vivienda</span>
                 </button>
                 <button class="radial-pill-item" onclick="window.selectMapLayer('gasolineras')">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="15" y2="22"></line><line x1="4" y1="9" x2="14" y2="9"></line><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"></path><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"></path></svg>
@@ -600,7 +600,7 @@
         window.MapFilterRegistry = {
 
             'inmo': {
-                name: 'Mercado Inmobiliario (€/m²)',
+                name: 'Vivienda',
                 type: 'geojson',
                 color: '#8b5cf6',
                 source: 'MIVAU e INE (Estadísticas Oficiales)',
@@ -653,7 +653,7 @@
                                       }
                                   }
                                   
-                                  document.getElementById('map-info-label').innerText = 'Dashboard Inmobiliario 360º';
+                                  document.getElementById('map-info-label').innerText = 'Vivienda';
                                   document.getElementById('map-info-label').style.color = '#8b5cf6';
                                   document.getElementById('map-info-title').innerText = p.municipio;
                                   
@@ -702,12 +702,12 @@
 
                                           <!-- Bloque 1: Precios -->
                                           <div style="margin-bottom: 16px;">
-                                              <div style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary); font-weight: bold; margin-bottom: 8px;">1. Precios de Mercado</div>
+                                              
                                               
                                               <div style="background: var(--bg-color); border: 1px solid var(--header-border); border-radius: 6px; padding: 12px; margin-bottom: 12px;">
                                                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                                         <div>
-                                                            <div style="font-size: 12px; color: var(--primary-color); font-weight: bold; text-transform: uppercase;">PRECIO M² PROMEDIO EN EL TÉRMINO MUNICIPAL</div>
+                                                            <div style="font-size: 12px; color: var(--primary-color); font-weight: bold; text-transform: uppercase;">PRECIO M² PROMEDIO</div>
                                                             <div style="font-size: 10px; color: var(--text-secondary); margin-top: 4px; max-width: 200px; line-height: 1.3;">Promedio oficial de las tasaciones hipotecarias (vivienda libre) recopiladas por el Ministerio.</div>
                                                         </div>
                                                         <div style="font-size: 20px; font-weight: bold; color: var(--text-primary);">${p.current} €/m²</div>
@@ -717,7 +717,7 @@
                                                             <span style="display: flex; align-items: center; gap: 4px;"><span style="font-size: 12px;">📅</span> <strong>Dato actual:</strong> 2º Trimestre 2026</span>
                                                         </div>
                                                         <div style="display: flex; justify-content: space-between; align-items: center;">
-                                                            <span style="display: flex; align-items: center; gap: 4px;"><span style="font-size: 12px;">🔜</span> <strong>Próximo dato:</strong> Noviembre 2026 (Q3)</span>
+                                                            <span style="display: flex; align-items: center; gap: 4px;"><span style="font-size: 12px;">🔜</span> <strong>Próxima actualización de MIVAU:</strong> Noviembre 2026 (Q3)</span>
                                                         </div>
                                                     </div>
                                                 </div>
