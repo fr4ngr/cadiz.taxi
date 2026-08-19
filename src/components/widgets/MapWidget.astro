@@ -632,7 +632,8 @@
                           });
                       },
                     onEachFeature: (feature, layer) => {
-                          layer.on('click', () => {
+                          layer.on('click', (e) => {
+                            if (e) window.L.DomEvent.stopPropagation(e);
                               const container = document.getElementById('map-ui-container');
                               if (container) {
                                   let p = feature.properties;
@@ -821,7 +822,8 @@
                             });
                         }
                         
-                        layer.on('click', () => {
+                        layer.on('click', (e) => {
+                            if (e) window.L.DomEvent.stopPropagation(e);
                             const container = document.getElementById('map-ui-container');
                             if (container) {
                                 document.getElementById('map-info-label').innerText = 'Alerta Epidemiológica';
@@ -875,7 +877,8 @@
                         });
                     },
                     onEachFeature: (feature, layer) => {
-                        layer.on('click', () => {
+                        layer.on('click', (e) => {
+                            if (e) window.L.DomEvent.stopPropagation(e);
                             const container = document.getElementById('map-ui-container');
                             if (container) {
                                 document.getElementById('map-info-label').innerText = 'Evento Histórico';
@@ -2376,7 +2379,8 @@
                     data.forEach(item => {
                         const marker = filterObj.renderMarker(item, map);
                         
-                        marker.on('click', () => {
+                        marker.on('click', (e) => {
+                              if (e) window.L.DomEvent.stopPropagation(e);
                             const popupData = filterObj.onMarkerClick(item);
                             const container = document.getElementById('map-ui-container');
                             if (!container) return;
@@ -2583,7 +2587,8 @@
                     filtered.forEach(item => {
                         const marker = filterObj.renderMarker(item, map);
                         
-                        marker.on('click', () => {
+                        marker.on('click', (e) => {
+                              if (e) window.L.DomEvent.stopPropagation(e);
                             const popupData = filterObj.onMarkerClick(item);
                             const container = document.getElementById('map-ui-container');
                             if (!container) return;
