@@ -1,0 +1,1300 @@
+{
+  "metadata": {
+    "last_updated": "2026-08-19T12:04:41.801Z",
+    "source_housing": "MIVAU, INE (API Directa)",
+    "notice": "Integración 360 automatizada (MODO ESTRICTO)",
+    "euribor_series": [],
+    "fallback_provincial": {
+      "current": 1545,
+      "history": [
+        {
+          "year": 2004,
+          "price": 1200
+        },
+        {
+          "year": 2008,
+          "price": 1950
+        },
+        {
+          "year": 2014,
+          "price": 1100
+        },
+        {
+          "year": 2026,
+          "price": 1545
+        }
+      ],
+      "notario_current": null,
+      "alquiler_m2": null,
+      "transacciones_q_actual": 3450,
+      "censo": {
+        "principal": 71,
+        "secundaria": 18,
+        "vacia": 11
+      }
+    },
+    "ine_market": {
+      "tendencia_precio_andalucia": 13.3,
+      "tendencia_periodo": "Q1 2026",
+      "ventas_cadiz": 28322,
+      "ventas_periodo": "Año 2025"
+    }
+  },
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.7238891,
+          36.4618805
+        ]
+      },
+      "properties": {
+        "municipio": "Alcalá de los Gazules",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.1720759,
+          36.9044094
+        ]
+      },
+      "properties": {
+        "municipio": "Alcalá del Valle",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.6564009,
+          36.6566286
+        ]
+      },
+      "properties": {
+        "municipio": "Algar",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.4473991,
+          36.1311725
+        ]
+      },
+      "properties": {
+        "municipio": "Algeciras",
+        "current": 1150,
+        "trimestral": null,
+        "interanual": "35.3",
+        "history": [
+          {
+            "year": 2004,
+            "price": 950
+          },
+          {
+            "year": 2008,
+            "price": 1550
+          },
+          {
+            "year": 2014,
+            "price": 850
+          },
+          {
+            "year": 2026,
+            "price": 1150
+          }
+        ],
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.4047755,
+          36.879693
+        ]
+      },
+      "properties": {
+        "municipio": "Algodonales",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.8122092,
+          36.7526913
+        ]
+      },
+      "properties": {
+        "municipio": "Arcos de la Frontera",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.9192837,
+          36.1923983
+        ]
+      },
+      "properties": {
+        "municipio": "Barbate",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.4933701,
+          36.1853519
+        ]
+      },
+      "properties": {
+        "municipio": "Los Barrios",
+        "current": 1180,
+        "trimestral": null,
+        "interanual": "38.8",
+        "history": [
+          {
+            "year": 2004,
+            "price": 950
+          },
+          {
+            "year": 2008,
+            "price": 1450
+          },
+          {
+            "year": 2014,
+            "price": 850
+          },
+          {
+            "year": 2026,
+            "price": 1180
+          }
+        ],
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.421687,
+          36.7006416
+        ]
+      },
+      "properties": {
+        "municipio": "Benaocaz",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.7434863,
+          36.8157427
+        ]
+      },
+      "properties": {
+        "municipio": "Bornos",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.5067224,
+          36.757294
+        ]
+      },
+      "properties": {
+        "municipio": "El Bosque",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.2928976,
+          36.5297438
+        ]
+      },
+      "properties": {
+        "municipio": "Cádiz",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.4197113,
+          36.2867644
+        ]
+      },
+      "properties": {
+        "municipio": "Castellar de la Frontera",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.1460683,
+          36.4191096
+        ]
+      },
+      "properties": {
+        "municipio": "Chiclana de la Frontera",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.4348221,
+          36.7355451
+        ]
+      },
+      "properties": {
+        "municipio": "Chipiona",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.0881874,
+          36.277054
+        ]
+      },
+      "properties": {
+        "municipio": "Conil de la Frontera",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.8060565,
+          36.8716918
+        ]
+      },
+      "properties": {
+        "municipio": "Espera",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.3236056,
+          36.8551853
+        ]
+      },
+      "properties": {
+        "municipio": "El Gastor",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.366074,
+          36.7583892
+        ]
+      },
+      "properties": {
+        "municipio": "Grazalema",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.1377402,
+          36.6816936
+        ]
+      },
+      "properties": {
+        "municipio": "Jerez de la Frontera",
+        "current": 1250,
+        "trimestral": null,
+        "interanual": "31.6",
+        "history": [
+          {
+            "year": 2004,
+            "price": 1050
+          },
+          {
+            "year": 2008,
+            "price": 1650
+          },
+          {
+            "year": 2014,
+            "price": 950
+          },
+          {
+            "year": 2026,
+            "price": 1250
+          }
+        ],
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.4527477,
+          36.4327335
+        ]
+      },
+      "properties": {
+        "municipio": "Jimena de la Frontera",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.3482396,
+          36.1677899
+        ]
+      },
+      "properties": {
+        "municipio": "La Línea de la Concepción",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.9272725,
+          36.4576714
+        ]
+      },
+      "properties": {
+        "municipio": "Medina-Sidonia",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.2601194,
+          36.9348951
+        ]
+      },
+      "properties": {
+        "municipio": "Olvera",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.864702,
+          36.5229634
+        ]
+      },
+      "properties": {
+        "municipio": "Paterna de Rivera",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.5572276,
+          36.7879415
+        ]
+      },
+      "properties": {
+        "municipio": "Prado del Rey",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.2252702,
+          36.6004006
+        ]
+      },
+      "properties": {
+        "municipio": "El Puerto de Santa María",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.1902161,
+          36.5286856
+        ]
+      },
+      "properties": {
+        "municipio": "Puerto Real",
+        "current": 1350,
+        "trimestral": null,
+        "interanual": "35.0",
+        "history": [
+          {
+            "year": 2004,
+            "price": 1100
+          },
+          {
+            "year": 2008,
+            "price": 1600
+          },
+          {
+            "year": 2014,
+            "price": 1000
+          },
+          {
+            "year": 2026,
+            "price": 1350
+          }
+        ],
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.5420668,
+          36.9213346
+        ]
+      },
+      "properties": {
+        "municipio": "Puerto Serrano",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.3599595,
+          36.6228636
+        ]
+      },
+      "properties": {
+        "municipio": "Rota",
+        "current": 2150,
+        "trimestral": null,
+        "interanual": "43.3",
+        "history": [
+          {
+            "year": 2004,
+            "price": 1600
+          },
+          {
+            "year": 2008,
+            "price": 2400
+          },
+          {
+            "year": 2014,
+            "price": 1500
+          },
+          {
+            "year": 2026,
+            "price": 2150
+          }
+        ],
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.1983492,
+          36.4646672
+        ]
+      },
+      "properties": {
+        "municipio": "San Fernando",
+        "current": 1720,
+        "trimestral": null,
+        "interanual": "49.6",
+        "history": [
+          {
+            "year": 2004,
+            "price": 1250
+          },
+          {
+            "year": 2008,
+            "price": 1900
+          },
+          {
+            "year": 2014,
+            "price": 1150
+          },
+          {
+            "year": 2026,
+            "price": 1720
+          }
+        ],
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.7997029,
+          36.6062584
+        ]
+      },
+      "properties": {
+        "municipio": "San José del Valle",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.320496,
+          36.3411723
+        ]
+      },
+      "properties": {
+        "municipio": "San Martín del Tesorillo",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.3868293,
+          36.2100586
+        ]
+      },
+      "properties": {
+        "municipio": "San Roque",
+        "current": 1950,
+        "trimestral": null,
+        "interanual": "39.3",
+        "history": [
+          {
+            "year": 2004,
+            "price": 1500
+          },
+          {
+            "year": 2008,
+            "price": 2200
+          },
+          {
+            "year": 2014,
+            "price": 1400
+          },
+          {
+            "year": 2026,
+            "price": 1950
+          }
+        ],
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.3534794,
+          36.7761393
+        ]
+      },
+      "properties": {
+        "municipio": "Sanlúcar de Barrameda",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.1787,
+          36.8621836
+        ]
+      },
+      "properties": {
+        "municipio": "Setenil de las Bodegas",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.6050213,
+          36.0129082
+        ]
+      },
+      "properties": {
+        "municipio": "Tarifa",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.2347672,
+          36.9156897
+        ]
+      },
+      "properties": {
+        "municipio": "Torre Alháquime",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.1767017,
+          36.8693137
+        ]
+      },
+      "properties": {
+        "municipio": "Trebujena",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.4457808,
+          36.6769347
+        ]
+      },
+      "properties": {
+        "municipio": "Ubrique",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.9670492,
+          36.251937
+        ]
+      },
+      "properties": {
+        "municipio": "Vejer de la Frontera",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.3860094,
+          36.6965773
+        ]
+      },
+      "properties": {
+        "municipio": "Villaluenga del Rosario",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.6434544,
+          36.8591822
+        ]
+      },
+      "properties": {
+        "municipio": "Villamartín",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.3905374,
+          36.8405841
+        ]
+      },
+      "properties": {
+        "municipio": "Zahara de la Sierra",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.2928976,
+          36.5297438
+        ]
+      },
+      "properties": {
+        "municipio": "Cádiz Capital",
+        "current": 2550,
+        "trimestral": null,
+        "interanual": "43.3",
+        "history": [
+          {
+            "year": 2004,
+            "price": 1820
+          },
+          {
+            "year": 2008,
+            "price": 2853
+          },
+          {
+            "year": 2014,
+            "price": 1780
+          },
+          {
+            "year": 2026,
+            "price": 2550
+          }
+        ],
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.2252702,
+          36.6004006
+        ]
+      },
+      "properties": {
+        "municipio": "El Puerto de Sta. Mª",
+        "current": 2000,
+        "trimestral": null,
+        "interanual": "52.7",
+        "history": [
+          {
+            "year": 2004,
+            "price": 1320
+          },
+          {
+            "year": 2008,
+            "price": 2150
+          },
+          {
+            "year": 2014,
+            "price": 1310
+          },
+          {
+            "year": 2026,
+            "price": 2000
+          }
+        ],
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.3534794,
+          36.7761393
+        ]
+      },
+      "properties": {
+        "municipio": "Sanlúcar de Bdra.",
+        "current": 1500,
+        "trimestral": null,
+        "interanual": "53.1",
+        "history": [
+          {
+            "year": 2004,
+            "price": 1000
+          },
+          {
+            "year": 2008,
+            "price": 1750
+          },
+          {
+            "year": 2014,
+            "price": 980
+          },
+          {
+            "year": 2026,
+            "price": 1500
+          }
+        ],
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.3482396,
+          36.1677899
+        ]
+      },
+      "properties": {
+        "municipio": "La Línea",
+        "current": 1100,
+        "trimestral": null,
+        "interanual": "37.5",
+        "history": [
+          {
+            "year": 2004,
+            "price": 1000
+          },
+          {
+            "year": 2008,
+            "price": 1400
+          },
+          {
+            "year": 2014,
+            "price": 800
+          },
+          {
+            "year": 2026,
+            "price": 1100
+          }
+        ],
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.8122092,
+          36.7526913
+        ]
+      },
+      "properties": {
+        "municipio": "Arcos de la Fra.",
+        "current": 880,
+        "trimestral": null,
+        "interanual": "25.7",
+        "history": [
+          {
+            "year": 2004,
+            "price": 850
+          },
+          {
+            "year": 2008,
+            "price": 1200
+          },
+          {
+            "year": 2014,
+            "price": 700
+          },
+          {
+            "year": 2026,
+            "price": 880
+          }
+        ],
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.0881874,
+          36.277054
+        ]
+      },
+      "properties": {
+        "municipio": "Conil de la Fra.",
+        "current": null,
+        "trimestral": null,
+        "interanual": null,
+        "history": null,
+        "notario_current": null,
+        "alquiler_m2": null,
+        "transacciones_q_actual": null,
+        "censo": null
+      }
+    }
+  ]
+}

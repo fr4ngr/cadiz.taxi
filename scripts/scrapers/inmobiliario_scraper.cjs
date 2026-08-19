@@ -6,7 +6,7 @@ const { scrapeCenso } = require('./censo_scraper.cjs');
 const { scrapeTransacciones } = require('./mivau_scraper.cjs');
 const { scrapeNotarios, scrapeSerpavi } = require('./serpavi_notarios_scraper.cjs');
 
-const TARGET_FILE = path.join(__dirname, '../../functions/api/inmobiliario_data.json');
+const TARGET_FILE = path.join(__dirname, '../../public/api/inmobiliario_data.json');
 const LOCAL_DATA = path.join(__dirname, '../data/inmobiliario_cadiz_oficial.json');
 const COORDS_DATA = path.join(__dirname, '../../scratch/coords.json');
 
