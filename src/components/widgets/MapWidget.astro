@@ -106,7 +106,7 @@
         <button class="map-chip desert-year-btn active" data-year="2100" onclick="window.changeDesertYear('2100')" style="padding: 4px 10px; font-size: 11px; background: #eab308; color: white; border-color: #eab308;">2100</button>
     </div>
 <!-- Contenedor UI de la InfoPill -->
-    <div id="map-ui-container" style="position: absolute; top: 86px; left: 50%; z-index: 1001; transform: translateX(-50%); width: calc(100% - 32px); max-width: 448px; display: flex; flex-direction: column; gap: 8px; transition: opacity 0.3s, transform 0.3s; opacity: 0; pointer-events: none;">
+    <div id="map-ui-container" style="position: absolute; top: 100px; left: 50%; z-index: 99999; transform: translateX(-50%); width: calc(100% - 32px); max-width: 448px; display: flex; flex-direction: column; gap: 8px; transition: opacity 0.3s, transform 0.3s; opacity: 0; pointer-events: none;">
         <!-- Píldora informativa de parada -->
         <div id="map-info-pill" style="background: color-mix(in srgb, var(--header-bg) 75%, transparent); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: 20px; padding: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); display: flex; flex-direction: column; gap: 14px; border: 1px solid var(--header-border);">
         
@@ -637,7 +637,7 @@
                               if (container) {
                                   let p = feature.properties;
                                   
-                                  const fallback = window.MapFilterRegistry['inmo']._allData?.metadata?.fallback_provincial;
+                                  alert('Click Inmobiliario en: ' + p.municipio + ' | ' + navigator.userAgent); const fallback = window.MapFilterRegistry['inmo']._allData?.metadata?.fallback_provincial;
                                   const isFallback = p.current === null;
 
                                   if (isFallback && fallback) {
