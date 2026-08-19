@@ -637,7 +637,7 @@
                               if (container) {
                                   let p = feature.properties;
                                   
-                                  const fallback = window.currentMapData?.metadata?.fallback_provincial;
+                                  const fallback = window.MapFilterRegistry['inmo']._allData?.metadata?.fallback_provincial;
                                   const isFallback = p.current === null;
 
                                   if (isFallback && fallback) {
@@ -678,7 +678,7 @@
                                   }).join(" L ");
                                   const areaPoints = "M 0," + height + " L " + linePoints + " L " + width + "," + height + " Z";
 
-                                  const euribor = window.currentMapData?.metadata?.euribor_series || [];
+                                  const euribor = window.MapFilterRegistry['inmo']._allData?.metadata?.euribor_series || [];
                                   const euriborPoints = euribor.length > 1 ? euribor.map((e, i) => {
                                       const x = (i / (euribor.length - 1)) * width;
                                       const y = height - ((e - -0.5) / 6.0) * (height - 10);
