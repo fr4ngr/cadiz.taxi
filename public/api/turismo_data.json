@@ -1,0 +1,846 @@
+{
+  "metadata": {
+    "last_updated": "2026-08-20T09:11:02.127Z",
+    "source": "API INE (Tempus 3) - Encuesta Ocupación Hotelera",
+    "notice": "Datos dinámicos obtenidos en tiempo real de los Puntos Turísticos oficiales."
+  },
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.7238891,
+          36.4618805
+        ]
+      },
+      "properties": {
+        "municipio": "Alcalá de los Gazules",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.1720759,
+          36.9044094
+        ]
+      },
+      "properties": {
+        "municipio": "Alcalá del Valle",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.6564009,
+          36.6566286
+        ]
+      },
+      "properties": {
+        "municipio": "Algar",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.4473991,
+          36.1311725
+        ]
+      },
+      "properties": {
+        "municipio": "Algeciras",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.4047755,
+          36.879693
+        ]
+      },
+      "properties": {
+        "municipio": "Algodonales",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.8122092,
+          36.7526913
+        ]
+      },
+      "properties": {
+        "municipio": "Arcos de la Frontera",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.9192837,
+          36.1923983
+        ]
+      },
+      "properties": {
+        "municipio": "Barbate",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.4933701,
+          36.1853519
+        ]
+      },
+      "properties": {
+        "municipio": "Los Barrios",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.421687,
+          36.7006416
+        ]
+      },
+      "properties": {
+        "municipio": "Benaocaz",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.7434863,
+          36.8157427
+        ]
+      },
+      "properties": {
+        "municipio": "Bornos",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.5067224,
+          36.757294
+        ]
+      },
+      "properties": {
+        "municipio": "El Bosque",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.2928976,
+          36.5297438
+        ]
+      },
+      "properties": {
+        "municipio": "Cádiz",
+        "is_hotspot": true,
+        "viajeros_esp": 19948,
+        "viajeros_ext": 11348,
+        "pernoctaciones_esp": 47372,
+        "pernoctaciones_ext": 29450,
+        "ocupacion": 66.88
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.4197113,
+          36.2867644
+        ]
+      },
+      "properties": {
+        "municipio": "Castellar de la Frontera",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.1460683,
+          36.4191096
+        ]
+      },
+      "properties": {
+        "municipio": "Chiclana de la Frontera",
+        "is_hotspot": true,
+        "viajeros_esp": 40678,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": 162523,
+        "pernoctaciones_ext": null,
+        "ocupacion": 75.58
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.4348221,
+          36.7355451
+        ]
+      },
+      "properties": {
+        "municipio": "Chipiona",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.0881874,
+          36.277054
+        ]
+      },
+      "properties": {
+        "municipio": "Conil de la Frontera",
+        "is_hotspot": true,
+        "viajeros_esp": 25370,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": 104959,
+        "pernoctaciones_ext": null,
+        "ocupacion": 67.35
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.8060565,
+          36.8716918
+        ]
+      },
+      "properties": {
+        "municipio": "Espera",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.3236056,
+          36.8551853
+        ]
+      },
+      "properties": {
+        "municipio": "El Gastor",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.366074,
+          36.7583892
+        ]
+      },
+      "properties": {
+        "municipio": "Grazalema",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.1377402,
+          36.6816936
+        ]
+      },
+      "properties": {
+        "municipio": "Jerez de la Frontera",
+        "is_hotspot": true,
+        "viajeros_esp": 24161,
+        "viajeros_ext": 9517,
+        "pernoctaciones_esp": 40519,
+        "pernoctaciones_ext": 22623,
+        "ocupacion": 52.78
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.4527477,
+          36.4327335
+        ]
+      },
+      "properties": {
+        "municipio": "Jimena de la Frontera",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.3482396,
+          36.1677899
+        ]
+      },
+      "properties": {
+        "municipio": "La Línea de la Concepción",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.9272725,
+          36.4576714
+        ]
+      },
+      "properties": {
+        "municipio": "Medina-Sidonia",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.2601194,
+          36.9348951
+        ]
+      },
+      "properties": {
+        "municipio": "Olvera",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.864702,
+          36.5229634
+        ]
+      },
+      "properties": {
+        "municipio": "Paterna de Rivera",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.5572276,
+          36.7879415
+        ]
+      },
+      "properties": {
+        "municipio": "Prado del Rey",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.2252702,
+          36.6004006
+        ]
+      },
+      "properties": {
+        "municipio": "El Puerto de Santa María",
+        "is_hotspot": true,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.1902161,
+          36.5286856
+        ]
+      },
+      "properties": {
+        "municipio": "Puerto Real",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.5420668,
+          36.9213346
+        ]
+      },
+      "properties": {
+        "municipio": "Puerto Serrano",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.3599595,
+          36.6228636
+        ]
+      },
+      "properties": {
+        "municipio": "Rota",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.1983492,
+          36.4646672
+        ]
+      },
+      "properties": {
+        "municipio": "San Fernando",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.7997029,
+          36.6062584
+        ]
+      },
+      "properties": {
+        "municipio": "San José del Valle",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.320496,
+          36.3411723
+        ]
+      },
+      "properties": {
+        "municipio": "San Martín del Tesorillo",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.3868293,
+          36.2100586
+        ]
+      },
+      "properties": {
+        "municipio": "San Roque",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.3534794,
+          36.7761393
+        ]
+      },
+      "properties": {
+        "municipio": "Sanlúcar de Barrameda",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.1787,
+          36.8621836
+        ]
+      },
+      "properties": {
+        "municipio": "Setenil de las Bodegas",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.6050213,
+          36.0129082
+        ]
+      },
+      "properties": {
+        "municipio": "Tarifa",
+        "is_hotspot": true,
+        "viajeros_esp": 17555,
+        "viajeros_ext": 7002,
+        "pernoctaciones_esp": 45704,
+        "pernoctaciones_ext": 24381,
+        "ocupacion": 66.28
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.2347672,
+          36.9156897
+        ]
+      },
+      "properties": {
+        "municipio": "Torre Alháquime",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.1767017,
+          36.8693137
+        ]
+      },
+      "properties": {
+        "municipio": "Trebujena",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.4457808,
+          36.6769347
+        ]
+      },
+      "properties": {
+        "municipio": "Ubrique",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.9670492,
+          36.251937
+        ]
+      },
+      "properties": {
+        "municipio": "Vejer de la Frontera",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.3860094,
+          36.6965773
+        ]
+      },
+      "properties": {
+        "municipio": "Villaluenga del Rosario",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.6434544,
+          36.8591822
+        ]
+      },
+      "properties": {
+        "municipio": "Villamartín",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.3905374,
+          36.8405841
+        ]
+      },
+      "properties": {
+        "municipio": "Zahara de la Sierra",
+        "is_hotspot": false,
+        "viajeros_esp": null,
+        "viajeros_ext": null,
+        "pernoctaciones_esp": null,
+        "pernoctaciones_ext": null,
+        "ocupacion": null
+      }
+    }
+  ]
+}
