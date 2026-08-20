@@ -667,6 +667,11 @@
                                 const p_esp = p.pernoctaciones_esp ? p.pernoctaciones_esp.valor : 0;
                                 const p_ext = p.pernoctaciones_ext ? p.pernoctaciones_ext.valor : 0;
                                 const total_p = p_esp + p_ext;
+                                
+                                window.turismoChartData = {
+                                    esp: p.viajeros_esp ? p.viajeros_esp.history : [],
+                                    ext: p.viajeros_ext ? p.viajeros_ext.history : []
+                                };
 
                                 const ocText = p.ocupacion ? p.ocupacion.valor.toFixed(1) + '%' : 'N/D';
                                 const estText = total_v > 0 ? (total_p / total_v).toFixed(1) + ' días' : 'N/D';
@@ -709,6 +714,21 @@
                                         </div>
                                     </div>
 
+                                    <div style="margin-bottom: 12px; border: 1px solid var(--header-border); border-radius: 6px; padding: 10px; background: var(--bg-color);">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                            <div style="font-size: 10px; font-weight: bold; text-transform: uppercase; color: var(--text-secondary);">Evolución de Viajeros</div>
+                                            <div style="display: flex; gap: 4px; font-size: 9px;">
+                                                <button class="turismo-btn" data-range="12" onclick="window.updateTurismoChart('12')" style="padding: 2px 6px; border-radius: 4px; border: 1px solid var(--header-border); cursor: pointer; background: #3b82f6; color: white;">1A</button>
+                                                <button class="turismo-btn" data-range="36" onclick="window.updateTurismoChart('36')" style="padding: 2px 6px; border-radius: 4px; border: 1px solid var(--header-border); cursor: pointer; background: var(--bg-color); color: var(--text-secondary);">3A</button>
+                                                <button class="turismo-btn" data-range="60" onclick="window.updateTurismoChart('60')" style="padding: 2px 6px; border-radius: 4px; border: 1px solid var(--header-border); cursor: pointer; background: var(--bg-color); color: var(--text-secondary);">5A</button>
+                                                <button class="turismo-btn" data-range="120" onclick="window.updateTurismoChart('120')" style="padding: 2px 6px; border-radius: 4px; border: 1px solid var(--header-border); cursor: pointer; background: var(--bg-color); color: var(--text-secondary);">10A</button>
+                                                <button class="turismo-btn" data-range="all" onclick="window.updateTurismoChart('all')" style="padding: 2px 6px; border-radius: 4px; border: 1px solid var(--header-border); cursor: pointer; background: var(--bg-color); color: var(--text-secondary);">Todo</button>
+                                            </div>
+                                        </div>
+                                        <div id="turismo-chart-container" style="display: flex; align-items: flex-end; gap: 1px; height: 50px; border-bottom: 1px solid var(--header-border);"></div>
+                                        <div id="turismo-chart-labels" style="display: flex; justify-content: space-between; font-size: 9px; margin-top: 4px;"></div>
+                                    </div>
+
                                     <div style="margin-bottom: 8px;">
                                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                                             <div style="background: rgba(107, 114, 128, 0.1); padding: 8px; border-radius: 6px; text-align: center;">
@@ -726,6 +746,7 @@
                                 `;
                                 
                                 document.getElementById('map-info-desc').innerHTML = html;
+                                setTimeout(() => window.updateTurismoChart('12'), 10);
                                 
                                 container.style.opacity = '1';
                                 container.style.pointerEvents = 'auto';
