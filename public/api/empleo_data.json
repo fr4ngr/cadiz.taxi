@@ -1,0 +1,1066 @@
+{
+  "metadata": {
+    "last_updated": "2026-08-20T08:56:43.083Z",
+    "source": "SEPE / IECA (Estructura de Integración)",
+    "notice": "Datos base para calibración visual. Pendiente conexión API oficial."
+  },
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.7238891,
+          36.4618805
+        ]
+      },
+      "properties": {
+        "municipio": "Alcalá de los Gazules",
+        "paro_total": 604,
+        "paro_hombres": 253,
+        "paro_mujeres": 350,
+        "variacion_mensual": 0.9,
+        "sectores": {
+          "agricultura": 30,
+          "industria": 48,
+          "construccion": 72,
+          "servicios": 392,
+          "sin_empleo_anterior": 60
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.1720759,
+          36.9044094
+        ]
+      },
+      "properties": {
+        "municipio": "Alcalá del Valle",
+        "paro_total": 344,
+        "paro_hombres": 144,
+        "paro_mujeres": 199,
+        "variacion_mensual": 0,
+        "sectores": {
+          "agricultura": 17,
+          "industria": 27,
+          "construccion": 41,
+          "servicios": 223,
+          "sin_empleo_anterior": 34
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.6564009,
+          36.6566286
+        ]
+      },
+      "properties": {
+        "municipio": "Algar",
+        "paro_total": 756,
+        "paro_hombres": 317,
+        "paro_mujeres": 438,
+        "variacion_mensual": 0.4,
+        "sectores": {
+          "agricultura": 37,
+          "industria": 60,
+          "construccion": 90,
+          "servicios": 491,
+          "sin_empleo_anterior": 75
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.4473991,
+          36.1311725
+        ]
+      },
+      "properties": {
+        "municipio": "Algeciras",
+        "paro_total": 12000,
+        "paro_hombres": 5040,
+        "paro_mujeres": 6959,
+        "variacion_mensual": 1.1,
+        "sectores": {
+          "agricultura": 600,
+          "industria": 960,
+          "construccion": 1440,
+          "servicios": 7800,
+          "sin_empleo_anterior": 1200
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.4047755,
+          36.879693
+        ]
+      },
+      "properties": {
+        "municipio": "Algodonales",
+        "paro_total": 759,
+        "paro_hombres": 318,
+        "paro_mujeres": 440,
+        "variacion_mensual": -1.1,
+        "sectores": {
+          "agricultura": 37,
+          "industria": 60,
+          "construccion": 91,
+          "servicios": 493,
+          "sin_empleo_anterior": 75
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.8122092,
+          36.7526913
+        ]
+      },
+      "properties": {
+        "municipio": "Arcos de la Frontera",
+        "paro_total": 4000,
+        "paro_hombres": 1680,
+        "paro_mujeres": 2320,
+        "variacion_mensual": 1.1,
+        "sectores": {
+          "agricultura": 200,
+          "industria": 320,
+          "construccion": 480,
+          "servicios": 2600,
+          "sin_empleo_anterior": 400
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.9192837,
+          36.1923983
+        ]
+      },
+      "properties": {
+        "municipio": "Barbate",
+        "paro_total": 2500,
+        "paro_hombres": 1050,
+        "paro_mujeres": 1450,
+        "variacion_mensual": 0.6,
+        "sectores": {
+          "agricultura": 125,
+          "industria": 200,
+          "construccion": 300,
+          "servicios": 1625,
+          "sin_empleo_anterior": 250
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.4933701,
+          36.1853519
+        ]
+      },
+      "properties": {
+        "municipio": "Los Barrios",
+        "paro_total": 2500,
+        "paro_hombres": 1050,
+        "paro_mujeres": 1450,
+        "variacion_mensual": 1.5,
+        "sectores": {
+          "agricultura": 125,
+          "industria": 200,
+          "construccion": 300,
+          "servicios": 1625,
+          "sin_empleo_anterior": 250
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.421687,
+          36.7006416
+        ]
+      },
+      "properties": {
+        "municipio": "Benaocaz",
+        "paro_total": 635,
+        "paro_hombres": 266,
+        "paro_mujeres": 368,
+        "variacion_mensual": -1.1,
+        "sectores": {
+          "agricultura": 31,
+          "industria": 50,
+          "construccion": 76,
+          "servicios": 412,
+          "sin_empleo_anterior": 63
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.7434863,
+          36.8157427
+        ]
+      },
+      "properties": {
+        "municipio": "Bornos",
+        "paro_total": 601,
+        "paro_hombres": 252,
+        "paro_mujeres": 348,
+        "variacion_mensual": -0.7,
+        "sectores": {
+          "agricultura": 30,
+          "industria": 48,
+          "construccion": 72,
+          "servicios": 390,
+          "sin_empleo_anterior": 60
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.5067224,
+          36.757294
+        ]
+      },
+      "properties": {
+        "municipio": "El Bosque",
+        "paro_total": 562,
+        "paro_hombres": 236,
+        "paro_mujeres": 325,
+        "variacion_mensual": -0.1,
+        "sectores": {
+          "agricultura": 28,
+          "industria": 44,
+          "construccion": 67,
+          "servicios": 365,
+          "sin_empleo_anterior": 56
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.2928976,
+          36.5297438
+        ]
+      },
+      "properties": {
+        "municipio": "Cádiz",
+        "paro_total": 12000,
+        "paro_hombres": 5040,
+        "paro_mujeres": 6959,
+        "variacion_mensual": -0.4,
+        "sectores": {
+          "agricultura": 600,
+          "industria": 960,
+          "construccion": 1440,
+          "servicios": 7800,
+          "sin_empleo_anterior": 1200
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.4197113,
+          36.2867644
+        ]
+      },
+      "properties": {
+        "municipio": "Castellar de la Frontera",
+        "paro_total": 761,
+        "paro_hombres": 319,
+        "paro_mujeres": 441,
+        "variacion_mensual": 0,
+        "sectores": {
+          "agricultura": 38,
+          "industria": 60,
+          "construccion": 91,
+          "servicios": 494,
+          "sin_empleo_anterior": 76
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.1460683,
+          36.4191096
+        ]
+      },
+      "properties": {
+        "municipio": "Chiclana de la Frontera",
+        "paro_total": 9000,
+        "paro_hombres": 3780,
+        "paro_mujeres": 5220,
+        "variacion_mensual": 0,
+        "sectores": {
+          "agricultura": 450,
+          "industria": 720,
+          "construccion": 1080,
+          "servicios": 5850,
+          "sin_empleo_anterior": 900
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.4348221,
+          36.7355451
+        ]
+      },
+      "properties": {
+        "municipio": "Chipiona",
+        "paro_total": 344,
+        "paro_hombres": 144,
+        "paro_mujeres": 199,
+        "variacion_mensual": -0.6,
+        "sectores": {
+          "agricultura": 17,
+          "industria": 27,
+          "construccion": 41,
+          "servicios": 223,
+          "sin_empleo_anterior": 34
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.0881874,
+          36.277054
+        ]
+      },
+      "properties": {
+        "municipio": "Conil de la Frontera",
+        "paro_total": 2500,
+        "paro_hombres": 1050,
+        "paro_mujeres": 1450,
+        "variacion_mensual": 2,
+        "sectores": {
+          "agricultura": 125,
+          "industria": 200,
+          "construccion": 300,
+          "servicios": 1625,
+          "sin_empleo_anterior": 250
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.8060565,
+          36.8716918
+        ]
+      },
+      "properties": {
+        "municipio": "Espera",
+        "paro_total": 442,
+        "paro_hombres": 185,
+        "paro_mujeres": 256,
+        "variacion_mensual": 1.2,
+        "sectores": {
+          "agricultura": 22,
+          "industria": 35,
+          "construccion": 53,
+          "servicios": 287,
+          "sin_empleo_anterior": 44
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.3236056,
+          36.8551853
+        ]
+      },
+      "properties": {
+        "municipio": "El Gastor",
+        "paro_total": 582,
+        "paro_hombres": 244,
+        "paro_mujeres": 337,
+        "variacion_mensual": -1.2,
+        "sectores": {
+          "agricultura": 29,
+          "industria": 46,
+          "construccion": 69,
+          "servicios": 378,
+          "sin_empleo_anterior": 58
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.366074,
+          36.7583892
+        ]
+      },
+      "properties": {
+        "municipio": "Grazalema",
+        "paro_total": 315,
+        "paro_hombres": 132,
+        "paro_mujeres": 182,
+        "variacion_mensual": -2,
+        "sectores": {
+          "agricultura": 15,
+          "industria": 25,
+          "construccion": 37,
+          "servicios": 204,
+          "sin_empleo_anterior": 31
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.1377402,
+          36.6816936
+        ]
+      },
+      "properties": {
+        "municipio": "Jerez de la Frontera",
+        "paro_total": 23000,
+        "paro_hombres": 9660,
+        "paro_mujeres": 13339,
+        "variacion_mensual": 1.2,
+        "sectores": {
+          "agricultura": 1150,
+          "industria": 1840,
+          "construccion": 2760,
+          "servicios": 14950,
+          "sin_empleo_anterior": 2300
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.4527477,
+          36.4327335
+        ]
+      },
+      "properties": {
+        "municipio": "Jimena de la Frontera",
+        "paro_total": 671,
+        "paro_hombres": 281,
+        "paro_mujeres": 389,
+        "variacion_mensual": -0.1,
+        "sectores": {
+          "agricultura": 33,
+          "industria": 53,
+          "construccion": 80,
+          "servicios": 436,
+          "sin_empleo_anterior": 67
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.3482396,
+          36.1677899
+        ]
+      },
+      "properties": {
+        "municipio": "La Línea de la Concepción",
+        "paro_total": 8000,
+        "paro_hombres": 3360,
+        "paro_mujeres": 4640,
+        "variacion_mensual": 0.7,
+        "sectores": {
+          "agricultura": 400,
+          "industria": 640,
+          "construccion": 960,
+          "servicios": 5200,
+          "sin_empleo_anterior": 800
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.9272725,
+          36.4576714
+        ]
+      },
+      "properties": {
+        "municipio": "Medina-Sidonia",
+        "paro_total": 322,
+        "paro_hombres": 135,
+        "paro_mujeres": 186,
+        "variacion_mensual": 1.8,
+        "sectores": {
+          "agricultura": 16,
+          "industria": 25,
+          "construccion": 38,
+          "servicios": 209,
+          "sin_empleo_anterior": 32
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.2601194,
+          36.9348951
+        ]
+      },
+      "properties": {
+        "municipio": "Olvera",
+        "paro_total": 638,
+        "paro_hombres": 267,
+        "paro_mujeres": 370,
+        "variacion_mensual": 0.2,
+        "sectores": {
+          "agricultura": 31,
+          "industria": 51,
+          "construccion": 76,
+          "servicios": 414,
+          "sin_empleo_anterior": 63
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.864702,
+          36.5229634
+        ]
+      },
+      "properties": {
+        "municipio": "Paterna de Rivera",
+        "paro_total": 376,
+        "paro_hombres": 157,
+        "paro_mujeres": 218,
+        "variacion_mensual": 0.2,
+        "sectores": {
+          "agricultura": 18,
+          "industria": 30,
+          "construccion": 45,
+          "servicios": 244,
+          "sin_empleo_anterior": 37
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.5572276,
+          36.7879415
+        ]
+      },
+      "properties": {
+        "municipio": "Prado del Rey",
+        "paro_total": 353,
+        "paro_hombres": 148,
+        "paro_mujeres": 204,
+        "variacion_mensual": 1.2,
+        "sectores": {
+          "agricultura": 17,
+          "industria": 28,
+          "construccion": 42,
+          "servicios": 229,
+          "sin_empleo_anterior": 35
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.2252702,
+          36.6004006
+        ]
+      },
+      "properties": {
+        "municipio": "El Puerto de Santa María",
+        "paro_total": 9000,
+        "paro_hombres": 3780,
+        "paro_mujeres": 5220,
+        "variacion_mensual": -0.1,
+        "sectores": {
+          "agricultura": 450,
+          "industria": 720,
+          "construccion": 1080,
+          "servicios": 5850,
+          "sin_empleo_anterior": 900
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.1902161,
+          36.5286856
+        ]
+      },
+      "properties": {
+        "municipio": "Puerto Real",
+        "paro_total": 4000,
+        "paro_hombres": 1680,
+        "paro_mujeres": 2320,
+        "variacion_mensual": 0.2,
+        "sectores": {
+          "agricultura": 200,
+          "industria": 320,
+          "construccion": 480,
+          "servicios": 2600,
+          "sin_empleo_anterior": 400
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.5420668,
+          36.9213346
+        ]
+      },
+      "properties": {
+        "municipio": "Puerto Serrano",
+        "paro_total": 758,
+        "paro_hombres": 318,
+        "paro_mujeres": 439,
+        "variacion_mensual": 1.8,
+        "sectores": {
+          "agricultura": 37,
+          "industria": 60,
+          "construccion": 90,
+          "servicios": 492,
+          "sin_empleo_anterior": 75
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.3599595,
+          36.6228636
+        ]
+      },
+      "properties": {
+        "municipio": "Rota",
+        "paro_total": 2500,
+        "paro_hombres": 1050,
+        "paro_mujeres": 1450,
+        "variacion_mensual": -2,
+        "sectores": {
+          "agricultura": 125,
+          "industria": 200,
+          "construccion": 300,
+          "servicios": 1625,
+          "sin_empleo_anterior": 250
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.1983492,
+          36.4646672
+        ]
+      },
+      "properties": {
+        "municipio": "San Fernando",
+        "paro_total": 9000,
+        "paro_hombres": 3780,
+        "paro_mujeres": 5220,
+        "variacion_mensual": -1.6,
+        "sectores": {
+          "agricultura": 450,
+          "industria": 720,
+          "construccion": 1080,
+          "servicios": 5850,
+          "sin_empleo_anterior": 900
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.7997029,
+          36.6062584
+        ]
+      },
+      "properties": {
+        "municipio": "San José del Valle",
+        "paro_total": 472,
+        "paro_hombres": 198,
+        "paro_mujeres": 273,
+        "variacion_mensual": 0.5,
+        "sectores": {
+          "agricultura": 23,
+          "industria": 37,
+          "construccion": 56,
+          "servicios": 306,
+          "sin_empleo_anterior": 47
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.320496,
+          36.3411723
+        ]
+      },
+      "properties": {
+        "municipio": "San Martín del Tesorillo",
+        "paro_total": 433,
+        "paro_hombres": 181,
+        "paro_mujeres": 251,
+        "variacion_mensual": -1.4,
+        "sectores": {
+          "agricultura": 21,
+          "industria": 34,
+          "construccion": 51,
+          "servicios": 281,
+          "sin_empleo_anterior": 43
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.3868293,
+          36.2100586
+        ]
+      },
+      "properties": {
+        "municipio": "San Roque",
+        "paro_total": 4000,
+        "paro_hombres": 1680,
+        "paro_mujeres": 2320,
+        "variacion_mensual": 1.6,
+        "sectores": {
+          "agricultura": 200,
+          "industria": 320,
+          "construccion": 480,
+          "servicios": 2600,
+          "sin_empleo_anterior": 400
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.3534794,
+          36.7761393
+        ]
+      },
+      "properties": {
+        "municipio": "Sanlúcar de Barrameda",
+        "paro_total": 8000,
+        "paro_hombres": 3360,
+        "paro_mujeres": 4640,
+        "variacion_mensual": -1.1,
+        "sectores": {
+          "agricultura": 400,
+          "industria": 640,
+          "construccion": 960,
+          "servicios": 5200,
+          "sin_empleo_anterior": 800
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.1787,
+          36.8621836
+        ]
+      },
+      "properties": {
+        "municipio": "Setenil de las Bodegas",
+        "paro_total": 719,
+        "paro_hombres": 301,
+        "paro_mujeres": 417,
+        "variacion_mensual": 1,
+        "sectores": {
+          "agricultura": 35,
+          "industria": 57,
+          "construccion": 86,
+          "servicios": 467,
+          "sin_empleo_anterior": 71
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.6050213,
+          36.0129082
+        ]
+      },
+      "properties": {
+        "municipio": "Tarifa",
+        "paro_total": 2500,
+        "paro_hombres": 1050,
+        "paro_mujeres": 1450,
+        "variacion_mensual": -1.2,
+        "sectores": {
+          "agricultura": 125,
+          "industria": 200,
+          "construccion": 300,
+          "servicios": 1625,
+          "sin_empleo_anterior": 250
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.2347672,
+          36.9156897
+        ]
+      },
+      "properties": {
+        "municipio": "Torre Alháquime",
+        "paro_total": 628,
+        "paro_hombres": 263,
+        "paro_mujeres": 364,
+        "variacion_mensual": -0.9,
+        "sectores": {
+          "agricultura": 31,
+          "industria": 50,
+          "construccion": 75,
+          "servicios": 408,
+          "sin_empleo_anterior": 62
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.1767017,
+          36.8693137
+        ]
+      },
+      "properties": {
+        "municipio": "Trebujena",
+        "paro_total": 637,
+        "paro_hombres": 267,
+        "paro_mujeres": 369,
+        "variacion_mensual": 1.6,
+        "sectores": {
+          "agricultura": 31,
+          "industria": 50,
+          "construccion": 76,
+          "servicios": 414,
+          "sin_empleo_anterior": 63
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.4457808,
+          36.6769347
+        ]
+      },
+      "properties": {
+        "municipio": "Ubrique",
+        "paro_total": 414,
+        "paro_hombres": 173,
+        "paro_mujeres": 240,
+        "variacion_mensual": -0.1,
+        "sectores": {
+          "agricultura": 20,
+          "industria": 33,
+          "construccion": 49,
+          "servicios": 269,
+          "sin_empleo_anterior": 41
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.9670492,
+          36.251937
+        ]
+      },
+      "properties": {
+        "municipio": "Vejer de la Frontera",
+        "paro_total": 389,
+        "paro_hombres": 163,
+        "paro_mujeres": 225,
+        "variacion_mensual": 1.5,
+        "sectores": {
+          "agricultura": 19,
+          "industria": 31,
+          "construccion": 46,
+          "servicios": 252,
+          "sin_empleo_anterior": 38
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.3860094,
+          36.6965773
+        ]
+      },
+      "properties": {
+        "municipio": "Villaluenga del Rosario",
+        "paro_total": 374,
+        "paro_hombres": 157,
+        "paro_mujeres": 216,
+        "variacion_mensual": 2,
+        "sectores": {
+          "agricultura": 18,
+          "industria": 29,
+          "construccion": 44,
+          "servicios": 243,
+          "sin_empleo_anterior": 37
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.6434544,
+          36.8591822
+        ]
+      },
+      "properties": {
+        "municipio": "Villamartín",
+        "paro_total": 484,
+        "paro_hombres": 203,
+        "paro_mujeres": 280,
+        "variacion_mensual": -1.1,
+        "sectores": {
+          "agricultura": 24,
+          "industria": 38,
+          "construccion": 58,
+          "servicios": 314,
+          "sin_empleo_anterior": 48
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.3905374,
+          36.8405841
+        ]
+      },
+      "properties": {
+        "municipio": "Zahara de la Sierra",
+        "paro_total": 425,
+        "paro_hombres": 178,
+        "paro_mujeres": 246,
+        "variacion_mensual": -1.9,
+        "sectores": {
+          "agricultura": 21,
+          "industria": 34,
+          "construccion": 51,
+          "servicios": 276,
+          "sin_empleo_anterior": 42
+        }
+      }
+    }
+  ]
+}
