@@ -1,8 +1,8 @@
 {
   "metadata": {
-    "last_updated": "2026-08-20T09:11:02.127Z",
-    "source": "API INE (Tempus 3) - Encuesta Ocupación Hotelera",
-    "notice": "Datos dinámicos obtenidos en tiempo real de los Puntos Turísticos oficiales."
+    "last_updated": "2026-08-20T09:17:35.881Z",
+    "source": "API INE (Tempus 3)",
+    "period": "Junio 2025"
   },
   "type": "FeatureCollection",
   "features": [
@@ -22,7 +22,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -41,7 +42,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -60,7 +62,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -79,7 +82,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -98,7 +102,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -117,7 +122,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -136,7 +142,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -155,7 +162,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -174,7 +182,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -193,7 +202,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -212,7 +222,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -227,11 +238,42 @@
       "properties": {
         "municipio": "Cádiz",
         "is_hotspot": true,
-        "viajeros_esp": 19948,
-        "viajeros_ext": 11348,
-        "pernoctaciones_esp": 47372,
-        "pernoctaciones_ext": 29450,
-        "ocupacion": 66.88
+        "viajeros_esp": {
+          "valor": 20862,
+          "anyo": 2025,
+          "mes": 6,
+          "mes_nombre": "Junio",
+          "variacion_interanual": 4.581912973731702
+        },
+        "viajeros_ext": {
+          "valor": 12305,
+          "anyo": 2025,
+          "mes": 6,
+          "mes_nombre": "Junio",
+          "variacion_interanual": 8.433204088826225
+        },
+        "pernoctaciones_esp": {
+          "valor": 46555,
+          "anyo": 2025,
+          "mes": 6,
+          "mes_nombre": "Junio",
+          "variacion_interanual": -1.7246474710799629
+        },
+        "pernoctaciones_ext": {
+          "valor": 29791,
+          "anyo": 2025,
+          "mes": 6,
+          "mes_nombre": "Junio",
+          "variacion_interanual": 1.1578947368421053
+        },
+        "ocupacion": {
+          "valor": 67.03,
+          "anyo": 2025,
+          "mes": 6,
+          "mes_nombre": "Junio",
+          "variacion_interanual": 0.22428229665072622
+        },
+        "periodo": "Junio 2025"
       }
     },
     {
@@ -250,7 +292,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -265,11 +308,30 @@
       "properties": {
         "municipio": "Chiclana de la Frontera",
         "is_hotspot": true,
-        "viajeros_esp": 40678,
+        "viajeros_esp": {
+          "valor": 37579,
+          "anyo": 2025,
+          "mes": 6,
+          "mes_nombre": "Junio",
+          "variacion_interanual": -7.618368651359457
+        },
         "viajeros_ext": null,
-        "pernoctaciones_esp": 162523,
+        "pernoctaciones_esp": {
+          "valor": 142231,
+          "anyo": 2025,
+          "mes": 6,
+          "mes_nombre": "Junio",
+          "variacion_interanual": -12.485617420303589
+        },
         "pernoctaciones_ext": null,
-        "ocupacion": 75.58
+        "ocupacion": {
+          "valor": 76.48,
+          "anyo": 2025,
+          "mes": 6,
+          "mes_nombre": "Junio",
+          "variacion_interanual": 1.1907912146070465
+        },
+        "periodo": "Junio 2025"
       }
     },
     {
@@ -288,7 +350,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -303,11 +366,30 @@
       "properties": {
         "municipio": "Conil de la Frontera",
         "is_hotspot": true,
-        "viajeros_esp": 25370,
+        "viajeros_esp": {
+          "valor": 28106,
+          "anyo": 2025,
+          "mes": 6,
+          "mes_nombre": "Junio",
+          "variacion_interanual": 10.78439101300749
+        },
         "viajeros_ext": null,
-        "pernoctaciones_esp": 104959,
+        "pernoctaciones_esp": {
+          "valor": 83421,
+          "anyo": 2025,
+          "mes": 6,
+          "mes_nombre": "Junio",
+          "variacion_interanual": -20.520393677531228
+        },
         "pernoctaciones_ext": null,
-        "ocupacion": 67.35
+        "ocupacion": {
+          "valor": 68.5,
+          "anyo": 2025,
+          "mes": 6,
+          "mes_nombre": "Junio",
+          "variacion_interanual": 1.707498144023765
+        },
+        "periodo": "Junio 2025"
       }
     },
     {
@@ -326,7 +408,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -345,7 +428,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -364,7 +448,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -379,11 +464,42 @@
       "properties": {
         "municipio": "Jerez de la Frontera",
         "is_hotspot": true,
-        "viajeros_esp": 24161,
-        "viajeros_ext": 9517,
-        "pernoctaciones_esp": 40519,
-        "pernoctaciones_ext": 22623,
-        "ocupacion": 52.78
+        "viajeros_esp": {
+          "valor": 18935,
+          "anyo": 2025,
+          "mes": 6,
+          "mes_nombre": "Junio",
+          "variacion_interanual": -21.629899424692685
+        },
+        "viajeros_ext": {
+          "valor": 7077,
+          "anyo": 2025,
+          "mes": 6,
+          "mes_nombre": "Junio",
+          "variacion_interanual": -25.63833140695597
+        },
+        "pernoctaciones_esp": {
+          "valor": 40049,
+          "anyo": 2025,
+          "mes": 6,
+          "mes_nombre": "Junio",
+          "variacion_interanual": -1.1599496532490932
+        },
+        "pernoctaciones_ext": {
+          "valor": 20667,
+          "anyo": 2025,
+          "mes": 6,
+          "mes_nombre": "Junio",
+          "variacion_interanual": -8.64606816072139
+        },
+        "ocupacion": {
+          "valor": 50,
+          "anyo": 2025,
+          "mes": 6,
+          "mes_nombre": "Junio",
+          "variacion_interanual": -5.267146646456993
+        },
+        "periodo": "Junio 2025"
       }
     },
     {
@@ -402,7 +518,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -421,7 +538,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -440,7 +558,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -459,7 +578,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -478,7 +598,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -497,7 +618,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -516,7 +638,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -535,7 +658,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -554,7 +678,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -573,7 +698,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -592,7 +718,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -611,7 +738,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -630,7 +758,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -649,7 +778,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -668,7 +798,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -687,7 +818,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -702,11 +834,42 @@
       "properties": {
         "municipio": "Tarifa",
         "is_hotspot": true,
-        "viajeros_esp": 17555,
-        "viajeros_ext": 7002,
-        "pernoctaciones_esp": 45704,
-        "pernoctaciones_ext": 24381,
-        "ocupacion": 66.28
+        "viajeros_esp": {
+          "valor": 16428,
+          "anyo": 2025,
+          "mes": 6,
+          "mes_nombre": "Junio",
+          "variacion_interanual": -6.419823412133295
+        },
+        "viajeros_ext": {
+          "valor": 8595,
+          "anyo": 2025,
+          "mes": 6,
+          "mes_nombre": "Junio",
+          "variacion_interanual": 22.750642673521853
+        },
+        "pernoctaciones_esp": {
+          "valor": 41513,
+          "anyo": 2025,
+          "mes": 6,
+          "mes_nombre": "Junio",
+          "variacion_interanual": -9.169875722037458
+        },
+        "pernoctaciones_ext": {
+          "valor": 23245,
+          "anyo": 2025,
+          "mes": 6,
+          "mes_nombre": "Junio",
+          "variacion_interanual": -4.6593658996759775
+        },
+        "ocupacion": {
+          "valor": 61.12,
+          "anyo": 2025,
+          "mes": 6,
+          "mes_nombre": "Junio",
+          "variacion_interanual": -7.785153892576951
+        },
+        "periodo": "Junio 2025"
       }
     },
     {
@@ -725,7 +888,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -744,7 +908,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -763,7 +928,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -782,7 +948,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -801,7 +968,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -820,7 +988,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     },
     {
@@ -839,7 +1008,8 @@
         "viajeros_ext": null,
         "pernoctaciones_esp": null,
         "pernoctaciones_ext": null,
-        "ocupacion": null
+        "ocupacion": null,
+        "periodo": null
       }
     }
   ]

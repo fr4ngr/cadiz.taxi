@@ -5,19 +5,35 @@ const axios = require('axios');
 const TARGET_FILE = path.join(__dirname, '../../public/api/turismo_data.json');
 const COORDS_DATA = path.join(__dirname, '../../scratch/coords.json');
 
-// Tourist hotspots in Cádiz province monitored by INE
 const PUNTOS_TURISTICOS = [
     'Cádiz', 'Jerez de la Frontera', 'Chiclana de la Frontera', 
     'Conil de la Frontera', 'El Puerto de Santa María', 'Tarifa', 'Zahara'
 ];
 
+const MESES = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+
 async function fetchIneData(seriesId) {
     if (!seriesId) return null;
     try {
-        const url = `https://servicios.ine.es/wstempus/js/ES/DATOS_SERIE/${seriesId}?nult=1`;
+        // Fetch 13 months to get current and YoY comparison
+        const url = `https://servicios.ine.es/wstempus/js/ES/DATOS_SERIE/${seriesId}?nult=13`;
         const res = await axios.get(url);
         if (res.data && res.data.Data && res.data.Data.length > 0) {
-            return res.data.Data[0].Valor;
+            const current = res.data.Data[0]; // Latest
+            const previousYear = res.data.Data.length === 13 ? res.data.Data[12] : null;
+            
+            let variacion = null;
+            if (previousYear && previousYear.Valor > 0) {
+                variacion = ((current.Valor - previousYear.Valor) / previousYear.Valor) * 100;
+            }
+
+            return {
+                valor: current.Valor,
+                anyo: current.Anyo,
+                mes: current.FK_Periodo, // 1 to 12
+                mes_nombre: MESES[current.FK_Periodo - 1],
+                variacion_interanual: variacion
+            };
         }
     } catch(e) {
         console.error(`Error fetching series ${seriesId}: ${e.message}`);
@@ -37,7 +53,6 @@ async function runScraper() {
     const features = [];
     const municipalities = Object.keys(coordsJson).filter(k => !['Cádiz Capital', 'El Puerto de Sta. Mª', 'Sanlúcar de Bdra.', 'Arcos de la Fra.', 'Conil de la Fra.', 'La Línea'].includes(k));
 
-    // First, let's get all series for Table 75197 (Viajeros y pernoctaciones)
     let seriesViajeros = [];
     let seriesOcupacion = [];
     
@@ -47,11 +62,11 @@ async function runScraper() {
         const res2 = await axios.get('https://servicios.ine.es/wstempus/js/ES/SERIES_TABLA/75198');
         seriesOcupacion = res2.data;
     } catch(e) {
-        console.error("No se pudo conectar a la API del INE para obtener metadatos.");
+        console.error("No se pudo conectar a la API del INE.");
         return;
     }
 
-    console.log(`[Pipeline] Procesando ${municipalities.length} municipios...`);
+    let globalPeriodo = "Dato reciente";
 
     for (const muni of municipalities) {
         const isHotspot = PUNTOS_TURISTICOS.includes(muni);
@@ -62,21 +77,17 @@ async function runScraper() {
             viajeros_ext: null,
             pernoctaciones_esp: null,
             pernoctaciones_ext: null,
-            ocupacion: null
+            ocupacion: null,
+            periodo: null
         };
 
         if (isHotspot) {
-            console.log(`Descargando datos en tiempo real para: ${muni}...`);
-            
-            // Find series IDs dynamically matching the town name
-            // Note: INE naming can be tricky, 'Cádiz' vs '11012-Cádiz' vs 'Jerez De La Frontera'
             const searchName = muni === 'Jerez de la Frontera' ? 'Jerez De La Frontera' : muni;
             
             const v_esp = seriesViajeros.find(s => s.Nombre.includes(searchName) && s.Nombre.includes('Viajero') && s.Nombre.includes('España'));
             const v_ext = seriesViajeros.find(s => s.Nombre.includes(searchName) && s.Nombre.includes('Viajero') && s.Nombre.includes('extranjero'));
             const p_esp = seriesViajeros.find(s => s.Nombre.includes(searchName) && s.Nombre.includes('Pernoctaciones') && s.Nombre.includes('España'));
             const p_ext = seriesViajeros.find(s => s.Nombre.includes(searchName) && s.Nombre.includes('Pernoctaciones') && s.Nombre.includes('extranjero'));
-            
             const oc = seriesOcupacion.find(s => s.Nombre.includes(searchName) && s.Nombre.includes('ocupación por plazas') && !s.Nombre.includes('fin de semana'));
 
             if (v_esp) props.viajeros_esp = await fetchIneData(v_esp.COD);
@@ -85,7 +96,11 @@ async function runScraper() {
             if (p_ext) props.pernoctaciones_ext = await fetchIneData(p_ext.COD);
             if (oc) props.ocupacion = await fetchIneData(oc.COD);
             
-            // Wait slightly to not hammer the API
+            if (props.ocupacion) {
+                props.periodo = `${props.ocupacion.mes_nombre} ${props.ocupacion.anyo}`;
+                globalPeriodo = props.periodo;
+            }
+
             await new Promise(r => setTimeout(r, 200));
         }
 
@@ -99,15 +114,14 @@ async function runScraper() {
     const db = {
         metadata: {
             last_updated: new Date().toISOString(),
-            source: "API INE (Tempus 3) - Encuesta Ocupación Hotelera",
-            notice: "Datos dinámicos obtenidos en tiempo real de los Puntos Turísticos oficiales."
+            source: "API INE (Tempus 3)",
+            period: globalPeriodo
         },
         type: "FeatureCollection",
         features: features
     };
 
     fs.writeFileSync(TARGET_FILE, JSON.stringify(db, null, 2));
-    console.log(`✅ Pipeline de Turismo finalizado: ${TARGET_FILE}`);
 }
 
 runScraper();

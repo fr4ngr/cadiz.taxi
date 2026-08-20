@@ -627,11 +627,11 @@
                         }
                         
                         // Hotspots: color based on occupancy, size based on total travelers
-                        const totalViajeros = (p.viajeros_esp || 0) + (p.viajeros_ext || 0);
+                        const totalViajeros = (p.viajeros_esp ? p.viajeros_esp.valor : 0) + (p.viajeros_ext ? p.viajeros_ext.valor : 0);
                         
                         let col = '#fcd34d'; // Yellow-ish
-                        if (p.ocupacion > 60) col = '#fb923c'; // Orange
-                        if (p.ocupacion > 80) col = '#ef4444'; // Red
+                        if (p.ocupacion && p.ocupacion.valor > 60) col = '#fb923c'; // Orange
+                        if (p.ocupacion && p.ocupacion.valor > 80) col = '#ef4444'; // Red
 
                         let rad = 6;
                         if (totalViajeros > 10000) rad = 10;
@@ -660,16 +660,27 @@
                                 const actionsDiv = document.getElementById('map-pill-actions');
                                 if (actionsDiv) actionsDiv.style.display = 'none';
 
-                                const v_esp = p.viajeros_esp || 0;
-                                const v_ext = p.viajeros_ext || 0;
+                                const v_esp = p.viajeros_esp ? p.viajeros_esp.valor : 0;
+                                const v_ext = p.viajeros_ext ? p.viajeros_ext.valor : 0;
                                 const total_v = v_esp + v_ext;
                                 
-                                const p_esp = p.pernoctaciones_esp || 0;
-                                const p_ext = p.pernoctaciones_ext || 0;
+                                const p_esp = p.pernoctaciones_esp ? p.pernoctaciones_esp.valor : 0;
+                                const p_ext = p.pernoctaciones_ext ? p.pernoctaciones_ext.valor : 0;
                                 const total_p = p_esp + p_ext;
 
-                                const ocText = p.ocupacion ? p.ocupacion.toFixed(1) + '%' : 'N/D';
+                                const ocText = p.ocupacion ? p.ocupacion.valor.toFixed(1) + '%' : 'N/D';
                                 const estText = total_v > 0 ? (total_p / total_v).toFixed(1) + ' días' : 'N/D';
+                                
+                                const periodoText = p.periodo || 'Este mes';
+                                
+                                let varHtml = '';
+                                if (p.ocupacion && p.ocupacion.variacion_interanual !== null) {
+                                    const v = p.ocupacion.variacion_interanual;
+                                    const color = v > 0 ? '#10b981' : '#ef4444';
+                                    const icon = v > 0 ? '↗' : '↘';
+                                    const sign = v > 0 ? '+' : '';
+                                    varHtml = `<div style="font-size: 10px; color: ${color}; margin-top: 2px;">${icon} ${sign}${v.toFixed(1)}% vs año ant.</div>`;
+                                }
 
                                 const html = `
                                     <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.5;">
@@ -680,7 +691,7 @@
                                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                             <div>
                                                 <div style="font-size: 12px; color: #f59e0b; font-weight: bold; text-transform: uppercase;">Viajeros Alojados</div>
-                                                <div style="font-size: 10px; color: var(--text-secondary); margin-top: 2px;">Este mes</div>
+                                                <div style="font-size: 10px; color: var(--text-secondary); margin-top: 2px; text-transform: capitalize;">${periodoText}</div>${varHtml}
                                             </div>
                                             <div style="font-size: 24px; font-weight: bold; color: var(--text-primary);">${new Intl.NumberFormat('es-ES').format(total_v)}</div>
                                         </div>
