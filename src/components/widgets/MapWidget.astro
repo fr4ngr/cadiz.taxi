@@ -609,7 +609,7 @@
                 type: 'geojson',
                 color: '#f59e0b',
                 source: 'API INE (Tempus 3)',
-                url: '/api/turismo_data.json',
+                url: '/api/turismo_data.json?t=' + Date.now(),
                 options: {
                     pointToLayer: (feature, latlng) => {
                         const p = feature.properties;
