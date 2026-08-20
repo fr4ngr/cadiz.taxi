@@ -2829,4 +2829,72 @@
         };
 
     }
+
+            window.turismoChartData = null;
+            
+            window.updateTurismoChart = function(months) {
+                if (!window.turismoChartData) return;
+                
+                const container = document.getElementById('turismo-chart-container');
+                const labelsEl = document.getElementById('turismo-chart-labels');
+                if (!container || !labelsEl) return;
+                
+                // Update active button state
+                document.querySelectorAll('.turismo-btn').forEach(btn => {
+                    btn.style.background = btn.dataset.range == months ? '#3b82f6' : 'var(--bg-color)';
+                    btn.style.color = btn.dataset.range == months ? 'white' : 'var(--text-secondary)';
+                });
+                
+                let dataEsp = window.turismoChartData.esp || [];
+                let dataExt = window.turismoChartData.ext || [];
+                
+                let totalLen = Math.min(dataEsp.length, dataExt.length);
+                if (totalLen === 0 && dataEsp.length > 0) totalLen = dataEsp.length;
+                if (totalLen === 0 && dataExt.length > 0) totalLen = dataExt.length;
+                
+                const sliceCount = months === 'all' ? totalLen : parseInt(months);
+                
+                const sliceEsp = dataEsp.slice(-sliceCount);
+                const sliceExt = dataExt.slice(-sliceCount);
+                
+                // Calculate max for scale
+                let max = 0;
+                let combinedData = [];
+                for(let i = 0; i < sliceCount; i++) {
+                    const e = sliceEsp[i] ? sliceEsp[i].val : 0;
+                    const x = sliceExt[i] ? sliceExt[i].val : 0;
+                    const total = e + x;
+                    if (total > max) max = total;
+                    
+                    combinedData.push({
+                        e, x, total,
+                        label: sliceEsp[i] ? sliceEsp[i].label : (sliceExt[i] ? sliceExt[i].label : '')
+                    });
+                }
+                
+                if (max === 0) max = 1;
+                
+                let html = '';
+                combinedData.forEach(d => {
+                    const pEsp = (d.e / max) * 100;
+                    const pExt = (d.x / max) * 100;
+                    const title = `${d.label}: ${new Intl.NumberFormat('es-ES').format(d.total)} viajeros`;
+                    
+                    html += `
+                        <div style="flex: 1; display: flex; flex-direction: column; justify-content: flex-end; min-width: 1px;" title="${title}">
+                            <div style="width: 100%; background: #3b82f6; height: ${pExt}%; transition: height 0.3s;" title="Extranjeros"></div>
+                            <div style="width: 100%; background: #10b981; height: ${pEsp}%; border-radius: 2px 2px 0 0; transition: height 0.3s;" title="Españoles"></div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+                
+                // Labels
+                if (combinedData.length > 0) {
+                    const firstL = combinedData[0].label;
+                    const lastL = combinedData[combinedData.length-1].label;
+                    labelsEl.innerHTML = `<span style="color: var(--text-secondary);">${firstL}</span><span style="color: var(--text-primary); font-weight: bold;">${lastL}</span>`;
+                }
+            };
+
 </script>
