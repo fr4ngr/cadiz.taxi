@@ -24,7 +24,7 @@ jobs:
       - name: Run Data Scrapers
         run: |
           node scripts/scrapers/inmobiliario_scraper.cjs
-          node scripts/scrapers/empleo_scraper.cjs
+          
 
       - name: Commit and Push new data
         uses: stefanzweifel/git-auto-commit-action@v5

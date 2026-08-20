@@ -233,10 +233,6 @@
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
                     <span class="label">Vivienda</span>
                 </button>
-                <button class="radial-pill-item" onclick="window.selectMapLayer('empleo')">
-                    <span class="icon" style="font-size: 16px; margin-right: 4px;">💼</span>
-                    <span class="label">Empleo</span>
-                </button>
                 <button class="radial-pill-item" onclick="window.selectMapLayer('gasolineras')">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="15" y2="22"></line><line x1="4" y1="9" x2="14" y2="9"></line><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"></path><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"></path></svg>
                     Gasolineras
@@ -603,131 +599,7 @@
 
         window.MapFilterRegistry = {
 
-            
-            'empleo': {
-                name: 'Desempleo (SEPE)',
-                type: 'geojson',
-                color: '#3b82f6',
-                source: 'SEPE / M. de Trabajo',
-                url: '/api/empleo_data.json',
-                options: {
-                    pointToLayer: (feature, latlng) => {
-                        const p = feature.properties;
-                        // Color based on variacion_mensual
-                        let col = '#10b981'; // Green (dropping)
-                        if (p.variacion_mensual > 0) col = '#ef4444'; // Red (rising)
-                        else if (p.variacion_mensual === 0) col = '#9ca3af'; // Gray
-                        
-                        // Size based on total paro
-                        let rad = 6;
-                        if (p.paro_total > 5000) rad = 10;
-                        if (p.paro_total > 15000) rad = 14;
-
-                        return window.L.circleMarker(latlng, {
-                            radius: rad,
-                            fillColor: col,
-                            color: '#ffffff',
-                            weight: 2,
-                            opacity: 1,
-                            fillOpacity: 0.85
-                        });
-                    },
-                    onEachFeature: (feature, layer) => {
-                        layer.on('click', (e) => {
-                            if (e) window.L.DomEvent.stopPropagation(e);
-                            const container = document.getElementById('map-ui-container');
-                            if (container) {
-                                let p = feature.properties;
-                                
-                                document.getElementById('map-info-label').innerText = 'Empleo y Paro Local';
-                                document.getElementById('map-info-label').style.color = '#3b82f6';
-                                document.getElementById('map-info-title').innerText = p.municipio;
-                                
-                                const actionsDiv = document.getElementById('map-pill-actions');
-                                if (actionsDiv) actionsDiv.style.display = 'none';
-
-                                const isRising = p.variacion_mensual > 0;
-                                const varColor = isRising ? '#ef4444' : '#10b981';
-                                const varIcon = isRising ? '📈' : '📉';
-                                const varSign = isRising ? '+' : '';
-
-                                const html = `
-                                    <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.5;">
-                                        Situación del mercado laboral (Paro Registrado)
-                                    </div>
-                                    
-                                    <div style="background: var(--bg-color); border: 1px solid var(--header-border); border-radius: 6px; padding: 12px; margin-bottom: 12px;">
-                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                            <div>
-                                                <div style="font-size: 12px; color: #3b82f6; font-weight: bold; text-transform: uppercase;">Parados Registrados</div>
-                                                <div style="font-size: 10px; color: var(--text-secondary); margin-top: 2px;">Total actual</div>
-                                            </div>
-                                            <div style="font-size: 24px; font-weight: bold; color: var(--text-primary);">${new Intl.NumberFormat('es-ES').format(p.paro_total)}</div>
-                                        </div>
-                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--header-border);">
-                                            <span style="font-size: 11px; color: var(--text-secondary);">Evolución Mensual</span>
-                                            <span style="font-weight: bold; color: ${varColor}; display: flex; align-items: center; gap: 4px;">
-                                                ${varIcon} ${varSign}${p.variacion_mensual}%
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <div style="margin-bottom: 16px;">
-                                        <div style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary); font-weight: bold; margin-bottom: 8px;">Desglose por Sexo</div>
-                                        <div style="display: flex; height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 6px;">
-                                            <div style="background: #3b82f6; width: ${(p.paro_hombres / p.paro_total) * 100}%;" title="Hombres"></div>
-                                            <div style="background: #ec4899; width: ${(p.paro_mujeres / p.paro_total) * 100}%;" title="Mujeres"></div>
-                                        </div>
-                                        <div style="display: flex; justify-content: space-between; font-size: 11px;">
-                                            <span style="color: #3b82f6;">👨 ${new Intl.NumberFormat('es-ES').format(p.paro_hombres)}</span>
-                                            <span style="color: #ec4899;">👩 ${new Intl.NumberFormat('es-ES').format(p.paro_mujeres)}</span>
-                                        </div>
-                                    </div>
-
-                                    <div style="margin-bottom: 8px;">
-                                        <div style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary); font-weight: bold; margin-bottom: 8px;">Paro por Sectores</div>
-                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                                            <div style="background: rgba(107, 114, 128, 0.1); padding: 8px; border-radius: 6px; text-align: center;">
-                                                <div style="font-size: 16px; margin-bottom: 2px;">🚜</div>
-                                                <div style="font-size: 13px; font-weight: bold;">${new Intl.NumberFormat('es-ES').format(p.sectores.agricultura)}</div>
-                                                <div style="font-size: 9px; color: var(--text-secondary); text-transform: uppercase;">Agrario</div>
-                                            </div>
-                                            <div style="background: rgba(107, 114, 128, 0.1); padding: 8px; border-radius: 6px; text-align: center;">
-                                                <div style="font-size: 16px; margin-bottom: 2px;">🏭</div>
-                                                <div style="font-size: 13px; font-weight: bold;">${new Intl.NumberFormat('es-ES').format(p.sectores.industria)}</div>
-                                                <div style="font-size: 9px; color: var(--text-secondary); text-transform: uppercase;">Industria</div>
-                                            </div>
-                                            <div style="background: rgba(107, 114, 128, 0.1); padding: 8px; border-radius: 6px; text-align: center;">
-                                                <div style="font-size: 16px; margin-bottom: 2px;">🏗️</div>
-                                                <div style="font-size: 13px; font-weight: bold;">${new Intl.NumberFormat('es-ES').format(p.sectores.construccion)}</div>
-                                                <div style="font-size: 9px; color: var(--text-secondary); text-transform: uppercase;">Construc.</div>
-                                            </div>
-                                            <div style="background: rgba(107, 114, 128, 0.1); padding: 8px; border-radius: 6px; text-align: center;">
-                                                <div style="font-size: 16px; margin-bottom: 2px;">🛎️</div>
-                                                <div style="font-size: 13px; font-weight: bold;">${new Intl.NumberFormat('es-ES').format(p.sectores.servicios)}</div>
-                                                <div style="font-size: 9px; color: var(--text-secondary); text-transform: uppercase;">Servicios</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                `;
-                                
-                                document.getElementById('map-info-desc').innerHTML = html;
-                                
-                                container.style.opacity = '1';
-                                container.style.pointerEvents = 'auto';
-                                container.style.transform = 'translate(-50%, 0)';
-                                
-                                // Source text
-                                const srcEl = document.getElementById('map-info-source');
-                                if (srcEl) {
-                                    srcEl.innerText = window.MapFilterRegistry['empleo'].source;
-                                }
-                            }
-                        });
-                    }
-                }
-            },
-'inmo': {
+            'inmo': {
                 name: 'Vivienda',
                 type: 'geojson',
                 color: '#8b5cf6',
