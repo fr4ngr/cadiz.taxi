@@ -1,8 +1,8 @@
 {
   "metadata": {
-    "last_updated": "2026-08-20T08:56:43.083Z",
-    "source": "SEPE / IECA (Estructura de Integración)",
-    "notice": "Datos base para calibración visual. Pendiente conexión API oficial."
+    "last_updated": "2026-08-20T09:01:37.583Z",
+    "source": "SEPE / IECA",
+    "notice": "Cádiz Capital = Datos Reales (Mayo 2026). Resto = Calibración UI hasta integración de API."
   },
   "type": "FeatureCollection",
   "features": [
@@ -17,16 +17,16 @@
       },
       "properties": {
         "municipio": "Alcalá de los Gazules",
-        "paro_total": 604,
-        "paro_hombres": 253,
-        "paro_mujeres": 350,
-        "variacion_mensual": 0.9,
+        "paro_total": 362,
+        "paro_hombres": 152,
+        "paro_mujeres": 209,
+        "variacion_mensual": 1.8,
         "sectores": {
-          "agricultura": 30,
-          "industria": 48,
-          "construccion": 72,
-          "servicios": 392,
-          "sin_empleo_anterior": 60
+          "agricultura": 18,
+          "industria": 28,
+          "construccion": 43,
+          "servicios": 271,
+          "sin_empleo_anterior": 36
         }
       }
     },
@@ -41,16 +41,16 @@
       },
       "properties": {
         "municipio": "Alcalá del Valle",
-        "paro_total": 344,
-        "paro_hombres": 144,
-        "paro_mujeres": 199,
-        "variacion_mensual": 0,
+        "paro_total": 734,
+        "paro_hombres": 308,
+        "paro_mujeres": 425,
+        "variacion_mensual": -1.1,
         "sectores": {
-          "agricultura": 17,
-          "industria": 27,
-          "construccion": 41,
-          "servicios": 223,
-          "sin_empleo_anterior": 34
+          "agricultura": 110,
+          "industria": 58,
+          "construccion": 88,
+          "servicios": 477,
+          "sin_empleo_anterior": 73
         }
       }
     },
@@ -65,16 +65,16 @@
       },
       "properties": {
         "municipio": "Algar",
-        "paro_total": 756,
-        "paro_hombres": 317,
-        "paro_mujeres": 438,
-        "variacion_mensual": 0.4,
+        "paro_total": 694,
+        "paro_hombres": 291,
+        "paro_mujeres": 402,
+        "variacion_mensual": 1.6,
         "sectores": {
-          "agricultura": 37,
-          "industria": 60,
-          "construccion": 90,
-          "servicios": 491,
-          "sin_empleo_anterior": 75
+          "agricultura": 34,
+          "industria": 55,
+          "construccion": 83,
+          "servicios": 520,
+          "sin_empleo_anterior": 69
         }
       }
     },
@@ -92,12 +92,12 @@
         "paro_total": 12000,
         "paro_hombres": 5040,
         "paro_mujeres": 6959,
-        "variacion_mensual": 1.1,
+        "variacion_mensual": -1.5,
         "sectores": {
-          "agricultura": 600,
+          "agricultura": 120,
           "industria": 960,
           "construccion": 1440,
-          "servicios": 7800,
+          "servicios": 9480,
           "sin_empleo_anterior": 1200
         }
       }
@@ -113,16 +113,16 @@
       },
       "properties": {
         "municipio": "Algodonales",
-        "paro_total": 759,
-        "paro_hombres": 318,
-        "paro_mujeres": 440,
-        "variacion_mensual": -1.1,
+        "paro_total": 408,
+        "paro_hombres": 171,
+        "paro_mujeres": 236,
+        "variacion_mensual": 1.2,
         "sectores": {
-          "agricultura": 37,
-          "industria": 60,
-          "construccion": 91,
-          "servicios": 493,
-          "sin_empleo_anterior": 75
+          "agricultura": 20,
+          "industria": 32,
+          "construccion": 48,
+          "servicios": 306,
+          "sin_empleo_anterior": 40
         }
       }
     },
@@ -140,12 +140,12 @@
         "paro_total": 4000,
         "paro_hombres": 1680,
         "paro_mujeres": 2320,
-        "variacion_mensual": 1.1,
+        "variacion_mensual": -1.7,
         "sectores": {
           "agricultura": 200,
           "industria": 320,
           "construccion": 480,
-          "servicios": 2600,
+          "servicios": 3000,
           "sin_empleo_anterior": 400
         }
       }
@@ -164,12 +164,12 @@
         "paro_total": 2500,
         "paro_hombres": 1050,
         "paro_mujeres": 1450,
-        "variacion_mensual": 0.6,
+        "variacion_mensual": 1.1,
         "sectores": {
           "agricultura": 125,
           "industria": 200,
           "construccion": 300,
-          "servicios": 1625,
+          "servicios": 1875,
           "sin_empleo_anterior": 250
         }
       }
@@ -188,12 +188,12 @@
         "paro_total": 2500,
         "paro_hombres": 1050,
         "paro_mujeres": 1450,
-        "variacion_mensual": 1.5,
+        "variacion_mensual": 1.9,
         "sectores": {
           "agricultura": 125,
           "industria": 200,
           "construccion": 300,
-          "servicios": 1625,
+          "servicios": 1875,
           "sin_empleo_anterior": 250
         }
       }
@@ -209,16 +209,16 @@
       },
       "properties": {
         "municipio": "Benaocaz",
-        "paro_total": 635,
-        "paro_hombres": 266,
-        "paro_mujeres": 368,
-        "variacion_mensual": -1.1,
+        "paro_total": 654,
+        "paro_hombres": 274,
+        "paro_mujeres": 379,
+        "variacion_mensual": -1.8,
         "sectores": {
-          "agricultura": 31,
-          "industria": 50,
-          "construccion": 76,
-          "servicios": 412,
-          "sin_empleo_anterior": 63
+          "agricultura": 32,
+          "industria": 52,
+          "construccion": 78,
+          "servicios": 490,
+          "sin_empleo_anterior": 65
         }
       }
     },
@@ -233,16 +233,16 @@
       },
       "properties": {
         "municipio": "Bornos",
-        "paro_total": 601,
-        "paro_hombres": 252,
-        "paro_mujeres": 348,
+        "paro_total": 613,
+        "paro_hombres": 257,
+        "paro_mujeres": 355,
         "variacion_mensual": -0.7,
         "sectores": {
           "agricultura": 30,
-          "industria": 48,
-          "construccion": 72,
-          "servicios": 390,
-          "sin_empleo_anterior": 60
+          "industria": 49,
+          "construccion": 73,
+          "servicios": 459,
+          "sin_empleo_anterior": 61
         }
       }
     },
@@ -257,16 +257,16 @@
       },
       "properties": {
         "municipio": "El Bosque",
-        "paro_total": 562,
-        "paro_hombres": 236,
-        "paro_mujeres": 325,
-        "variacion_mensual": -0.1,
+        "paro_total": 503,
+        "paro_hombres": 211,
+        "paro_mujeres": 291,
+        "variacion_mensual": 0.5,
         "sectores": {
-          "agricultura": 28,
-          "industria": 44,
-          "construccion": 67,
-          "servicios": 365,
-          "sin_empleo_anterior": 56
+          "agricultura": 25,
+          "industria": 40,
+          "construccion": 60,
+          "servicios": 377,
+          "sin_empleo_anterior": 50
         }
       }
     },
@@ -281,16 +281,16 @@
       },
       "properties": {
         "municipio": "Cádiz",
-        "paro_total": 12000,
-        "paro_hombres": 5040,
-        "paro_mujeres": 6959,
-        "variacion_mensual": -0.4,
+        "paro_total": 7866,
+        "paro_hombres": 3225,
+        "paro_mujeres": 4641,
+        "variacion_mensual": -1.2,
         "sectores": {
-          "agricultura": 600,
-          "industria": 960,
-          "construccion": 1440,
-          "servicios": 7800,
-          "sin_empleo_anterior": 1200
+          "agricultura": 52,
+          "industria": 412,
+          "construccion": 464,
+          "servicios": 6027,
+          "sin_empleo_anterior": 911
         }
       }
     },
@@ -305,16 +305,16 @@
       },
       "properties": {
         "municipio": "Castellar de la Frontera",
-        "paro_total": 761,
-        "paro_hombres": 319,
-        "paro_mujeres": 441,
-        "variacion_mensual": 0,
+        "paro_total": 403,
+        "paro_hombres": 169,
+        "paro_mujeres": 233,
+        "variacion_mensual": -1.8,
         "sectores": {
-          "agricultura": 38,
-          "industria": 60,
-          "construccion": 91,
-          "servicios": 494,
-          "sin_empleo_anterior": 76
+          "agricultura": 20,
+          "industria": 32,
+          "construccion": 48,
+          "servicios": 302,
+          "sin_empleo_anterior": 40
         }
       }
     },
@@ -332,12 +332,12 @@
         "paro_total": 9000,
         "paro_hombres": 3780,
         "paro_mujeres": 5220,
-        "variacion_mensual": 0,
+        "variacion_mensual": 1.6,
         "sectores": {
           "agricultura": 450,
           "industria": 720,
           "construccion": 1080,
-          "servicios": 5850,
+          "servicios": 6750,
           "sin_empleo_anterior": 900
         }
       }
@@ -353,16 +353,16 @@
       },
       "properties": {
         "municipio": "Chipiona",
-        "paro_total": 344,
-        "paro_hombres": 144,
-        "paro_mujeres": 199,
+        "paro_total": 394,
+        "paro_hombres": 165,
+        "paro_mujeres": 228,
         "variacion_mensual": -0.6,
         "sectores": {
-          "agricultura": 17,
-          "industria": 27,
-          "construccion": 41,
-          "servicios": 223,
-          "sin_empleo_anterior": 34
+          "agricultura": 19,
+          "industria": 31,
+          "construccion": 47,
+          "servicios": 295,
+          "sin_empleo_anterior": 39
         }
       }
     },
@@ -380,12 +380,12 @@
         "paro_total": 2500,
         "paro_hombres": 1050,
         "paro_mujeres": 1450,
-        "variacion_mensual": 2,
+        "variacion_mensual": -1.7,
         "sectores": {
           "agricultura": 125,
           "industria": 200,
           "construccion": 300,
-          "servicios": 1625,
+          "servicios": 1875,
           "sin_empleo_anterior": 250
         }
       }
@@ -401,16 +401,16 @@
       },
       "properties": {
         "municipio": "Espera",
-        "paro_total": 442,
-        "paro_hombres": 185,
-        "paro_mujeres": 256,
-        "variacion_mensual": 1.2,
+        "paro_total": 434,
+        "paro_hombres": 182,
+        "paro_mujeres": 251,
+        "variacion_mensual": 1.1,
         "sectores": {
-          "agricultura": 22,
-          "industria": 35,
-          "construccion": 53,
-          "servicios": 287,
-          "sin_empleo_anterior": 44
+          "agricultura": 21,
+          "industria": 34,
+          "construccion": 52,
+          "servicios": 325,
+          "sin_empleo_anterior": 43
         }
       }
     },
@@ -425,16 +425,16 @@
       },
       "properties": {
         "municipio": "El Gastor",
-        "paro_total": 582,
-        "paro_hombres": 244,
-        "paro_mujeres": 337,
-        "variacion_mensual": -1.2,
+        "paro_total": 723,
+        "paro_hombres": 303,
+        "paro_mujeres": 419,
+        "variacion_mensual": -0.9,
         "sectores": {
-          "agricultura": 29,
-          "industria": 46,
-          "construccion": 69,
-          "servicios": 378,
-          "sin_empleo_anterior": 58
+          "agricultura": 36,
+          "industria": 57,
+          "construccion": 86,
+          "servicios": 542,
+          "sin_empleo_anterior": 72
         }
       }
     },
@@ -449,16 +449,16 @@
       },
       "properties": {
         "municipio": "Grazalema",
-        "paro_total": 315,
-        "paro_hombres": 132,
-        "paro_mujeres": 182,
-        "variacion_mensual": -2,
+        "paro_total": 394,
+        "paro_hombres": 165,
+        "paro_mujeres": 228,
+        "variacion_mensual": 1.8,
         "sectores": {
-          "agricultura": 15,
-          "industria": 25,
-          "construccion": 37,
-          "servicios": 204,
-          "sin_empleo_anterior": 31
+          "agricultura": 19,
+          "industria": 31,
+          "construccion": 47,
+          "servicios": 295,
+          "sin_empleo_anterior": 39
         }
       }
     },
@@ -476,12 +476,12 @@
         "paro_total": 23000,
         "paro_hombres": 9660,
         "paro_mujeres": 13339,
-        "variacion_mensual": 1.2,
+        "variacion_mensual": -1.6,
         "sectores": {
           "agricultura": 1150,
           "industria": 1840,
           "construccion": 2760,
-          "servicios": 14950,
+          "servicios": 17250,
           "sin_empleo_anterior": 2300
         }
       }
@@ -497,16 +497,16 @@
       },
       "properties": {
         "municipio": "Jimena de la Frontera",
-        "paro_total": 671,
-        "paro_hombres": 281,
-        "paro_mujeres": 389,
-        "variacion_mensual": -0.1,
+        "paro_total": 302,
+        "paro_hombres": 126,
+        "paro_mujeres": 175,
+        "variacion_mensual": -0.2,
         "sectores": {
-          "agricultura": 33,
-          "industria": 53,
-          "construccion": 80,
-          "servicios": 436,
-          "sin_empleo_anterior": 67
+          "agricultura": 15,
+          "industria": 24,
+          "construccion": 36,
+          "servicios": 226,
+          "sin_empleo_anterior": 30
         }
       }
     },
@@ -524,12 +524,12 @@
         "paro_total": 8000,
         "paro_hombres": 3360,
         "paro_mujeres": 4640,
-        "variacion_mensual": 0.7,
+        "variacion_mensual": 0.1,
         "sectores": {
-          "agricultura": 400,
+          "agricultura": 80,
           "industria": 640,
           "construccion": 960,
-          "servicios": 5200,
+          "servicios": 6320,
           "sin_empleo_anterior": 800
         }
       }
@@ -545,16 +545,16 @@
       },
       "properties": {
         "municipio": "Medina-Sidonia",
-        "paro_total": 322,
-        "paro_hombres": 135,
-        "paro_mujeres": 186,
-        "variacion_mensual": 1.8,
+        "paro_total": 738,
+        "paro_hombres": 309,
+        "paro_mujeres": 428,
+        "variacion_mensual": 0.4,
         "sectores": {
-          "agricultura": 16,
-          "industria": 25,
-          "construccion": 38,
-          "servicios": 209,
-          "sin_empleo_anterior": 32
+          "agricultura": 110,
+          "industria": 59,
+          "construccion": 88,
+          "servicios": 479,
+          "sin_empleo_anterior": 73
         }
       }
     },
@@ -569,16 +569,16 @@
       },
       "properties": {
         "municipio": "Olvera",
-        "paro_total": 638,
-        "paro_hombres": 267,
-        "paro_mujeres": 370,
-        "variacion_mensual": 0.2,
+        "paro_total": 556,
+        "paro_hombres": 233,
+        "paro_mujeres": 322,
+        "variacion_mensual": 1.8,
         "sectores": {
-          "agricultura": 31,
-          "industria": 51,
-          "construccion": 76,
-          "servicios": 414,
-          "sin_empleo_anterior": 63
+          "agricultura": 27,
+          "industria": 44,
+          "construccion": 66,
+          "servicios": 417,
+          "sin_empleo_anterior": 55
         }
       }
     },
@@ -593,16 +593,16 @@
       },
       "properties": {
         "municipio": "Paterna de Rivera",
-        "paro_total": 376,
-        "paro_hombres": 157,
-        "paro_mujeres": 218,
-        "variacion_mensual": 0.2,
+        "paro_total": 487,
+        "paro_hombres": 204,
+        "paro_mujeres": 282,
+        "variacion_mensual": -1.8,
         "sectores": {
-          "agricultura": 18,
-          "industria": 30,
-          "construccion": 45,
-          "servicios": 244,
-          "sin_empleo_anterior": 37
+          "agricultura": 24,
+          "industria": 38,
+          "construccion": 58,
+          "servicios": 365,
+          "sin_empleo_anterior": 48
         }
       }
     },
@@ -617,16 +617,16 @@
       },
       "properties": {
         "municipio": "Prado del Rey",
-        "paro_total": 353,
-        "paro_hombres": 148,
-        "paro_mujeres": 204,
-        "variacion_mensual": 1.2,
+        "paro_total": 412,
+        "paro_hombres": 173,
+        "paro_mujeres": 238,
+        "variacion_mensual": -1.2,
         "sectores": {
-          "agricultura": 17,
-          "industria": 28,
-          "construccion": 42,
-          "servicios": 229,
-          "sin_empleo_anterior": 35
+          "agricultura": 20,
+          "industria": 32,
+          "construccion": 49,
+          "servicios": 309,
+          "sin_empleo_anterior": 41
         }
       }
     },
@@ -644,12 +644,12 @@
         "paro_total": 9000,
         "paro_hombres": 3780,
         "paro_mujeres": 5220,
-        "variacion_mensual": -0.1,
+        "variacion_mensual": 0.4,
         "sectores": {
-          "agricultura": 450,
+          "agricultura": 90,
           "industria": 720,
           "construccion": 1080,
-          "servicios": 5850,
+          "servicios": 7110,
           "sin_empleo_anterior": 900
         }
       }
@@ -668,12 +668,12 @@
         "paro_total": 4000,
         "paro_hombres": 1680,
         "paro_mujeres": 2320,
-        "variacion_mensual": 0.2,
+        "variacion_mensual": -1.3,
         "sectores": {
           "agricultura": 200,
           "industria": 320,
           "construccion": 480,
-          "servicios": 2600,
+          "servicios": 3000,
           "sin_empleo_anterior": 400
         }
       }
@@ -689,16 +689,16 @@
       },
       "properties": {
         "municipio": "Puerto Serrano",
-        "paro_total": 758,
-        "paro_hombres": 318,
-        "paro_mujeres": 439,
-        "variacion_mensual": 1.8,
+        "paro_total": 794,
+        "paro_hombres": 333,
+        "paro_mujeres": 460,
+        "variacion_mensual": 1.4,
         "sectores": {
-          "agricultura": 37,
-          "industria": 60,
-          "construccion": 90,
-          "servicios": 492,
-          "sin_empleo_anterior": 75
+          "agricultura": 39,
+          "industria": 63,
+          "construccion": 95,
+          "servicios": 595,
+          "sin_empleo_anterior": 79
         }
       }
     },
@@ -716,12 +716,12 @@
         "paro_total": 2500,
         "paro_hombres": 1050,
         "paro_mujeres": 1450,
-        "variacion_mensual": -2,
+        "variacion_mensual": 1.8,
         "sectores": {
           "agricultura": 125,
           "industria": 200,
           "construccion": 300,
-          "servicios": 1625,
+          "servicios": 1875,
           "sin_empleo_anterior": 250
         }
       }
@@ -740,12 +740,12 @@
         "paro_total": 9000,
         "paro_hombres": 3780,
         "paro_mujeres": 5220,
-        "variacion_mensual": -1.6,
+        "variacion_mensual": 2,
         "sectores": {
-          "agricultura": 450,
+          "agricultura": 90,
           "industria": 720,
           "construccion": 1080,
-          "servicios": 5850,
+          "servicios": 7110,
           "sin_empleo_anterior": 900
         }
       }
@@ -761,16 +761,16 @@
       },
       "properties": {
         "municipio": "San José del Valle",
-        "paro_total": 472,
-        "paro_hombres": 198,
-        "paro_mujeres": 273,
-        "variacion_mensual": 0.5,
+        "paro_total": 352,
+        "paro_hombres": 147,
+        "paro_mujeres": 204,
+        "variacion_mensual": -1.7,
         "sectores": {
-          "agricultura": 23,
-          "industria": 37,
-          "construccion": 56,
-          "servicios": 306,
-          "sin_empleo_anterior": 47
+          "agricultura": 17,
+          "industria": 28,
+          "construccion": 42,
+          "servicios": 264,
+          "sin_empleo_anterior": 35
         }
       }
     },
@@ -785,16 +785,16 @@
       },
       "properties": {
         "municipio": "San Martín del Tesorillo",
-        "paro_total": 433,
-        "paro_hombres": 181,
-        "paro_mujeres": 251,
-        "variacion_mensual": -1.4,
+        "paro_total": 643,
+        "paro_hombres": 270,
+        "paro_mujeres": 372,
+        "variacion_mensual": -1.5,
         "sectores": {
-          "agricultura": 21,
-          "industria": 34,
-          "construccion": 51,
-          "servicios": 281,
-          "sin_empleo_anterior": 43
+          "agricultura": 32,
+          "industria": 51,
+          "construccion": 77,
+          "servicios": 482,
+          "sin_empleo_anterior": 64
         }
       }
     },
@@ -812,12 +812,12 @@
         "paro_total": 4000,
         "paro_hombres": 1680,
         "paro_mujeres": 2320,
-        "variacion_mensual": 1.6,
+        "variacion_mensual": -1.3,
         "sectores": {
           "agricultura": 200,
           "industria": 320,
           "construccion": 480,
-          "servicios": 2600,
+          "servicios": 3000,
           "sin_empleo_anterior": 400
         }
       }
@@ -836,12 +836,12 @@
         "paro_total": 8000,
         "paro_hombres": 3360,
         "paro_mujeres": 4640,
-        "variacion_mensual": -1.1,
+        "variacion_mensual": 1.3,
         "sectores": {
           "agricultura": 400,
           "industria": 640,
           "construccion": 960,
-          "servicios": 5200,
+          "servicios": 6000,
           "sin_empleo_anterior": 800
         }
       }
@@ -857,16 +857,16 @@
       },
       "properties": {
         "municipio": "Setenil de las Bodegas",
-        "paro_total": 719,
-        "paro_hombres": 301,
-        "paro_mujeres": 417,
-        "variacion_mensual": 1,
+        "paro_total": 331,
+        "paro_hombres": 139,
+        "paro_mujeres": 191,
+        "variacion_mensual": -1.2,
         "sectores": {
-          "agricultura": 35,
-          "industria": 57,
-          "construccion": 86,
-          "servicios": 467,
-          "sin_empleo_anterior": 71
+          "agricultura": 16,
+          "industria": 26,
+          "construccion": 39,
+          "servicios": 248,
+          "sin_empleo_anterior": 33
         }
       }
     },
@@ -884,12 +884,12 @@
         "paro_total": 2500,
         "paro_hombres": 1050,
         "paro_mujeres": 1450,
-        "variacion_mensual": -1.2,
+        "variacion_mensual": 1,
         "sectores": {
           "agricultura": 125,
           "industria": 200,
           "construccion": 300,
-          "servicios": 1625,
+          "servicios": 1875,
           "sin_empleo_anterior": 250
         }
       }
@@ -905,16 +905,16 @@
       },
       "properties": {
         "municipio": "Torre Alháquime",
-        "paro_total": 628,
-        "paro_hombres": 263,
-        "paro_mujeres": 364,
-        "variacion_mensual": -0.9,
+        "paro_total": 522,
+        "paro_hombres": 219,
+        "paro_mujeres": 302,
+        "variacion_mensual": 0.2,
         "sectores": {
-          "agricultura": 31,
-          "industria": 50,
-          "construccion": 75,
-          "servicios": 408,
-          "sin_empleo_anterior": 62
+          "agricultura": 26,
+          "industria": 41,
+          "construccion": 62,
+          "servicios": 391,
+          "sin_empleo_anterior": 52
         }
       }
     },
@@ -929,16 +929,16 @@
       },
       "properties": {
         "municipio": "Trebujena",
-        "paro_total": 637,
-        "paro_hombres": 267,
-        "paro_mujeres": 369,
-        "variacion_mensual": 1.6,
+        "paro_total": 678,
+        "paro_hombres": 284,
+        "paro_mujeres": 393,
+        "variacion_mensual": 0.3,
         "sectores": {
-          "agricultura": 31,
-          "industria": 50,
-          "construccion": 76,
-          "servicios": 414,
-          "sin_empleo_anterior": 63
+          "agricultura": 101,
+          "industria": 54,
+          "construccion": 81,
+          "servicios": 440,
+          "sin_empleo_anterior": 67
         }
       }
     },
@@ -953,16 +953,16 @@
       },
       "properties": {
         "municipio": "Ubrique",
-        "paro_total": 414,
-        "paro_hombres": 173,
-        "paro_mujeres": 240,
-        "variacion_mensual": -0.1,
+        "paro_total": 591,
+        "paro_hombres": 248,
+        "paro_mujeres": 342,
+        "variacion_mensual": 0.2,
         "sectores": {
-          "agricultura": 20,
-          "industria": 33,
-          "construccion": 49,
-          "servicios": 269,
-          "sin_empleo_anterior": 41
+          "agricultura": 29,
+          "industria": 47,
+          "construccion": 70,
+          "servicios": 443,
+          "sin_empleo_anterior": 59
         }
       }
     },
@@ -977,16 +977,16 @@
       },
       "properties": {
         "municipio": "Vejer de la Frontera",
-        "paro_total": 389,
-        "paro_hombres": 163,
-        "paro_mujeres": 225,
-        "variacion_mensual": 1.5,
+        "paro_total": 575,
+        "paro_hombres": 241,
+        "paro_mujeres": 333,
+        "variacion_mensual": -1.3,
         "sectores": {
-          "agricultura": 19,
-          "industria": 31,
-          "construccion": 46,
-          "servicios": 252,
-          "sin_empleo_anterior": 38
+          "agricultura": 28,
+          "industria": 46,
+          "construccion": 69,
+          "servicios": 431,
+          "sin_empleo_anterior": 57
         }
       }
     },
@@ -1001,16 +1001,16 @@
       },
       "properties": {
         "municipio": "Villaluenga del Rosario",
-        "paro_total": 374,
-        "paro_hombres": 157,
-        "paro_mujeres": 216,
+        "paro_total": 782,
+        "paro_hombres": 328,
+        "paro_mujeres": 453,
         "variacion_mensual": 2,
         "sectores": {
-          "agricultura": 18,
-          "industria": 29,
-          "construccion": 44,
-          "servicios": 243,
-          "sin_empleo_anterior": 37
+          "agricultura": 39,
+          "industria": 62,
+          "construccion": 93,
+          "servicios": 586,
+          "sin_empleo_anterior": 78
         }
       }
     },
@@ -1025,16 +1025,16 @@
       },
       "properties": {
         "municipio": "Villamartín",
-        "paro_total": 484,
-        "paro_hombres": 203,
-        "paro_mujeres": 280,
-        "variacion_mensual": -1.1,
+        "paro_total": 663,
+        "paro_hombres": 278,
+        "paro_mujeres": 384,
+        "variacion_mensual": -1.6,
         "sectores": {
-          "agricultura": 24,
-          "industria": 38,
-          "construccion": 58,
-          "servicios": 314,
-          "sin_empleo_anterior": 48
+          "agricultura": 99,
+          "industria": 53,
+          "construccion": 79,
+          "servicios": 430,
+          "sin_empleo_anterior": 66
         }
       }
     },
@@ -1049,16 +1049,16 @@
       },
       "properties": {
         "municipio": "Zahara de la Sierra",
-        "paro_total": 425,
-        "paro_hombres": 178,
-        "paro_mujeres": 246,
-        "variacion_mensual": -1.9,
+        "paro_total": 664,
+        "paro_hombres": 278,
+        "paro_mujeres": 385,
+        "variacion_mensual": 1.5,
         "sectores": {
-          "agricultura": 21,
-          "industria": 34,
-          "construccion": 51,
-          "servicios": 276,
-          "sin_empleo_anterior": 42
+          "agricultura": 33,
+          "industria": 53,
+          "construccion": 79,
+          "servicios": 498,
+          "sin_empleo_anterior": 66
         }
       }
     }
