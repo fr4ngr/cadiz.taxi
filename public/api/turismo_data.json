@@ -1,8 +1,8 @@
 {
   "metadata": {
-    "last_updated": "2026-08-20T09:17:35.881Z",
+    "last_updated": "2026-08-20T09:23:01.154Z",
     "source": "API INE (Tempus 3)",
-    "period": "Junio 2025"
+    "period": "Junio 2026"
   },
   "type": "FeatureCollection",
   "features": [
@@ -239,41 +239,41 @@
         "municipio": "Cádiz",
         "is_hotspot": true,
         "viajeros_esp": {
-          "valor": 20862,
-          "anyo": 2025,
+          "valor": 19948,
+          "anyo": 2026,
           "mes": 6,
           "mes_nombre": "Junio",
-          "variacion_interanual": 4.581912973731702
+          "variacion_interanual": -4.381171508004985
         },
         "viajeros_ext": {
-          "valor": 12305,
-          "anyo": 2025,
+          "valor": 11348,
+          "anyo": 2026,
           "mes": 6,
           "mes_nombre": "Junio",
-          "variacion_interanual": 8.433204088826225
+          "variacion_interanual": -7.7773262901259645
         },
         "pernoctaciones_esp": {
-          "valor": 46555,
-          "anyo": 2025,
+          "valor": 47372,
+          "anyo": 2026,
           "mes": 6,
           "mes_nombre": "Junio",
-          "variacion_interanual": -1.7246474710799629
+          "variacion_interanual": 1.7549135431210399
         },
         "pernoctaciones_ext": {
-          "valor": 29791,
-          "anyo": 2025,
+          "valor": 29450,
+          "anyo": 2026,
           "mes": 6,
           "mes_nombre": "Junio",
-          "variacion_interanual": 1.1578947368421053
+          "variacion_interanual": -1.1446409989594173
         },
         "ocupacion": {
-          "valor": 67.03,
-          "anyo": 2025,
+          "valor": 66.88,
+          "anyo": 2026,
           "mes": 6,
           "mes_nombre": "Junio",
-          "variacion_interanual": 0.22428229665072622
+          "variacion_interanual": -0.22378039683724552
         },
-        "periodo": "Junio 2025"
+        "periodo": "Junio 2026"
       }
     },
     {
@@ -309,29 +309,29 @@
         "municipio": "Chiclana de la Frontera",
         "is_hotspot": true,
         "viajeros_esp": {
-          "valor": 37579,
-          "anyo": 2025,
+          "valor": 40678,
+          "anyo": 2026,
           "mes": 6,
           "mes_nombre": "Junio",
-          "variacion_interanual": -7.618368651359457
+          "variacion_interanual": 8.246627105564277
         },
         "viajeros_ext": null,
         "pernoctaciones_esp": {
-          "valor": 142231,
-          "anyo": 2025,
+          "valor": 162523,
+          "anyo": 2026,
           "mes": 6,
           "mes_nombre": "Junio",
-          "variacion_interanual": -12.485617420303589
+          "variacion_interanual": 14.266931962792922
         },
         "pernoctaciones_ext": null,
         "ocupacion": {
-          "valor": 76.48,
-          "anyo": 2025,
+          "valor": 75.58,
+          "anyo": 2026,
           "mes": 6,
           "mes_nombre": "Junio",
-          "variacion_interanual": 1.1907912146070465
+          "variacion_interanual": -1.1767782426778317
         },
-        "periodo": "Junio 2025"
+        "periodo": "Junio 2026"
       }
     },
     {
@@ -367,29 +367,29 @@
         "municipio": "Conil de la Frontera",
         "is_hotspot": true,
         "viajeros_esp": {
-          "valor": 28106,
-          "anyo": 2025,
+          "valor": 25370,
+          "anyo": 2026,
           "mes": 6,
           "mes_nombre": "Junio",
-          "variacion_interanual": 10.78439101300749
+          "variacion_interanual": -9.734576247064684
         },
         "viajeros_ext": null,
         "pernoctaciones_esp": {
-          "valor": 83421,
-          "anyo": 2025,
+          "valor": 104959,
+          "anyo": 2026,
           "mes": 6,
           "mes_nombre": "Junio",
-          "variacion_interanual": -20.520393677531228
+          "variacion_interanual": 25.81843900216972
         },
         "pernoctaciones_ext": null,
         "ocupacion": {
-          "valor": 68.5,
-          "anyo": 2025,
+          "valor": 67.35,
+          "anyo": 2026,
           "mes": 6,
           "mes_nombre": "Junio",
-          "variacion_interanual": 1.707498144023765
+          "variacion_interanual": -1.6788321167883296
         },
-        "periodo": "Junio 2025"
+        "periodo": "Junio 2026"
       }
     },
     {
@@ -465,41 +465,41 @@
         "municipio": "Jerez de la Frontera",
         "is_hotspot": true,
         "viajeros_esp": {
-          "valor": 18935,
-          "anyo": 2025,
+          "valor": 24161,
+          "anyo": 2026,
           "mes": 6,
           "mes_nombre": "Junio",
-          "variacion_interanual": -21.629899424692685
+          "variacion_interanual": 27.599683126485345
         },
         "viajeros_ext": {
-          "valor": 7077,
-          "anyo": 2025,
+          "valor": 9517,
+          "anyo": 2026,
           "mes": 6,
           "mes_nombre": "Junio",
-          "variacion_interanual": -25.63833140695597
+          "variacion_interanual": 34.477886109933586
         },
         "pernoctaciones_esp": {
-          "valor": 40049,
-          "anyo": 2025,
+          "valor": 40519,
+          "anyo": 2026,
           "mes": 6,
           "mes_nombre": "Junio",
-          "variacion_interanual": -1.1599496532490932
+          "variacion_interanual": 1.1735623860770557
         },
         "pernoctaciones_ext": {
-          "valor": 20667,
-          "anyo": 2025,
+          "valor": 22623,
+          "anyo": 2026,
           "mes": 6,
           "mes_nombre": "Junio",
-          "variacion_interanual": -8.64606816072139
+          "variacion_interanual": 9.46436347800842
         },
         "ocupacion": {
-          "valor": 50,
-          "anyo": 2025,
+          "valor": 52.78,
+          "anyo": 2026,
           "mes": 6,
           "mes_nombre": "Junio",
-          "variacion_interanual": -5.267146646456993
+          "variacion_interanual": 5.560000000000002
         },
-        "periodo": "Junio 2025"
+        "periodo": "Junio 2026"
       }
     },
     {
@@ -835,41 +835,41 @@
         "municipio": "Tarifa",
         "is_hotspot": true,
         "viajeros_esp": {
-          "valor": 16428,
-          "anyo": 2025,
+          "valor": 17555,
+          "anyo": 2026,
           "mes": 6,
           "mes_nombre": "Junio",
-          "variacion_interanual": -6.419823412133295
+          "variacion_interanual": 6.860238616995373
         },
         "viajeros_ext": {
-          "valor": 8595,
-          "anyo": 2025,
+          "valor": 7002,
+          "anyo": 2026,
           "mes": 6,
           "mes_nombre": "Junio",
-          "variacion_interanual": 22.750642673521853
+          "variacion_interanual": -18.534031413612563
         },
         "pernoctaciones_esp": {
-          "valor": 41513,
-          "anyo": 2025,
+          "valor": 45704,
+          "anyo": 2026,
           "mes": 6,
           "mes_nombre": "Junio",
-          "variacion_interanual": -9.169875722037458
+          "variacion_interanual": 10.09563269337316
         },
         "pernoctaciones_ext": {
-          "valor": 23245,
-          "anyo": 2025,
+          "valor": 24381,
+          "anyo": 2026,
           "mes": 6,
           "mes_nombre": "Junio",
-          "variacion_interanual": -4.6593658996759775
+          "variacion_interanual": 4.887072488707249
         },
         "ocupacion": {
-          "valor": 61.12,
-          "anyo": 2025,
+          "valor": 66.28,
+          "anyo": 2026,
           "mes": 6,
           "mes_nombre": "Junio",
-          "variacion_interanual": -7.785153892576951
+          "variacion_interanual": 8.442408376963357
         },
-        "periodo": "Junio 2025"
+        "periodo": "Junio 2026"
       }
     },
     {

@@ -15,12 +15,13 @@ const MESES = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "
 async function fetchIneData(seriesId) {
     if (!seriesId) return null;
     try {
-        // Fetch 13 months to get current and YoY comparison
         const url = `https://servicios.ine.es/wstempus/js/ES/DATOS_SERIE/${seriesId}?nult=13`;
         const res = await axios.get(url);
         if (res.data && res.data.Data && res.data.Data.length > 0) {
-            const current = res.data.Data[0]; // Latest
-            const previousYear = res.data.Data.length === 13 ? res.data.Data[12] : null;
+            const dataArr = res.data.Data;
+            // INE sorts ascending. So the last element is the newest.
+            const current = dataArr[dataArr.length - 1]; 
+            const previousYear = dataArr.length === 13 ? dataArr[0] : null; 
             
             let variacion = null;
             if (previousYear && previousYear.Valor > 0) {
